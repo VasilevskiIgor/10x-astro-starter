@@ -87,6 +87,7 @@ CREATE TABLE users (
 );
 ```
 
+
 ### trip_activities
 ```sql
 CREATE TABLE trip_activities (
@@ -127,6 +128,7 @@ CREATE TABLE ai_generation_logs (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 ```
+
 
 ### user_rate_limits
 ```sql
