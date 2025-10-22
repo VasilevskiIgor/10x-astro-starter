@@ -1,0 +1,40 @@
+---
+/**
+ * Trip Detail Page
+ *
+ * Displays full details of a specific trip including AI-generated content.
+ * Features:
+ * - Complete trip information
+ * - AI-generated itinerary (if available)
+ * - Edit and delete actions
+ * - Authentication required
+ */
+
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumb from '@/components/ui/Breadcrumb.astro';
+import { TripDetail } from '@/components/trips/TripDetail';
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/trips');
+}
+
+const breadcrumbItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Trips', href: '/trips' },
+  { label: 'Details' },
+];
+---
+
+<Layout title="Trip Details - VibeTravels">
+  <main class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    {/* Breadcrumb */}
+    <div class="mb-6">
+      <Breadcrumb items={breadcrumbItems} />
+    </div>
+
+    {/* Trip Detail Component */}
+    <TripDetail tripId={id} client:load />
+  </main>
+</Layout>

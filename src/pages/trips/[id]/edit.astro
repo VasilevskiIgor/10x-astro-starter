@@ -1,0 +1,51 @@
+---
+/**
+ * Edit Trip Page
+ *
+ * Page for editing an existing trip.
+ * Features:
+ * - Pre-filled form with current trip data
+ * - Validation
+ * - Save/Cancel actions
+ * - Authentication required
+ */
+
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumb from '@/components/ui/Breadcrumb.astro';
+import { TripEditForm } from '@/components/trips/TripEditForm';
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/trips');
+}
+
+const breadcrumbItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Trips', href: '/trips' },
+  { label: 'Details', href: `/trips/${id}` },
+  { label: 'Edit' },
+];
+---
+
+<Layout title="Edit Trip - VibeTravels">
+  <main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    {/* Breadcrumb */}
+    <div class="mb-6">
+      <Breadcrumb items={breadcrumbItems} />
+    </div>
+
+    {/* Header */}
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Edit Trip</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Update your trip details. AI-generated content cannot be edited directly.
+      </p>
+    </div>
+
+    {/* Form */}
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <TripEditForm tripId={id} client:load />
+    </div>
+  </main>
+</Layout>

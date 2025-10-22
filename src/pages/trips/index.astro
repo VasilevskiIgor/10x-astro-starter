@@ -1,0 +1,55 @@
+---
+/**
+ * Trips List Page
+ *
+ * Displays all trips for the authenticated user.
+ * Features:
+ * - Paginated list of trips
+ * - Status filtering
+ * - Empty state for new users
+ * - Authentication required
+ */
+
+import Layout from '@/layouts/Layout.astro';
+import { TripsList } from '@/components/trips/TripsList';
+
+// Check authentication (will be handled by middleware)
+// For now, we'll just render the page
+---
+
+<Layout title="My Trips - VibeTravels">
+  <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    {/* Header */}
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">My Trips</h1>
+        <p class="mt-2 text-sm text-gray-600">
+          Manage and view all your travel plans
+        </p>
+      </div>
+      <a
+        href="/trips/new"
+        class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        <svg
+          class="mr-2 h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width={2}
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        New Trip
+      </a>
+    </div>
+
+    {/* Trips List Component */}
+    <TripsList client:load />
+  </main>
+</Layout>

@@ -5,27 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-[var(--spacingHorizontalS)] whitespace-nowrap text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] transition-all duration-100 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)]",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          "bg-[var(--colorBrandBackground)] text-[var(--colorBrandForeground1)] shadow-[var(--shadow2)] hover:bg-[var(--colorBrandBackgroundHover)] active:bg-[var(--colorBrandBackgroundPressed)] rounded-[var(--borderRadiusMedium)]",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-[var(--colorStatusDangerBackground3)] text-[var(--colorBrandForeground1)] shadow-[var(--shadow2)] hover:opacity-90 active:opacity-80 rounded-[var(--borderRadiusMedium)]",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] text-[var(--colorNeutralForeground1)] hover:bg-[var(--colorNeutralBackground4)] active:bg-[var(--colorNeutralBackground5)] rounded-[var(--borderRadiusMedium)]",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          "bg-[var(--colorNeutralBackground4)] text-[var(--colorNeutralForeground1)] shadow-[var(--shadow2)] hover:bg-[var(--colorNeutralBackground5)] active:bg-[var(--colorNeutralBackground6)] rounded-[var(--borderRadiusMedium)]",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-transparent text-[var(--colorNeutralForeground2)] hover:bg-[var(--colorNeutralBackground4)] active:bg-[var(--colorNeutralBackground5)] rounded-[var(--borderRadiusMedium)]",
+        link: "text-[var(--colorBrandForegroundLink)] underline-offset-4 hover:underline hover:text-[var(--colorBrandBackgroundHover)]",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        default: "h-8 px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalSNudge)] has-[>svg]:px-[var(--spacingHorizontalS)]",
+        sm: "h-6 px-[var(--spacingHorizontalS)] py-[var(--spacingVerticalXXS)] text-[var(--fontSizeBase200)] gap-[var(--spacingHorizontalXS)] has-[>svg]:px-[var(--spacingHorizontalXS)]",
+        lg: "h-10 px-[var(--spacingHorizontalL)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase400)] has-[>svg]:px-[var(--spacingHorizontalM)]",
+        icon: "size-8 p-[var(--spacingHorizontalXS)]",
       },
     },
     defaultVariants: {

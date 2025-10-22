@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Dodaj te linie do pliku .gitignore
+jwt_token.txt
+nul
+*.tmp
+.DS_Store

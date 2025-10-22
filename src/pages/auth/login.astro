@@ -1,0 +1,56 @@
+---
+/**
+ * Login Page
+ *
+ * Authentication page using Supabase Auth.
+ * Supports redirect parameter to return user to original destination.
+ */
+
+import Layout from '@/layouts/Layout.astro';
+import { LoginForm } from '@/components/forms/LoginForm';
+import { LoginFormSimple } from '@/components/forms/LoginFormSimple';
+import { SimpleLoginTest } from '@/components/forms/SimpleLoginTest';
+
+// Get redirect URL from query params
+const url = new URL(Astro.request.url);
+const redirectTo = url.searchParams.get('redirect') || '/';
+---
+
+<Layout title="Sign In - VibeTravels">
+  <main class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md">
+      {/* Header */}
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Welcome back</h1>
+        <p class="mt-2 text-sm text-gray-600">
+          Sign in to your account to continue
+        </p>
+      </div>
+
+      {/* Login Form Card */}
+      <div class="bg-white rounded-lg shadow-xl p-8 border border-gray-200">
+        <LoginFormSimple client:only="react" />
+      </div>
+
+      {/* Footer Links */}
+      <div class="mt-6 text-center">
+        <a
+          href="/"
+          class="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          ← Back to home
+        </a>
+      </div>
+
+      {/* Debug Info (only in dev) */}
+      {import.meta.env.DEV && (
+        <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
+          <p class="font-medium text-yellow-800">Dev Mode Info:</p>
+          <p class="text-yellow-700 mt-1">
+            Redirect after login: <code class="bg-yellow-100 px-1 rounded">{redirectTo}</code>
+          </p>
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>

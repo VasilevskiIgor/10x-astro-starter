@@ -451,7 +451,8 @@ export function validateTripsQueryParams(params: URLSearchParams): ValidationRes
   if (sort !== null) {
     const validationResult = validateSortParam(sort);
     if (!validationResult.success) {
-      errors.push(...validationResult.errors);
+      const sortErrors = 'errors' in validationResult ? validationResult.errors : [];
+      errors.push(...sortErrors);
     } else {
       result.sort = sort;
     }

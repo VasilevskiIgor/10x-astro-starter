@@ -33,7 +33,7 @@ export function createErrorResponse(
     error: {
       code,
       message,
-      ...(details && { details }),
+      ...(details && { details: details as ErrorResponse['error']['details'] }),
     },
   };
 }
@@ -72,17 +72,20 @@ export function getStatusForErrorCode(code: ErrorCode): number {
  * @param code - Error code
  * @param message - Error message
  * @param details - Optional error details
+ * @param statusOverride - Optional status code override
  * @returns Response object
  *
  * @example
  * return errorResponse('UNAUTHORIZED', 'Authentication required');
+ * return errorResponse('GENERATION_IN_PROGRESS', 'Already generating', {}, 409);
  */
 export function errorResponse(
   code: ErrorCode,
   message: string,
-  details?: unknown
+  details?: unknown,
+  statusOverride?: number
 ): Response {
-  const status = getStatusForErrorCode(code);
+  const status = statusOverride ?? getStatusForErrorCode(code);
   const body = createErrorResponse(code, message, details);
 
   return new Response(JSON.stringify(body), {

@@ -1,0 +1,1 @@
+{"error":{"code":"AI_GENERATION_FAILED","message":"Failed to generate trip plan","details":{"reason":"AI API error: 401 No auth credentials found"}}}
