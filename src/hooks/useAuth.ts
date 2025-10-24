@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import { supabaseClient } from '@/db/supabase.client';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 import type { User, Session } from '@supabase/supabase-js';
 
 // ============================================================================
@@ -40,7 +40,7 @@ export function useAuth(): UseAuthReturn {
     console.log('[useAuth] Checking authentication status...');
 
     // Get initial session
-    supabaseClient.auth.getSession().then(({ data: { session }, error }) => {
+    supabaseBrowser.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('[useAuth] Error getting session:', error);
       }
@@ -58,7 +58,7 @@ export function useAuth(): UseAuthReturn {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+    } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
       console.log('[useAuth] Auth state changed:', _event, session ? 'AUTHENTICATED' : 'NOT AUTHENTICATED');
 
       setState({
@@ -77,7 +77,7 @@ export function useAuth(): UseAuthReturn {
 
   const signOut = React.useCallback(async () => {
     console.log('[useAuth] Signing out...');
-    await supabaseClient.auth.signOut();
+    await supabaseBrowser.auth.signOut();
   }, []);
 
   return {

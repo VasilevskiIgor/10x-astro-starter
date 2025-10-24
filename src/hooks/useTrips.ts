@@ -11,7 +11,7 @@
  */
 
 import * as React from 'react';
-import { supabaseClient } from '@/db/supabase.client';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 import type { PaginatedTripsResponse, TripListItemDTO, TripsQueryParams } from '@/types/dto';
 
 // ============================================================================
@@ -66,7 +66,7 @@ export function useTrips(initialParams?: TripsQueryParams): UseTripsReturn {
 
     try {
       // Get session to retrieve access token
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      const { data: { session } } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
         throw new Error('Not authenticated. Please log in.');

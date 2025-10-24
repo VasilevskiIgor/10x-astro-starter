@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import { supabaseClient } from '@/db/supabase.client';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 import type {
   CreateTripCommand,
   TripResponseDTO,
@@ -49,7 +49,7 @@ async function getAccessToken(): Promise<string | null> {
     const {
       data: { session },
       error,
-    } = await supabaseClient.auth.getSession();
+    } = await supabaseBrowser.auth.getSession();
 
     if (error) {
       console.error('Failed to get session:', error);

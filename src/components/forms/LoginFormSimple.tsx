@@ -3,7 +3,7 @@
  */
 
 import * as React from 'react';
-import { supabaseClient } from '@/db/supabase.client';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 
 export const LoginFormSimple: React.FC = () => {
   const [email, setEmail] = React.useState('');
@@ -34,7 +34,7 @@ export const LoginFormSimple: React.FC = () => {
       const data = await response.json();
 
       // Store session in Supabase client
-      await supabaseClient.auth.setSession({
+      await supabaseBrowser.auth.setSession({
         access_token: data.access_token,
         refresh_token: data.refresh_token,
       });

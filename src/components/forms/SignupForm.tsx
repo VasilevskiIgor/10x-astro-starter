@@ -1,13 +1,14 @@
 /**
- * LoginForm Component
+ * SignupForm Component
  *
- * Login form using Supabase Auth.
+ * Registration form using Supabase Auth.
  * Features:
- * - Email/Password authentication
+ * - Email/Password registration
+ * - Password confirmation
  * - Client-side validation
  * - Error handling
  * - Loading state
- * - Redirect after successful login
+ * - Auto-login and redirect after successful signup
  */
 
 import * as React from 'react';
@@ -18,13 +19,14 @@ import { supabaseBrowser } from '@/lib/supabase-browser';
 // Type Definitions
 // ============================================================================
 
-export interface LoginFormProps {
+export interface SignupFormProps {
   redirectTo?: string;
 }
 
-interface LoginFormData {
+interface SignupFormData {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 // ============================================================================
@@ -38,92 +40,94 @@ const validateEmail = (email: string): string | null => {
   return null;
 };
 
+const validatePassword = (password: string): string | null => {
+  if (!password) return 'Hasło jest wymagane';
+  if (password.length < 8) return 'Hasło musi mieć co najmniej 8 znaków';
+  return null;
+};
+
+const validatePasswordMatch = (password: string, confirm: string): string | null => {
+  if (password !== confirm) return 'Hasła nie pasują do siebie';
+  return null;
+};
+
 // ============================================================================
 // Component
 // ============================================================================
 
-export const LoginForm: React.FC<LoginFormProps> = ({
+export const SignupForm: React.FC<SignupFormProps> = ({
   redirectTo = '/trips'
 }) => {
-  console.log('[LoginForm] Component mounted, redirectTo:', redirectTo);
-
-  const [formData, setFormData] = React.useState<LoginFormData>({
+  const [formData, setFormData] = React.useState<SignupFormData>({
     email: '',
     password: '',
+    confirmPassword: '',
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('[LoginForm] handleSubmit called');
     e.preventDefault();
     setError(null);
-
-    console.log('[LoginForm] Form data:', { email: formData.email, hasPassword: !!formData.password });
+    setSuccessMessage(null);
 
     // Client-side validation
     const emailError = validateEmail(formData.email);
-    if (emailError) {
-      console.log('[LoginForm] Validation error:', emailError);
-      setError(emailError);
+    const passwordError = validatePassword(formData.password);
+    const matchError = validatePasswordMatch(formData.password, formData.confirmPassword);
+
+    if (emailError || passwordError || matchError) {
+      setError(emailError || passwordError || matchError);
       return;
     }
 
     setIsLoading(true);
-    console.log('[LoginForm] Validation passed, attempting login with email:', formData.email);
 
     try {
-
-      const { data, error } = await supabaseBrowser.auth.signInWithPassword({
+      const { data, error } = await supabaseBrowser.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
 
-      if (error) {
-        console.error('[LoginForm] Login error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log('[LoginForm] Login successful!', data);
-      console.log('[LoginForm] Session:', data.session);
-      console.log('[LoginForm] Redirecting to:', redirectTo);
-
-      // Success - redirect (session is now in cookies automatically)
-      window.location.href = redirectTo;
-    } catch (error: any) {
-      console.error('[LoginForm] Login failed:', error);
-
-      // Handle Supabase errors
-      if (error.message?.includes('Invalid login credentials')) {
-        setError('Nieprawidłowy email lub hasło');
-      } else if (error.message?.includes('Email not confirmed')) {
-        setError('Potwierdź swój adres email przed zalogowaniem');
+      // MVP: Email confirmation is DISABLED in Supabase
+      // User is automatically logged in after signup
+      if (data.session) {
+        setSuccessMessage('Konto utworzone! Przekierowujemy...');
+        // Small delay for UX (show success message)
+        setTimeout(() => {
+          window.location.href = redirectTo;
+        }, 1000);
       } else {
-        setError(error.message || 'Wystąpił błąd podczas logowania');
+        // This should not happen with email confirmation disabled
+        // But handle gracefully just in case
+        setError('Konto utworzone, ale nie udało się zalogować automatycznie. Spróbuj zalogować się ręcznie.');
+      }
+    } catch (error: any) {
+      // Handle Supabase errors
+      if (error.message?.includes('already registered')) {
+        setError('Ten adres email jest już zarejestrowany');
+      } else if (error.message?.includes('User already registered')) {
+        setError('Ten adres email jest już zarejestrowany');
+      } else if (error.message?.includes('password')) {
+        setError('Hasło jest zbyt słabe. Użyj silniejszego hasła.');
+      } else {
+        setError(error.message || 'Wystąpił błąd podczas rejestracji');
       }
       setIsLoading(false);
     }
   };
 
-  const handleFieldChange = (field: keyof LoginFormData, value: string) => {
-    console.log('[LoginForm] Field changed:', field, 'value length:', value.length);
+  const handleFieldChange = (field: keyof SignupFormData, value: string) => {
     setFormData({ ...formData, [field]: value });
     // Clear error when user starts typing
     if (error) {
       setError(null);
     }
   };
-
-  // Debug: Log when button state changes
-  React.useEffect(() => {
-    console.log('[LoginForm] Form state:', {
-      email: formData.email,
-      hasPassword: !!formData.password,
-      isLoading,
-      buttonDisabled: isLoading || !formData.email || !formData.password
-    });
-  }, [formData, isLoading]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
@@ -132,13 +136,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />
       )}
 
+      {/* Success Alert */}
+      {successMessage && (
+        <ErrorAlert type="success" message={successMessage} />
+      )}
+
       {/* Email Field */}
       <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
         <label
           htmlFor="email"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Email <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="required">*</span>
+          Email <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
         </label>
         <input
           type="email"
@@ -149,8 +158,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           disabled={isLoading}
           required
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder="twoj@email.com"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
+          aria-describedby="email-error"
         />
       </div>
 
@@ -160,7 +170,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           htmlFor="password"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Password <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="required">*</span>
+          Hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
         </label>
         <input
           type="password"
@@ -170,8 +180,31 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           onChange={(e) => handleFieldChange('password', e.target.value)}
           disabled={isLoading}
           required
-          autoComplete="current-password"
-          placeholder="Wprowadź hasło"
+          autoComplete="new-password"
+          placeholder="Min. 8 znaków"
+          className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
+          aria-describedby="password-error"
+        />
+      </div>
+
+      {/* Confirm Password Field */}
+      <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
+        <label
+          htmlFor="confirmPassword"
+          className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
+        >
+          Potwierdź hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+        </label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
+          disabled={isLoading}
+          required
+          autoComplete="new-password"
+          placeholder="Powtórz hasło"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
       </div>
@@ -180,8 +213,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <div>
         <button
           type="submit"
-          onClick={() => console.log('[LoginForm] Button clicked!')}
-          disabled={isLoading || !formData.email || !formData.password}
+          disabled={isLoading || !formData.email || !formData.password || !formData.confirmPassword}
           className="w-full inline-flex items-center justify-center gap-[var(--spacingHorizontalS)] px-[var(--spacingHorizontalL)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorBrandForeground1)] bg-[var(--colorBrandBackground)] rounded-[var(--borderRadiusMedium)] shadow-[var(--shadow2)] hover:bg-[var(--colorBrandBackgroundHover)] active:bg-[var(--colorBrandBackgroundPressed)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-100"
         >
           {isLoading ? (
@@ -206,14 +238,26 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Logowanie...
+              Rejestracja...
             </>
           ) : (
-            'Zaloguj się'
+            'Utwórz konto'
           )}
         </button>
       </div>
 
+      {/* Help Text */}
+      <div className="text-center text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground2)]">
+        <p>
+          Masz już konto?{' '}
+          <a
+            href="/auth/login"
+            className="text-[var(--colorBrandForegroundLink)] hover:text-[var(--colorBrandBackgroundHover)] hover:underline font-[var(--fontWeightSemibold)] transition-colors duration-100"
+          >
+            Zaloguj się
+          </a>
+        </p>
+      </div>
     </form>
   );
 };

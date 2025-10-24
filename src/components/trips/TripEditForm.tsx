@@ -10,7 +10,7 @@
  */
 
 import * as React from 'react';
-import { supabaseClient } from '@/db/supabase.client';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 import type { TripDetailDTO, UpdateTripCommand } from '@/types/dto';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/button';
@@ -57,7 +57,7 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
       setError(null);
 
       try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+        const { data: { session } } = await supabaseBrowser.auth.getSession();
 
         if (!session) {
           throw new Error('Not authenticated. Please log in.');
@@ -171,7 +171,7 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
     setError(null);
 
     try {
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      const { data: { session } } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
         throw new Error('Not authenticated. Please log in.');

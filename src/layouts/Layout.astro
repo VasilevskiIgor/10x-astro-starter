@@ -1,23 +1,40 @@
 ---
+/**
+ * Main Layout Component
+ *
+ * Provides consistent structure for all pages:
+ * - Navigation bar with user authentication state
+ * - Meta tags and title
+ * - Global styles
+ * - Content slot
+ */
+
 import "../styles/global.css";
+import Navigation from "@/components/navigation/Navigation.astro";
 
 interface Props {
   title?: string;
+  showNavigation?: boolean; // Allow pages to hide navigation if needed
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "VibeTravels", showNavigation = true } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content="Planuj swoje wymarzone podróże z pomocą AI" />
     <title>{title}</title>
   </head>
   <body>
+    {/* Navigation - shown on all pages by default */}
+    {showNavigation && <Navigation />}
+
+    {/* Page content */}
     <slot />
   </body>
 </html>

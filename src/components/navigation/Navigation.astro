@@ -1,0 +1,143 @@
+---
+/**
+ * Navigation Component
+ *
+ * Main navigation bar with authentication state awareness.
+ * Features:
+ * - Client-side session check (using localStorage)
+ * - Different UI for logged in vs logged out users
+ * - UserMenu component for logged in users
+ * - Responsive design
+ */
+---
+
+<nav class="bg-white shadow-sm border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      {/* Logo */}
+      <div class="flex items-center">
+        <a href="/" class="text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+          VibeTravels
+        </a>
+      </div>
+
+      {/* Navigation Links */}
+      <div id="navLinks" class="flex items-center space-x-4">
+        {/* Will be populated by JavaScript based on auth state */}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  import { supabaseBrowser } from '@/lib/supabase-browser';
+
+  const navLinks = document.getElementById('navLinks');
+
+  // Check auth state and render appropriate navigation
+  supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
+    if (session?.user) {
+      // Logged in navigation
+      navLinks!.innerHTML = `
+        <a
+          href="/trips"
+          class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+        >
+          Moje plany
+        </a>
+        <div class="relative" id="userMenuContainer">
+          <button
+            id="userMenuButton"
+            class="flex items-center space-x-2 rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-opacity"
+          >
+            <div class="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center border-2 border-blue-200">
+              <span class="text-blue-600 font-semibold text-sm">
+                ${session.user.email?.[0]?.toUpperCase() || 'U'}
+              </span>
+            </div>
+            <svg
+              class="w-4 h-4 text-gray-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          <div
+            id="userMenu"
+            class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+          >
+            <div class="px-4 py-3 border-b border-gray-200">
+              <p class="text-xs text-gray-500 mb-1">Zalogowany jako</p>
+              <p class="text-sm font-medium text-gray-900 truncate">${session.user.email}</p>
+            </div>
+            <button
+              id="logoutButton"
+              class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-2"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span>Wyloguj się</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Add menu toggle functionality
+      const menuButton = document.getElementById('userMenuButton');
+      const menu = document.getElementById('userMenu');
+
+      menuButton?.addEventListener('click', () => {
+        menu?.classList.toggle('hidden');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        const container = document.getElementById('userMenuContainer');
+        if (container && !container.contains(e.target as Node)) {
+          menu?.classList.add('hidden');
+        }
+      });
+
+      // Handle logout
+      document.getElementById('logoutButton')?.addEventListener('click', async () => {
+        await supabaseBrowser.auth.signOut();
+        window.location.href = '/auth/login';
+      });
+
+    } else {
+      // Logged out navigation
+      navLinks!.innerHTML = `
+        <a
+          href="/auth/login"
+          class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+        >
+          Zaloguj się
+        </a>
+        <a
+          href="/auth/signup"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+        >
+          Zarejestruj się
+        </a>
+      `;
+    }
+  });
+</script>

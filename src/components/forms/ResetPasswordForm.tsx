@@ -1,13 +1,13 @@
 /**
- * LoginForm Component
+ * ResetPasswordForm Component
  *
- * Login form using Supabase Auth.
+ * New password setup form using Supabase Auth.
  * Features:
- * - Email/Password authentication
+ * - New password and confirmation inputs
  * - Client-side validation
  * - Error handling
+ * - Auto-redirect to login after success
  * - Loading state
- * - Redirect after successful login
  */
 
 import * as React from 'react';
@@ -18,23 +18,22 @@ import { supabaseBrowser } from '@/lib/supabase-browser';
 // Type Definitions
 // ============================================================================
 
-export interface LoginFormProps {
-  redirectTo?: string;
-}
-
-interface LoginFormData {
-  email: string;
-  password: string;
+export interface ResetPasswordFormProps {
+  accessToken: string;
 }
 
 // ============================================================================
 // Validation Functions
 // ============================================================================
 
-const validateEmail = (email: string): string | null => {
-  if (!email) return 'Email jest wymagany';
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return 'Nieprawidłowy format email';
+const validatePassword = (password: string): string | null => {
+  if (!password) return 'Hasło jest wymagane';
+  if (password.length < 8) return 'Hasło musi mieć co najmniej 8 znaków';
+  return null;
+};
+
+const validatePasswordMatch = (password: string, confirm: string): string | null => {
+  if (password !== confirm) return 'Hasła nie pasują do siebie';
   return null;
 };
 
@@ -42,88 +41,60 @@ const validateEmail = (email: string): string | null => {
 // Component
 // ============================================================================
 
-export const LoginForm: React.FC<LoginFormProps> = ({
-  redirectTo = '/trips'
+export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
+  accessToken
 }) => {
-  console.log('[LoginForm] Component mounted, redirectTo:', redirectTo);
-
-  const [formData, setFormData] = React.useState<LoginFormData>({
-    email: '',
-    password: '',
-  });
-
+  const [newPassword, setNewPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('[LoginForm] handleSubmit called');
     e.preventDefault();
     setError(null);
-
-    console.log('[LoginForm] Form data:', { email: formData.email, hasPassword: !!formData.password });
+    setSuccessMessage(null);
 
     // Client-side validation
-    const emailError = validateEmail(formData.email);
-    if (emailError) {
-      console.log('[LoginForm] Validation error:', emailError);
-      setError(emailError);
+    const passwordError = validatePassword(newPassword);
+    const matchError = validatePasswordMatch(newPassword, confirmPassword);
+
+    if (passwordError || matchError) {
+      setError(passwordError || matchError);
       return;
     }
 
     setIsLoading(true);
-    console.log('[LoginForm] Validation passed, attempting login with email:', formData.email);
 
     try {
-
-      const { data, error } = await supabaseBrowser.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
+      // First, set the session with the access token from URL
+      const { error: sessionError } = await supabaseBrowser.auth.setSession({
+        access_token: accessToken,
+        refresh_token: '', // Not needed for recovery
       });
 
-      if (error) {
-        console.error('[LoginForm] Login error:', error);
-        throw error;
-      }
+      if (sessionError) throw sessionError;
 
-      console.log('[LoginForm] Login successful!', data);
-      console.log('[LoginForm] Session:', data.session);
-      console.log('[LoginForm] Redirecting to:', redirectTo);
+      // Then update the password
+      const { error } = await supabaseBrowser.auth.updateUser({
+        password: newPassword,
+      });
 
-      // Success - redirect (session is now in cookies automatically)
-      window.location.href = redirectTo;
+      if (error) throw error;
+
+      setSuccessMessage('Hasło zostało zmienione! Przekierowujemy do logowania...');
+      setTimeout(() => {
+        window.location.href = '/auth/login?success=password_reset';
+      }, 2000);
     } catch (error: any) {
-      console.error('[LoginForm] Login failed:', error);
-
-      // Handle Supabase errors
-      if (error.message?.includes('Invalid login credentials')) {
-        setError('Nieprawidłowy email lub hasło');
-      } else if (error.message?.includes('Email not confirmed')) {
-        setError('Potwierdź swój adres email przed zalogowaniem');
+      if (error.message?.includes('expired')) {
+        setError('Link wygasł. Wygeneruj nowy link resetujący.');
       } else {
-        setError(error.message || 'Wystąpił błąd podczas logowania');
+        setError(error.message || 'Wystąpił błąd podczas zmiany hasła');
       }
       setIsLoading(false);
     }
   };
-
-  const handleFieldChange = (field: keyof LoginFormData, value: string) => {
-    console.log('[LoginForm] Field changed:', field, 'value length:', value.length);
-    setFormData({ ...formData, [field]: value });
-    // Clear error when user starts typing
-    if (error) {
-      setError(null);
-    }
-  };
-
-  // Debug: Log when button state changes
-  React.useEffect(() => {
-    console.log('[LoginForm] Form state:', {
-      email: formData.email,
-      hasPassword: !!formData.password,
-      isLoading,
-      buttonDisabled: isLoading || !formData.email || !formData.password
-    });
-  }, [formData, isLoading]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
@@ -132,46 +103,57 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />
       )}
 
-      {/* Email Field */}
+      {/* Success Alert */}
+      {successMessage && (
+        <ErrorAlert type="success" message={successMessage} />
+      )}
+
+      {/* New Password Field */}
       <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
         <label
-          htmlFor="email"
+          htmlFor="newPassword"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Email <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="required">*</span>
+          Nowe hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
         </label>
         <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={(e) => handleFieldChange('email', e.target.value)}
+          type="password"
+          id="newPassword"
+          name="newPassword"
+          value={newPassword}
+          onChange={(e) => {
+            setNewPassword(e.target.value);
+            if (error) setError(null);
+          }}
           disabled={isLoading}
           required
-          autoComplete="email"
-          placeholder="you@example.com"
+          autoComplete="new-password"
+          placeholder="Min. 8 znaków"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
       </div>
 
-      {/* Password Field */}
+      {/* Confirm Password Field */}
       <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
         <label
-          htmlFor="password"
+          htmlFor="confirmPassword"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Password <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="required">*</span>
+          Potwierdź hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
         </label>
         <input
           type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={(e) => handleFieldChange('password', e.target.value)}
+          id="confirmPassword"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            if (error) setError(null);
+          }}
           disabled={isLoading}
           required
-          autoComplete="current-password"
-          placeholder="Wprowadź hasło"
+          autoComplete="new-password"
+          placeholder="Powtórz hasło"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
       </div>
@@ -180,8 +162,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <div>
         <button
           type="submit"
-          onClick={() => console.log('[LoginForm] Button clicked!')}
-          disabled={isLoading || !formData.email || !formData.password}
+          disabled={isLoading || !newPassword || !confirmPassword}
           className="w-full inline-flex items-center justify-center gap-[var(--spacingHorizontalS)] px-[var(--spacingHorizontalL)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorBrandForeground1)] bg-[var(--colorBrandBackground)] rounded-[var(--borderRadiusMedium)] shadow-[var(--shadow2)] hover:bg-[var(--colorBrandBackgroundHover)] active:bg-[var(--colorBrandBackgroundPressed)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-100"
         >
           {isLoading ? (
@@ -206,14 +187,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Logowanie...
+              Zmiana hasła...
             </>
           ) : (
-            'Zaloguj się'
+            'Zmień hasło'
           )}
         </button>
       </div>
-
     </form>
   );
 };
