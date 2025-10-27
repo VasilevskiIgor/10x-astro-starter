@@ -7,28 +7,17 @@
  * - Paginated list of trips
  * - Status filtering
  * - Empty state for new users
- * - Authentication required
+ * - Authentication required (enforced by middleware)
  */
 
 import Layout from '@/layouts/Layout.astro';
 import { TripsList } from '@/components/trips/TripsList';
 
-// Check authentication (will be handled by middleware)
-// For now, we'll just render the page
+// Authentication is enforced by middleware - no need for client-side check
+// User will be redirected to /auth/login if not authenticated
 ---
 
-<Layout title="My Trips - VibeTravels">
-  <script>
-    import { supabaseBrowser } from '@/lib/supabase-browser';
-
-    // Client-side auth check (since middleware can't see localStorage)
-    supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        const currentPath = window.location.pathname;
-        window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`;
-      }
-    });
-  </script>
+<Layout title="My Trips - Magic Travel App">
 
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     {/* Header */}

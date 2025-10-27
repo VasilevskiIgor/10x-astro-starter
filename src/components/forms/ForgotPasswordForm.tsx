@@ -50,8 +50,12 @@ export const ForgotPasswordForm: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Use current origin, but ensure we're using the correct port
+      // This handles cases where dev server might be on different ports
+      const redirectUrl = `${window.location.origin}/auth/reset-password`;
+
       const { error } = await supabaseBrowser.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+        redirectTo: redirectUrl,
       });
 
       if (error) throw error;

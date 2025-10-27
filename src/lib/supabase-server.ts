@@ -19,13 +19,46 @@ const supabaseAnonKey = import.meta.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR
 /**
  * Create a Supabase client for server-side use (middleware, API routes)
  * with access to request cookies
+ *
+ * UPDATED: Now reads our custom sb-access-token and sb-refresh-token cookies
+ * that are synced from localStorage by the browser client
  */
 export function createSupabaseServerClient(cookies: AstroCookies) {
+  // Try to get tokens from our custom cookies
+  const accessToken = cookies.get('sb-access-token')?.value;
+  const refreshToken = cookies.get('sb-refresh-token')?.value;
+
+  // If we have custom cookies, create client with those tokens
+  if (accessToken && refreshToken) {
+    const client = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return Array.from(cookies).map((cookie) => ({
+            name: cookie.name,
+            value: cookie.value,
+          }));
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookies.set(name, value, options);
+          });
+        },
+      },
+    });
+
+    // Set the session from our custom cookies
+    client.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+
+    return client;
+  }
+
+  // Fallback: standard Supabase SSR client (for when using official cookies)
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
-        // Astro's cookies.getAll() returns an AstroCookie[] object
-        // We need to convert it to the format Supabase expects: { name, value }[]
         return Array.from(cookies).map((cookie) => ({
           name: cookie.name,
           value: cookie.value,

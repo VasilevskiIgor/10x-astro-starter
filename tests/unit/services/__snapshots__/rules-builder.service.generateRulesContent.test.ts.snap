@@ -1,0 +1,123 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RulesBuilderService.generateRulesContent() - Enhanced Tests > Snapshot Tests > should match snapshot for 1-day trip without budget 1`] = `
+"=== CONTENT GENERATION RULES ===
+
+1. ACTIVITY REQUIREMENTS:
+   - Each day MUST have 3-5 activities
+   - Activity duration: 15-480 minutes
+   - Activities must follow logical time progression
+   - No overlapping activity times
+
+2. COST ESTIMATE RULES:
+   - Use ONLY these cost levels: $, $$, $$$, $$$$
+   - "$" = Budget (<$20)
+   - "$$" = Moderate ($20-$50)
+   - "$$$" = Expensive ($50-$100)
+   - "$$$$" = Luxury (>$100)
+
+3. TIME SLOT RULES:
+   - Early Morning (05:00-08:00): Exercise, sunrise activities
+   - Morning (08:00-12:00): Museums, tours, sightseeing
+   - Afternoon (12:00-17:00): Lunch, outdoor activities
+   - Evening (17:00-21:00): Dinner, entertainment
+   - Night (21:00-24:00): Bars, nightlife
+
+4. TRIP-SPECIFIC RULES:
+   - Total duration: 1 days
+   - Total activities: 3-5
+   - Balance activity types: 40% cultural, 30% food/dining, 20% outdoor, 10% relaxation"
+`;
+
+exports[`RulesBuilderService.generateRulesContent() - Enhanced Tests > Snapshot Tests > should match snapshot for 365-day luxury trip 1`] = `
+"=== CONTENT GENERATION RULES ===
+
+1. ACTIVITY REQUIREMENTS:
+   - Each day MUST have 3-5 activities
+   - Activity duration: 15-480 minutes
+   - Activities must follow logical time progression
+   - No overlapping activity times
+
+2. COST ESTIMATE RULES:
+   - Use ONLY these cost levels: $, $$, $$$, $$$$
+   - Preferred budget level: $$$$
+   - Exclusive experiences, fine dining, private tours
+   - "$" = Budget (<$20)
+   - "$$" = Moderate ($20-$50)
+   - "$$$" = Expensive ($50-$100)
+   - "$$$$" = Luxury (>$100)
+
+3. TIME SLOT RULES:
+   - Early Morning (05:00-08:00): Exercise, sunrise activities
+   - Morning (08:00-12:00): Museums, tours, sightseeing
+   - Afternoon (12:00-17:00): Lunch, outdoor activities
+   - Evening (17:00-21:00): Dinner, entertainment
+   - Night (21:00-24:00): Bars, nightlife
+
+4. TRIP-SPECIFIC RULES:
+   - Total duration: 365 days
+   - Total activities: 1095-1825
+   - Balance activity types: 40% cultural, 30% food/dining, 20% outdoor, 10% relaxation"
+`;
+
+exports[`RulesBuilderService.generateRulesContent() - Enhanced Tests > Snapshot Tests > should match snapshot for custom configuration 1`] = `
+"=== CONTENT GENERATION RULES ===
+
+1. ACTIVITY REQUIREMENTS:
+   - Each day MUST have 2-6 activities
+   - Activity duration: 30-360 minutes
+   - Activities must follow logical time progression
+   - No overlapping activity times
+
+2. COST ESTIMATE RULES:
+   - Use ONLY these cost levels: $, $$, $$$, $$$$
+   - Preferred budget level: $
+   - Focus on free/cheap activities, local food, public transport
+   - "$" = Budget (<$20)
+   - "$$" = Moderate ($20-$50)
+   - "$$$" = Expensive ($50-$100)
+   - "$$$$" = Luxury (>$100)
+
+3. TIME SLOT RULES:
+   - Early Morning (05:00-08:00): Exercise, sunrise activities
+   - Morning (08:00-12:00): Museums, tours, sightseeing
+   - Afternoon (12:00-17:00): Lunch, outdoor activities
+   - Evening (17:00-21:00): Dinner, entertainment
+   - Night (21:00-24:00): Bars, nightlife
+
+4. TRIP-SPECIFIC RULES:
+   - Total duration: 7 days
+   - Total activities: 14-42
+   - Balance activity types: 40% cultural, 30% food/dining, 20% outdoor, 10% relaxation"
+`;
+
+exports[`RulesBuilderService.generateRulesContent() - Enhanced Tests > Snapshot Tests > should match snapshot for typical 7-day moderate trip 1`] = `
+"=== CONTENT GENERATION RULES ===
+
+1. ACTIVITY REQUIREMENTS:
+   - Each day MUST have 3-5 activities
+   - Activity duration: 15-480 minutes
+   - Activities must follow logical time progression
+   - No overlapping activity times
+
+2. COST ESTIMATE RULES:
+   - Use ONLY these cost levels: $, $$, $$$, $$$$
+   - Preferred budget level: $$
+   - Mix of paid attractions and free activities, local restaurants
+   - "$" = Budget (<$20)
+   - "$$" = Moderate ($20-$50)
+   - "$$$" = Expensive ($50-$100)
+   - "$$$$" = Luxury (>$100)
+
+3. TIME SLOT RULES:
+   - Early Morning (05:00-08:00): Exercise, sunrise activities
+   - Morning (08:00-12:00): Museums, tours, sightseeing
+   - Afternoon (12:00-17:00): Lunch, outdoor activities
+   - Evening (17:00-21:00): Dinner, entertainment
+   - Night (21:00-24:00): Bars, nightlife
+
+4. TRIP-SPECIFIC RULES:
+   - Total duration: 7 days
+   - Total activities: 21-35
+   - Balance activity types: 40% cultural, 30% food/dining, 20% outdoor, 10% relaxation"
+`;

@@ -1,0 +1,750 @@
+═══════════════════════════════════════════════════════════════════════════════
+                          STRUKTURA KOMPONENTÓW
+                     ROZPOCZYNAJĄC OD @RulePreview.tsx
+═══════════════════════════════════════════════════════════════════════════════
+
+                          ┌──────────────────────┐
+                          │  RulePreview.tsx     │
+                          │  (GŁÓWNY KOMPONENT)  │
+                          │                      │
+                          │  Props:              │
+                          │  - rule: Rule        │
+                          │  - onEdit()          │
+                          │  - onDelete()        │
+                          │  - onToggleStatus()  │
+                          │  - showActions       │
+                          │  - compact           │
+                          └──────────┬───────────┘
+                                     │
+                ┌────────────────────┼────────────────────┐
+                │                    │                    │
+                ▼                    ▼                    ▼
+     ┌──────────────────┐ ┌──────────────────┐ ┌─────────────────┐
+     │   button.tsx     │ │ ErrorAlert.tsx   │ │RuleEditor.tsx   │
+     │   (UI Base)      │ │  (UI Base)       │ │  (Editor Form)  │
+     │                  │ │                  │ │                 │
+     │  [radix-ui]      │ │  Props:          │ │  Props:         │
+     │  [cva]           │ │  - type          │ │  - rule?        │
+     │                  │ │  - message       │ │  - onSave()     │
+     │  Variants:       │ │  - dismissible   │ │  - onCancel()   │
+     │  • default       │ │  - onDismiss()   │ │                 │
+     │  • destructive   │ │                  │ │  używa:         │
+     │  • outline       │ │  Types:          │ │  ├─ button.tsx  │
+     │  • secondary     │ │  • error         │ │  └─ErrorAlert   │
+     │  • ghost         │ │  • warning       │ └─────────────────┘
+     │  • link          │ │  • info          │
+     │                  │ │  • success       │
+     │  Sizes:          │ └──────────────────┘
+     │  • default       │
+     │  • sm            │
+     │  • lg            │
+     │  • icon          │
+     └──────────────────┘
+
+                                     │
+                ┌────────────────────┼────────────────────┐
+                │                    │                    │
+                ▼                    ▼                    ▼
+     ┌──────────────────┐ ┌──────────────────┐ ┌─────────────────┐
+     │RuleCondition.tsx │ │  RuleAction.tsx  │ │  RulesList.tsx  │
+     │  (Podkomponent)  │ │  (Podkomponent)  │ │  (Kontener)     │
+     │                  │ │                  │ │                 │
+     │  Props:          │ │  Props:          │ │  Props:         │
+     │  - condition     │ │  - action        │ │  - rules[]      │
+     │                  │ │                  │ │  - isLoading    │
+     │  Wyświetla:      │ │  Wyświetla:      │ │  - error        │
+     │  • expression    │ │  • type          │ │  - onEdit()     │
+     │  • parameters{}  │ │  • message       │ │  - onDelete()   │
+     │                  │ │  • config{}      │ │  - onToggle()   │
+     │  Highlighting:   │ │                  │ │                 │
+     │  • <pre> block   │ │  Icons:          │ │  używa:         │
+     │  • mono font     │ │  ✓ validate      │ │  ├─RulePreview  │
+     │  • blue theme    │ │  ↻ transform     │ │  └─ErrorAlert   │
+     └──────────────────┘ │  🔔 notify       │ └─────────────────┘
+                          │  ✕ reject        │
+                          │                  │
+                          │  Colors:         │
+                          │  • green/blue/   │
+                          │    yellow/red    │
+                          └──────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+                            HIERARCHIA ZALEŻNOŚCI
+═══════════════════════════════════════════════════════════════════════════════
+
+Level 0: ZEWNĘTRZNE BIBLIOTEKI
+    ┌──────────────┐  ┌────────────────────┐  ┌──────────────────┐
+    │   React      │  │  @radix-ui/slot    │  │ class-variance-  │
+    │   (base)     │  │  (button base)     │  │   authority      │
+    └──────────────┘  └────────────────────┘  └──────────────────┘
+           │                    │                       │
+           └────────────────────┼───────────────────────┘
+                                │
+                                ▼
+Level 1: PODSTAWOWE UI KOMPONENTY
+    ┌──────────────────────────────────────────────────────────┐
+    │                                                          │
+    │    ┌──────────────────┐        ┌──────────────────┐    │
+    │    │   button.tsx     │        │ ErrorAlert.tsx   │    │
+    │    │                  │        │                  │    │
+    │    │  /components/ui/ │        │  /components/ui/ │    │
+    │    └──────────────────┘        └──────────────────┘    │
+    │                                                          │
+    └──────────────────────┬───────────────────────────────────┘
+                           │
+                           ▼
+Level 2: PODKOMPONENTY RULES
+    ┌──────────────────────────────────────────────────────────┐
+    │                                                          │
+    │  ┌─────────────────┐  ┌─────────────────┐              │
+    │  │ RuleCondition   │  │  RuleAction     │              │
+    │  │      .tsx       │  │      .tsx       │              │
+    │  │                 │  │                 │              │
+    │  │ /components/    │  │ /components/    │              │
+    │  │   rules/        │  │   rules/        │              │
+    │  └─────────────────┘  └─────────────────┘              │
+    │                                                          │
+    └──────────────────────┬───────────────────────────────────┘
+                           │
+                           ▼
+Level 3: KOMPONENT GŁÓWNY I EDYTOR
+    ┌──────────────────────────────────────────────────────────┐
+    │                                                          │
+    │  ┌─────────────────┐  ┌─────────────────┐              │
+    │  │  RulePreview    │  │   RuleEditor    │              │
+    │  │      .tsx       │  │      .tsx       │              │
+    │  │                 │  │                 │              │
+    │  │  [IMPORTUJE]    │  │  [IMPORTUJE]    │              │
+    │  │  • Button       │  │  • Button       │              │
+    │  │  • ErrorAlert   │  │  • ErrorAlert   │              │
+    │  │  • RuleEditor   │  │                 │              │
+    │  │  • RuleCondition│  │                 │              │
+    │  │  • RuleAction   │  │                 │              │
+    │  └─────────────────┘  └─────────────────┘              │
+    │                                                          │
+    └──────────────────────┬───────────────────────────────────┘
+                           │
+                           ▼
+Level 4: KOMPONENT LISTY (KONTENER)
+    ┌──────────────────────────────────────────────────────────┐
+    │                                                          │
+    │              ┌─────────────────┐                        │
+    │              │   RulesList     │                        │
+    │              │      .tsx       │                        │
+    │              │                 │                        │
+    │              │  [IMPORTUJE]    │                        │
+    │              │  • RulePreview  │                        │
+    │              │  • ErrorAlert   │                        │
+    │              │                 │                        │
+    │              │  Features:      │                        │
+    │              │  • Filtering    │                        │
+    │              │  • Loading      │                        │
+    │              │  • Empty state  │                        │
+    │              └─────────────────┘                        │
+    │                                                          │
+    └──────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+                        PRZEPŁYW DANYCH (DATA FLOW)
+═══════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         PARENT COMPONENT/PAGE                           │
+│                         (np. /pages/rules.tsx)                          │
+└───────────────────────────────┬─────────────────────────────────────────┘
+                                │
+                                │ rules: Rule[]
+                                │ handlers: onEdit, onDelete, onToggle
+                                ▼
+                    ┌───────────────────────┐
+                    │    RulesList.tsx      │
+                    │  • Filtering logic    │
+                    │  • Loading states     │
+                    └───────────┬───────────┘
+                                │
+                                │ rules.map(rule => ...)
+                                │ przekazuje: rule, handlers
+                                ▼
+                    ┌───────────────────────┐
+                    │   RulePreview.tsx     │◄────────┐
+                    │  • Display logic      │         │
+                    │  • Action buttons     │         │
+                    │  • Delete modal       │         │
+                    └───────────┬───────────┘         │
+                                │                     │
+              ┌─────────────────┼──────────────┐      │
+              │                 │              │      │
+              ▼                 ▼              ▼      │
+    ┌─────────────────┐ ┌─────────────┐ ┌──────────────┐
+    │ RuleCondition   │ │ RuleAction  │ │ RuleEditor   │
+    │                 │ │             │ │  (on edit)   │
+    │  condition:     │ │  action:    │ │              │
+    │  • expression   │ │  • type     │ │  onSave() ───┘
+    │  • parameters   │ │  • message  │ │  onCancel()
+    └─────────────────┘ │  • config   │ └──────────────┘
+                        └─────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+                         TYPY DANYCH (TYPE SYSTEM)
+═══════════════════════════════════════════════════════════════════════════════
+
+interface Rule {
+  id: string
+  name: string
+  description?: string
+  status: 'active' | 'inactive' | 'draft'
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  condition: {
+    expression: string
+    parameters: Record<string, any>
+  }
+  action: {
+    type: 'validate' | 'transform' | 'notify' | 'reject'
+    config: Record<string, any>
+    message?: string
+  }
+  created_at: string
+  updated_at: string
+  created_by: string
+}
+
+                    ▲
+                    │
+                    │ używane przez
+                    │
+    ┌───────────────┼───────────────┐
+    │               │               │
+    ▼               ▼               ▼
+RulePreview    RulesList      RuleEditor
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          LOKALIZACJA PLIKÓW
+═══════════════════════════════════════════════════════════════════════════════
+
+10x-astro-starter/src/components/
+│
+├── ui/                                  [LEVEL 1 - BASE UI]
+│   ├── button.tsx                       ← Bazowy komponent przycisku
+│   └── ErrorAlert.tsx                   ← Bazowy komponent alertu
+│
+└── rules/                               [LEVEL 2-4 - RULES SYSTEM]
+    ├── RuleCondition.tsx                ← Wyświetla warunki reguły
+    ├── RuleAction.tsx                   ← Wyświetla akcje reguły
+    ├── RulePreview.tsx                  ← ★ GŁÓWNY KOMPONENT ★
+    ├── RuleEditor.tsx                   ← Formularz edycji
+    └── RulesList.tsx                    ← Kontener listy reguł
+
+═══════════════════════════════════════════════════════════════════════════════
+                         FUNKCJONALNOŚCI KOMPONENTÓW
+═══════════════════════════════════════════════════════════════════════════════
+
+RulePreview.tsx
+├── ✓ Wyświetlanie nagłówka reguły (nazwa, status, priorytet)
+├── ✓ Wyświetlanie opisu
+├── ✓ Wyświetlanie dat (created, updated)
+├── ✓ Przyciski akcji (Edit, Delete, Toggle Status)
+├── ✓ Tryb kompaktowy (compact mode)
+├── ✓ Modal potwierdzenia usunięcia
+├── ✓ Obsługa błędów
+├── ✓ Sekcja warunków (RuleCondition)
+└── ✓ Sekcja akcji (RuleAction)
+
+RuleCondition.tsx
+├── ✓ Syntax highlighting dla wyrażeń
+├── ✓ Wyświetlanie parametrów
+└── ✓ Formatowanie JSON
+
+RuleAction.tsx
+├── ✓ Ikony dla typów akcji (✓ ↻ 🔔 ✕)
+├── ✓ Kolorowanie według typu
+├── ✓ Wyświetlanie konfiguracji
+└── ✓ Wyświetlanie wiadomości
+
+RuleEditor.tsx
+├── ✓ Formularz tworzenia/edycji
+├── ✓ Walidacja pól
+├── ✓ Obsługa błędów
+├── ✓ Status i priorytet (select)
+└── ✓ Edytor wyrażeń (textarea z mono font)
+
+RulesList.tsx
+├── ✓ Filtrowanie (all, active, inactive, draft)
+├── ✓ Stan ładowania (loading skeletons)
+├── ✓ Pusty stan (empty state)
+└── ✓ Renderowanie wielu RulePreview
+
+═══════════════════════════════════════════════════════════════════════════════
+                         SZCZEGÓŁOWA ANALIZA ZALEŻNOŚCI
+═══════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         RulePreview.tsx (główny)                        │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  IMPORT DEPENDENCIES:                                                   │
+│  ├─ import * as React from 'react'                                      │
+│  ├─ import { Button } from '@/components/ui/button'                     │
+│  ├─ import { ErrorAlert } from '@/components/ui/ErrorAlert'             │
+│  ├─ import { RuleEditor } from './RuleEditor'                           │
+│  ├─ import { RuleCondition } from './RuleCondition'                     │
+│  └─ import { RuleAction } from './RuleAction'                           │
+│                                                                         │
+│  STATE MANAGEMENT:                                                      │
+│  ├─ [showDetails, setShowDetails] - toggle visibility                  │
+│  ├─ [isDeleting, setIsDeleting] - delete operation status              │
+│  ├─ [error, setError] - error messages                                 │
+│  └─ [showDeleteConfirm, setShowDeleteConfirm] - modal control          │
+│                                                                         │
+│  HANDLERS:                                                              │
+│  ├─ handleEdit() - triggers onEdit callback                            │
+│  ├─ handleDelete() - async delete with error handling                  │
+│  └─ handleToggleStatus() - toggles active/inactive                     │
+│                                                                         │
+│  RENDER SECTIONS:                                                       │
+│  ├─ Header (name, status, priority badges)                             │
+│  ├─ Action Buttons (Edit, Delete, Toggle, Show/Hide)                   │
+│  ├─ Details Section (conditional render)                               │
+│  │   ├─ <RuleCondition condition={rule.condition} />                   │
+│  │   └─ <RuleAction action={rule.action} />                            │
+│  └─ Delete Confirmation Modal                                          │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         RuleCondition.tsx                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  IMPORT DEPENDENCIES:                                                   │
+│  └─ import * as React from 'react'                                      │
+│                                                                         │
+│  PROPS:                                                                 │
+│  └─ condition: { expression: string, parameters: Record<string, any> } │
+│                                                                         │
+│  RENDER:                                                                │
+│  ├─ Expression block (mono font, syntax highlighting)                  │
+│  └─ Parameters list (key-value pairs)                                  │
+│                                                                         │
+│  STYLING:                                                               │
+│  └─ Blue theme (border-blue-300, text-blue-900, bg-blue-50)            │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         RuleAction.tsx                                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  IMPORT DEPENDENCIES:                                                   │
+│  └─ import * as React from 'react'                                      │
+│                                                                         │
+│  PROPS:                                                                 │
+│  └─ action: { type, config, message }                                  │
+│                                                                         │
+│  HELPER FUNCTIONS:                                                      │
+│  ├─ getActionIcon() - returns emoji for action type                    │
+│  └─ getActionColor() - returns color class for action type             │
+│                                                                         │
+│  RENDER:                                                                │
+│  ├─ Action Type with Icon                                              │
+│  ├─ Message block (optional)                                           │
+│  └─ Configuration (key-value pairs)                                    │
+│                                                                         │
+│  STYLING:                                                               │
+│  └─ Purple theme (border-purple-300, text-purple-900, bg-purple-50)    │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         RuleEditor.tsx                                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  IMPORT DEPENDENCIES:                                                   │
+│  ├─ import * as React from 'react'                                      │
+│  ├─ import { Button } from '@/components/ui/button'                     │
+│  ├─ import { ErrorAlert } from '@/components/ui/ErrorAlert'             │
+│  └─ import type { Rule, RuleStatus, RulePriority } from './RulePreview'│
+│                                                                         │
+│  FORM STATE:                                                            │
+│  ├─ [name, setName]                                                     │
+│  ├─ [description, setDescription]                                       │
+│  ├─ [status, setStatus]                                                 │
+│  ├─ [priority, setPriority]                                             │
+│  ├─ [expression, setExpression]                                         │
+│  ├─ [actionType, setActionType]                                         │
+│  ├─ [actionMessage, setActionMessage]                                   │
+│  ├─ [isSaving, setIsSaving]                                             │
+│  └─ [error, setError]                                                   │
+│                                                                         │
+│  FORM FIELDS:                                                           │
+│  ├─ Rule Name (text input, required)                                   │
+│  ├─ Description (textarea)                                              │
+│  ├─ Status (select: draft/active/inactive)                             │
+│  ├─ Priority (select: low/medium/high/critical)                        │
+│  ├─ Condition Expression (textarea, mono font, required)               │
+│  ├─ Action Type (select: validate/transform/notify/reject)             │
+│  └─ Action Message (text input)                                        │
+│                                                                         │
+│  HANDLERS:                                                              │
+│  └─ handleSubmit() - validates and calls onSave()                      │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         RulesList.tsx                                   │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  IMPORT DEPENDENCIES:                                                   │
+│  ├─ import * as React from 'react'                                      │
+│  ├─ import { RulePreview } from './RulePreview'                         │
+│  └─ import { ErrorAlert } from '@/components/ui/ErrorAlert'             │
+│                                                                         │
+│  STATE:                                                                 │
+│  └─ [filter, setFilter] - current filter ('all'|'active'|etc)          │
+│                                                                         │
+│  COMPUTED:                                                              │
+│  └─ filteredRules (useMemo) - filters rules by status                  │
+│                                                                         │
+│  RENDER STATES:                                                         │
+│  ├─ Loading (skeleton placeholders)                                    │
+│  ├─ Error (ErrorAlert)                                                 │
+│  ├─ Empty (no rules message)                                           │
+│  └─ List of RulePreview components                                     │
+│                                                                         │
+│  FEATURES:                                                              │
+│  ├─ Filter buttons (all, active, inactive, draft)                      │
+│  └─ Maps filtered rules to RulePreview components                      │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+                         PRZYKŁAD UŻYCIA
+═══════════════════════════════════════════════════════════════════════════════
+
+// ============================================================================
+// 1. POJEDYNCZY KOMPONENT RulePreview
+// ============================================================================
+
+import { RulePreview } from '@/components/rules/RulePreview';
+
+const rule: Rule = {
+  id: '1',
+  name: 'Długa wycieczka z niskim budżetem',
+  description: 'Walidacja dla wycieczek trwających powyżej 7 dni z budżetem poniżej 1000',
+  status: 'active',
+  priority: 'high',
+  condition: {
+    expression: 'trip.duration > 7 && trip.budget < 1000',
+    parameters: {
+      minDuration: 7,
+      maxBudget: 1000
+    }
+  },
+  action: {
+    type: 'validate',
+    message: 'Długie wycieczki wymagają wyższego budżetu dla komfortu podróży',
+    config: {
+      threshold: 1000,
+      recommendation: 'Zwiększ budżet do minimum 1500 PLN'
+    }
+  },
+  created_at: '2025-01-15T10:00:00Z',
+  updated_at: '2025-01-20T14:30:00Z',
+  created_by: 'user-123'
+};
+
+// Podstawowe użycie
+<RulePreview
+  rule={rule}
+  onEdit={(id) => console.log('Edit rule:', id)}
+  onDelete={async (id) => await deleteRule(id)}
+  onToggleStatus={(id, status) => updateRuleStatus(id, status)}
+  showActions={true}
+  compact={false}
+/>
+
+// Tryb kompaktowy (domyślnie zwinięty)
+<RulePreview
+  rule={rule}
+  compact={true}
+/>
+
+// Tylko widok (bez akcji)
+<RulePreview
+  rule={rule}
+  showActions={false}
+/>
+
+// ============================================================================
+// 2. LISTA REGUŁ - RulesList
+// ============================================================================
+
+import { RulesList } from '@/components/rules/RulesList';
+
+const MyRulesPage = () => {
+  const [rules, setRules] = React.useState<Rule[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    fetchRules();
+  }, []);
+
+  const fetchRules = async () => {
+    try {
+      const response = await fetch('/api/rules');
+      const data = await response.json();
+      setRules(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEdit = (ruleId: string) => {
+    router.push(`/rules/${ruleId}/edit`);
+  };
+
+  const handleDelete = async (ruleId: string) => {
+    await fetch(`/api/rules/${ruleId}`, { method: 'DELETE' });
+    setRules(rules.filter(r => r.id !== ruleId));
+  };
+
+  const handleToggleStatus = async (ruleId: string, newStatus: RuleStatus) => {
+    await fetch(`/api/rules/${ruleId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: newStatus })
+    });
+    setRules(rules.map(r =>
+      r.id === ruleId ? { ...r, status: newStatus } : r
+    ));
+  };
+
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">Business Rules</h1>
+
+      <RulesList
+        rules={rules}
+        isLoading={isLoading}
+        error={error}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onToggleStatus={handleToggleStatus}
+      />
+    </div>
+  );
+};
+
+// ============================================================================
+// 3. EDYTOR REGUŁ - RuleEditor
+// ============================================================================
+
+import { RuleEditor } from '@/components/rules/RuleEditor';
+
+const CreateRulePage = () => {
+  const [showEditor, setShowEditor] = React.useState(true);
+
+  const handleSave = async (ruleData: Partial<Rule>) => {
+    const response = await fetch('/api/rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ruleData)
+    });
+
+    if (response.ok) {
+      router.push('/rules');
+    }
+  };
+
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">Create New Rule</h1>
+
+      {showEditor && (
+        <RuleEditor
+          onSave={handleSave}
+          onCancel={() => router.back()}
+        />
+      )}
+    </div>
+  );
+};
+
+// Edycja istniejącej reguły
+const EditRulePage = ({ ruleId }: { ruleId: string }) => {
+  const [rule, setRule] = React.useState<Rule | null>(null);
+
+  React.useEffect(() => {
+    fetch(`/api/rules/${ruleId}`)
+      .then(res => res.json())
+      .then(setRule);
+  }, [ruleId]);
+
+  const handleSave = async (ruleData: Partial<Rule>) => {
+    await fetch(`/api/rules/${ruleId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ruleData)
+    });
+
+    router.push('/rules');
+  };
+
+  if (!rule) return <div>Loading...</div>;
+
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">Edit Rule</h1>
+
+      <RuleEditor
+        rule={rule}
+        onSave={handleSave}
+        onCancel={() => router.back()}
+      />
+    </div>
+  );
+};
+
+═══════════════════════════════════════════════════════════════════════════════
+                         STYLE GUIDE & CONVENTIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. NAMING CONVENTIONS
+   ├─ Components: PascalCase (RulePreview, RuleCondition)
+   ├─ Files: PascalCase.tsx (RulePreview.tsx)
+   ├─ Props interfaces: ComponentNameProps
+   ├─ Type definitions: PascalCase (Rule, RuleStatus)
+   └─ Handlers: handle[Action] (handleEdit, handleDelete)
+
+2. FOLDER STRUCTURE
+   ├─ Group related components in feature folders (/rules/)
+   ├─ Shared UI components in /ui/ folder
+   ├─ Co-locate types with components
+   └─ Export main component as named export
+
+3. COMPONENT PATTERNS
+   ├─ Use React.FC<Props> for component types
+   ├─ Props interface before component definition
+   ├─ State hooks at top of component
+   ├─ Helper functions before component or outside
+   ├─ JSX in return statement
+   └─ Conditional rendering with early returns
+
+4. STATE MANAGEMENT
+   ├─ Local state with useState
+   ├─ Computed values with useMemo
+   ├─ Side effects with useEffect
+   └─ Callbacks passed as props
+
+5. STYLING
+   ├─ Tailwind CSS utility classes
+   ├─ CSS variables for colors (var(--color...))
+   ├─ Consistent spacing (p-4, gap-3, space-y-6)
+   ├─ Responsive design (sm:, md:, lg:)
+   └─ Color themes: blue (conditions), purple (actions)
+
+6. ERROR HANDLING
+   ├─ Try-catch blocks for async operations
+   ├─ Error state in component
+   ├─ Display errors with ErrorAlert
+   └─ Graceful degradation
+
+7. ACCESSIBILITY
+   ├─ Semantic HTML elements
+   ├─ ARIA labels where needed
+   ├─ Keyboard navigation support
+   └─ Focus states (focus-visible:outline)
+
+8. TYPE SAFETY
+   ├─ All props typed with interfaces
+   ├─ No 'any' types (use 'unknown' if needed)
+   ├─ Union types for status/priority
+   └─ Optional props with ?
+
+═══════════════════════════════════════════════════════════════════════════════
+                         INTEGRATION CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+□ Components Created
+  ├─ [✓] RulePreview.tsx
+  ├─ [✓] RuleCondition.tsx
+  ├─ [✓] RuleAction.tsx
+  ├─ [✓] RuleEditor.tsx
+  └─ [✓] RulesList.tsx
+
+□ Dependencies Verified
+  ├─ [✓] button.tsx exists
+  ├─ [✓] ErrorAlert.tsx exists
+  ├─ [✓] React imported
+  └─ [✓] TypeScript configured
+
+□ Type Definitions
+  ├─ [✓] Rule interface
+  ├─ [✓] RuleStatus type
+  ├─ [✓] RulePriority type
+  ├─ [✓] RuleConditionData interface
+  └─ [✓] RuleActionData interface
+
+□ Functionality
+  ├─ [✓] Display rule details
+  ├─ [✓] Edit rule
+  ├─ [✓] Delete rule with confirmation
+  ├─ [✓] Toggle rule status
+  ├─ [✓] Filter rules by status
+  ├─ [✓] Loading states
+  ├─ [✓] Error handling
+  └─ [✓] Empty states
+
+□ Styling
+  ├─ [✓] Tailwind classes
+  ├─ [✓] Responsive design
+  ├─ [✓] Color themes
+  ├─ [✓] Status badges
+  └─ [✓] Priority badges
+
+□ Next Steps (for integration)
+  ├─ [ ] Create API endpoints (/api/rules/*)
+  ├─ [ ] Create database schema for rules
+  ├─ [ ] Create page components (pages/rules/*)
+  ├─ [ ] Add navigation links
+  ├─ [ ] Write tests (unit + integration)
+  └─ [ ] Add documentation
+
+═══════════════════════════════════════════════════════════════════════════════
+                         TECHNICAL NOTES
+═══════════════════════════════════════════════════════════════════════════════
+
+1. PERFORMANCE CONSIDERATIONS
+   • useMemo for filtered rules list to avoid unnecessary recalculations
+   • Compact mode allows showing many rules without performance hit
+   • Lazy loading can be added for large lists (virtual scrolling)
+
+2. EXTENSIBILITY
+   • Easy to add new rule types (extend RuleActionData.type union)
+   • Priority and status can be extended with new values
+   • RuleCondition supports any expression language
+   • Config objects are flexible (Record<string, any>)
+
+3. REUSABILITY
+   • Components are decoupled and can be used independently
+   • Props are flexible with optional handlers
+   • Can be styled differently per use case
+   • Type system ensures consistency
+
+4. MAINTAINABILITY
+   • Clear separation of concerns
+   • Well-documented with JSDoc comments
+   • Consistent naming conventions
+   • TypeScript catches errors at compile time
+
+5. KNOWN LIMITATIONS
+   • No syntax validation for condition expressions (could add parser)
+   • No real-time collaboration (single user edits)
+   • Delete is permanent (no soft delete/undo)
+   • No rule versioning (could track history)
+
+═══════════════════════════════════════════════════════════════════════════════
+                         GENERATED: 2025-10-27
+                         VERSION: 1.0.0
+═══════════════════════════════════════════════════════════════════════════════

@@ -87,9 +87,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       console.log('[LoginForm] Login successful!', data);
       console.log('[LoginForm] Session:', data.session);
+      console.log('[LoginForm] Cookies after login:', document.cookie);
       console.log('[LoginForm] Redirecting to:', redirectTo);
 
-      // Success - redirect (session is now in cookies automatically)
+      // Success - redirect (session is now in cookies automatically via createBrowserClient)
       window.location.href = redirectTo;
     } catch (error: any) {
       console.error('[LoginForm] Login failed:', error);

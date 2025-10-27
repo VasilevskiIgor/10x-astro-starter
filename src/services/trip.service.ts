@@ -455,6 +455,7 @@ export class TripService {
 
   /**
    * Soft deletes a trip (sets deleted_at timestamp)
+   * Uses PostgreSQL function to bypass RLS issues
    *
    * @param userId - User ID from authenticated session
    * @param tripId - Trip ID
@@ -465,31 +466,13 @@ export class TripService {
     tripId: string
   ): Promise<ServiceResult<void>> {
     try {
-      // First check if trip exists
-      const { data: existingTrip, error: fetchError } = await this.supabase
-        .from('trips')
-        .select('id')
-        .eq('id', tripId)
-        .eq('user_id', userId)
-        .is('deleted_at', null)
-        .single();
-
-      if (fetchError || !existingTrip) {
-        return {
-          success: false,
-          error: {
-            code: 'NOT_FOUND',
-            message: 'Trip not found',
-          },
-        };
-      }
-
-      // Perform soft delete by setting deleted_at
-      const { error } = await this.supabase
-        .from('trips')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', tripId)
-        .eq('user_id', userId);
+      // Call PostgreSQL function to perform soft delete
+      // This function uses SECURITY DEFINER to bypass RLS while maintaining security
+      const { data, error } = await this.supabase
+        .rpc('soft_delete_trip', {
+          p_trip_id: tripId,
+          p_user_id: userId,
+        });
 
       if (error) {
         console.error('Database error deleting trip:', error);
@@ -499,6 +482,17 @@ export class TripService {
             code: 'DATABASE_ERROR',
             message: 'Failed to delete trip',
             details: error,
+          },
+        };
+      }
+
+      // data will be true if trip was deleted, false if not found
+      if (!data) {
+        return {
+          success: false,
+          error: {
+            code: 'NOT_FOUND',
+            message: 'Trip not found',
           },
         };
       }

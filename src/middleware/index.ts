@@ -75,11 +75,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Note: Supabase automatically handles token refresh if autoRefreshToken is enabled
   const { data: { session } } = await supabase.auth.getSession();
 
-  // CASE 1: Protected route + no session → DON'T redirect yet
-  // Let the page handle auth check client-side since we use localStorage
-  // (middleware can't see localStorage, only cookies)
+  // DEBUG: Log auth state
+  console.log('[Middleware]', {
+    pathname,
+    isProtected,
+    isAuthPage,
+    hasSession: !!session,
+    cookies: Array.from(context.cookies).map(c => c.name)
+  });
+
+  // CASE 1: Protected route + no session → Redirect to login
+  // Server-side protection: uniwersalny mechanizm dla wszystkich protected routes
   if (isProtected && !session) {
-    // Don't redirect - let page JavaScript handle it
+    // Zakoduj aktualną ścieżkę do parametru redirect dla powrotu po logowaniu
+    const redirectUrl = encodeURIComponent(pathname);
+    return context.redirect(`/auth/login?redirect=${redirectUrl}`);
   }
 
   // CASE 2: Auth page + has session → redirect to trips (already logged in)
@@ -87,6 +97,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect('/trips');
   }
 
-  // CASE 3: Public route or authorized access → continue
+  // CASE 3: User is authenticated → Add to context.locals for use in pages
+  if (session) {
+    context.locals.user = session.user;
+    context.locals.session = session;
+  }
+
+  // CASE 4: Public route or authorized access → continue
   return next();
 });

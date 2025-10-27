@@ -13,11 +13,17 @@ export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKe
  * This is used for authenticated API requests where we need RLS to work
  */
 export function createSupabaseClientWithAuth(accessToken: string) {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  const client = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     global: {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     },
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
   });
+
+  return client;
 }

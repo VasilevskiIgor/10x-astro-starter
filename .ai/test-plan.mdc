@@ -1,0 +1,284 @@
+---
+description: Comprehensive test plan for VibeTravels MVP application
+globs:
+  - "**/*.{ts,tsx,astro,js,jsx}"
+  - "tests/**/*"
+  - ".ai/**/*.md"
+alwaysApply: false
+---
+Jesteś doświadczonym inżynierem QA specjalizującym się w testowaniu aplikacji webowych. Twoim zadaniem jest stworzenie kompleksowego planu testów dla projektu VibeTravels MVP - aplikacji do planowania podróży z integracją AI.
+
+Przeanalizuj dostarczone informacje o projekcie:
+
+<prd>
+[prd.md](mdc:.ai/prd.md)
+</prd>
+
+<tech_stack>
+[tech-stack.md](mdc:.ai/tech/tech-stack.md)
+</tech_stack>
+
+<auth_specification>
+[auth-spec.md](mdc:.ai/auth-spec.md)
+</auth_specification>
+
+<astro_rules>
+[astro.mdc](mdc:.cursor/rules/astro.mdc)
+</astro_rules>
+
+<supabase_integration>
+[api-supabase-astro-init.mdc](mdc:.cursor/rules/api-supabase-astro-init.mdc)
+</supabase_integration>
+
+## Wymagania zaliczeniowe projektu (z PRD)
+
+Zgodnie z PRD, projekt **MUSI** zawierać:
+1. ✅ **Mechanizm kontroli dostępu użytkownika** (logowanie/rejestracja z Supabase Auth)
+2. ✅ **Zarządzanie danymi CRUD** (tworzenie, odczyt, aktualizacja, usuwanie planów podróży)
+3. ✅ **Logika biznesowa z AI** (generowanie planów przez OpenAI/OpenRouter)
+4. ✅ **Testy end-to-end** (minimum 1 test E2E jest **WYMAGANY**)
+5. ✅ **Pipeline CI/CD** (GitHub Actions: build + test)
+
+## Zakres MVP minimum do przetestowania
+
+**MUST HAVE (P0 - wymagane do zaliczenia):**
+- Ekran logowania + rejestracji (email/password)
+- CRUD dla planów podróży (Create, Read, Update, Delete)
+- Generowanie planów przez AI (OpenAI/OpenRouter API)
+- **Minimum 1 test E2E weryfikujący cały flow użytkownika**
+- GitHub Actions CI/CD (build + test)
+- Row Level Security (RLS) w Supabase
+
+**NICE TO HAVE (P1-P2 - opcjonalne):**
+- Google OAuth
+- System Premium/płatności
+- Email notifications
+- PDF export
+- Rating system
+
+---
+
+## Instrukcje dla generowania planu testów
+
+Przed stworzeniem planu testów, przeprowadź dogłębną analizę projektu wewnątrz bloku `<analiza_projektu>` w swoim bloku myślowym. W analizie uwzględnij:
+
+### 1. Analiza kluczowych komponentów projektu
+
+Zidentyfikuj i opisz główne komponenty projektu na podstawie PRD i specyfikacji:
+- **Moduł autentykacji** (Supabase Auth + middleware)
+- **Moduł CRUD** (zarządzanie planami podróży)
+- **Moduł AI** (integracja z OpenAI/OpenRouter)
+- **Moduł bezpieczeństwa** (RLS, protected routes, session management)
+
+### 2. Specyfika stosu technologicznego i strategia testowania
+
+Przeanalizuj wpływ stosu technologicznego na testowanie:
+- **Astro 5.0** (SSR, API routes, middleware)
+- **Supabase** (PostgreSQL, Auth, RLS, real-time)
+- **OpenAI/OpenRouter** (API integration, async operations, error handling)
+- **TypeScript** (type safety, testing utilities)
+- **Playwright** (E2E testing framework - WYMAGANY)
+- **Vitest** (unit testing - opcjonalny)
+
+### 3. Priorytety testowe
+
+Uszereguj obszary testowe według ważności:
+- **P0 (Critical):** Testy blokujące zaliczenie projektu (E2E, CRUD, Auth, AI, RLS)
+- **P1 (Important):** Testy ważnych funkcjonalności (walidacja, error handling)
+- **P2 (Nice to have):** Testy usprawniające jakość (performance, accessibility)
+
+### 4. Obszary ryzyka wymagające szczególnej uwagi
+
+Zidentyfikuj potencjalne ryzyka:
+- **Security:** RLS policies, JWT tokens, XSS/SQL injection
+- **AI Integration:** API timeouts, rate limits, error handling, parsing responses
+- **Data isolation:** Użytkownik widzi tylko swoje plany
+- **Session management:** Proper logout, token refresh, protected routes
+- **Async operations:** AI generation (30-90s), concurrent requests
+
+---
+
+## Struktura planu testów
+
+Po zakończeniu analizy, stwórz plan testów w formacie Markdown wewnątrz bloku `<plan_testow>`. Plan powinien zawierać:
+
+### 1. Wprowadzenie i cele testowania
+- Cel dokumentu
+- Wymagania zaliczeniowe (z PRD)
+- Zakres MVP minimum
+- Definicja "Done" dla testów
+
+### 2. Zakres testów
+- Funkcjonalności objęte testami (z mapowaniem do User Stories z PRD)
+- Funkcjonalności NIE objęte testami (out of scope dla MVP)
+- Macierz pokrycia wymagań (traceability matrix)
+
+### 3. Strategia testowania
+- Piramida testów (E2E → Integration → Unit)
+- Typy testów do przeprowadzenia:
+  - **E2E Tests (Playwright)** - WYMAGANE, P0
+  - **Unit Tests (Vitest)** - opcjonalne, P2
+  - **Integration Tests** - opcjonalne, P1
+  - **Manual Tests** - WYMAGANE, P0
+  - **Security Tests** - WYMAGANE, P0
+- Priorytety testów (P0, P1, P2)
+
+### 4. Scenariusze testowe dla kluczowych funkcjonalności
+
+#### 4.1 Test E2E #1: Complete User Journey (WYMAGANY)
+**Plik:** `tests/e2e/complete-user-journey.spec.ts`
+
+Szczegółowy test weryfikujący:
+1. Rejestracja nowego użytkownika (US-001)
+2. Automatyczne logowanie po rejestracji (US-001)
+3. Przekierowanie do dashboardu (FR-002)
+4. Utworzenie planu podróży (US-004, FR-004)
+5. Generowanie planu przez AI (US-005, FR-009, FR-010)
+6. Wyświetlenie szczegółów planu (FR-006)
+7. Edycja planu (US-008, US-009, FR-007)
+8. Usunięcie planu (US-010, FR-008)
+9. Wylogowanie (US-003, FR-003)
+
+**Kod testu:** Dostarcz pełny kod TypeScript z Playwright
+
+#### 4.2 Test E2E #2: Protected Routes & Authorization
+Test weryfikujący middleware protection i dostęp do protected routes
+
+#### 4.3 Test E2E #3: Data Isolation (RLS)
+Test weryfikujący Row Level Security - użytkownik A nie może widzieć planów użytkownika B
+
+#### 4.4 Test E2E #4: Form Validation
+Test walidacji formularzy (email format, password length, required fields)
+
+#### 4.5 Testy manualne
+Checklisty dla:
+- Autentykacja (6 test cases)
+- CRUD operations (6 test cases)
+- UI/UX (5 test cases)
+- Accessibility WCAG 2.1 Level AA (5 test cases)
+- Cross-browser testing (Chrome, Firefox, Safari, Edge)
+
+#### 4.6 Testy bezpieczeństwa
+Security checklist (9 items):
+- RLS enabled
+- Passwords hashed
+- JWT tokens secure
+- XSS protection
+- SQL injection protection
+- HTTPS enforced (production)
+- Environment variables secure
+
+### 5. Środowisko testowe
+- Konfiguracja lokalna (Node.js, npm, browsers)
+- Konfiguracja CI/CD (GitHub Actions)
+- Test data management (fixtures, cleanup strategy)
+- Environment variables (.env.test)
+
+### 6. Narzędzia do testowania
+- **Playwright** (E2E tests) - konfiguracja playwright.config.ts
+- **Vitest** (unit tests - opcjonalne) - konfiguracja vitest.config.ts
+- **GitHub Actions** (CI/CD pipeline) - workflow .github/workflows/ci.yml
+- **Manual testing tools** (Browser DevTools, Lighthouse, WAVE)
+
+### 7. Harmonogram testów
+Timeline dla Tygodnia 2 (Dni 8-14):
+- Dzień 8-9: Setup Playwright + główny test E2E (6-8h)
+- Dzień 10-11: Dodatkowe testy E2E (4-6h)
+- Dzień 12: CI/CD + testy manualne (6-8h)
+- Dzień 13: Bugfixing + regression testing (4-6h)
+- Dzień 14: Finalne testy + dokumentacja (4-6h)
+
+**Szacowany czas:** 20-28 godzin na pełne testowanie MVP
+
+### 8. Kryteria akceptacji testów
+- Definicja "PASS" dla testu
+- Minimalne wymagania do zaliczenia projektu
+- Kryteria sukcesu dla każdego typu testu
+- Flakiness rate < 5%
+- Test execution time < 3 min/test
+
+### 9. Role i odpowiedzialności w procesie testowania
+- QA Engineer: Implementacja testów automatycznych
+- Developer: Code review, bugfixing
+- Product Owner: Akceptacja kryteriów testowych
+- CI/CD: Automatyczne uruchamianie testów
+
+### 10. Procedury raportowania błędów
+- Bug severity classification (P0-Critical, P1-Major, P2-Minor, P3-Trivial)
+- Test execution reports (Playwright HTML reports)
+- CI/CD artifacts (GitHub Actions)
+- Test summary template (.github/TEST_SUMMARY.md)
+
+---
+
+## Wymagania dotyczące planu testów
+
+Plan testów **MUSI** być:
+
+1. **Dokładnie dostosowany do kontekstu projektu VibeTravels MVP**
+   - Wszystkie scenariusze testowe mapowane do User Stories z PRD
+   - Fokus na wymagania zaliczeniowe
+
+2. **Uwzględniał specyfikę wykorzystywanych technologii**
+   - Playwright dla E2E (WYMAGANY)
+   - Supabase Auth + RLS
+   - OpenAI/OpenRouter API (async, timeouts, error handling)
+   - Astro 5.0 SSR + middleware
+
+3. **Priorytetyzował kluczowe elementy**
+   - **P0 (MUST HAVE):** 1 test E2E complete user journey, CI/CD, manual testing
+   - **P1 (Important):** Dodatkowe testy E2E, security testing
+   - **P2 (Nice to have):** Unit tests, performance testing
+
+4. **Był napisany w języku polskim**
+   - Wszystkie opisy, komentarze i dokumentacja po polsku
+   - Kod testów z komentarzami w języku polskim
+
+5. **Prezentował wysoką jakość i profesjonalizm**
+   - Pełne przykłady kodu testów (TypeScript + Playwright)
+   - Konfiguracje (playwright.config.ts, vitest.config.ts, GitHub Actions)
+   - Checklisty i tabele dla testów manualnych
+   - Appendix z troubleshooting guide
+
+6. **Zawierał gotowe do użycia przykłady kodu**
+   - Kompletny test `complete-user-journey.spec.ts` (200+ linii)
+   - Testy protected routes, RLS, form validation
+   - Setup files (fixtures, cleanup utilities)
+   - GitHub Actions workflow
+
+---
+
+## Format odpowiedzi
+
+Twoja odpowiedź powinna składać się z dwóch bloków myślowych:
+
+### Blok 1: `<analiza_projektu>`
+Dogłębna analiza projektu (nie pokazywana w finalnym planie):
+- Kluczowe komponenty
+- Specyfika stosu technologicznego
+- Priorytety testowe
+- Obszary ryzyka
+
+### Blok 2: `<plan_testow>`
+Finalny plan testów w formacie Markdown (to będzie zwrócone jako wynik):
+- Wszystkie 10 sekcji wymienione powyżej
+- Pełne przykłady kodu testów
+- Tabele, checklisty, diagramy
+- Appendix z troubleshooting
+
+---
+
+## Kluczowe punkty do zapamiętania
+
+1. ✅ **Minimum 1 test E2E jest WYMAGANY** do zaliczenia projektu
+2. ✅ Test `complete-user-journey.spec.ts` weryfikuje 100% wymagań MVP
+3. ✅ CI/CD pipeline z GitHub Actions automatyzuje testowanie
+4. ✅ Testy manualne są równie ważne jak automatyczne
+5. ✅ Row Level Security (RLS) musi być przetestowany
+6. ✅ AI integration wymaga specjalnej uwagi (timeouts, error handling)
+
+---
+
+**Rozpocznij od analizy wewnątrz bloku myślowego, a następnie wygeneruj kompletny plan testów w języku polskim w formacie Markdown.**
+
+Twój końcowy wynik powinien składać się tylko z planu testów i nie powinien powielać ani streszczać żadnej pracy wykonanej w bloku analizy projektu.

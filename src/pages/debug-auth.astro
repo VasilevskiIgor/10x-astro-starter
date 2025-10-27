@@ -1,0 +1,72 @@
+---
+/**
+ * Debug Auth Page
+ * Pokazuje stan autentykacji dla debugowania
+ */
+
+const { data: { session } } = await Astro.locals.supabase.auth.getSession();
+const cookies = Array.from(Astro.cookies);
+---
+
+<html>
+<head>
+  <title>Auth Debug</title>
+  <style>
+    body { font-family: monospace; padding: 20px; }
+    pre { background: #f0f0f0; padding: 10px; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Auth Debug Page</h1>
+
+  <h2>Server-side (Middleware)</h2>
+  <div>
+    <strong>Has Session:</strong>
+    <span class={session ? 'success' : 'error'}>
+      {session ? '✅ YES' : '❌ NO'}
+    </span>
+  </div>
+
+  {session && (
+    <div>
+      <strong>User ID:</strong> {session.user.id}<br/>
+      <strong>Email:</strong> {session.user.email}
+    </div>
+  )}
+
+  <h3>Cookies (server-side):</h3>
+  <pre>{JSON.stringify(cookies.map(c => ({ name: c.name, value: c.value.substring(0, 50) + '...' })), null, 2)}</pre>
+
+  <h2>Client-side (Browser)</h2>
+  <div id="client-session"></div>
+  <div id="client-cookies"></div>
+
+  <script>
+    import { supabaseBrowser } from '@/lib/supabase-browser';
+
+    // Check client-side session
+    supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
+      const sessionDiv = document.getElementById('client-session');
+      if (session) {
+        sessionDiv.innerHTML = `
+          <strong>Has Session:</strong> <span class="success">✅ YES</span><br/>
+          <strong>User ID:</strong> ${session.user.id}<br/>
+          <strong>Email:</strong> ${session.user.email}
+        `;
+      } else {
+        sessionDiv.innerHTML = '<strong>Has Session:</strong> <span class="error">❌ NO</span>';
+      }
+    });
+
+    // Show browser cookies
+    const cookiesDiv = document.getElementById('client-cookies');
+    cookiesDiv.innerHTML = `<h3>Cookies (client-side):</h3><pre>${document.cookie || '(none)'}</pre>`;
+  </script>
+
+  <hr/>
+  <a href="/auth/login">← Go to Login</a> |
+  <a href="/trips">Go to Trips →</a>
+</body>
+</html>
