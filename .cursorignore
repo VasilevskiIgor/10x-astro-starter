@@ -1,0 +1,14 @@
+# Environment files
+.env
+.env.production
+.env.test
+
+# Sensitive files
+jwt_token.txt
+
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
