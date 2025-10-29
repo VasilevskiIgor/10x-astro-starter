@@ -68,9 +68,9 @@ export const TripsList: React.FC = () => {
             d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-semibold text-gray-900">No trips yet</h3>
+        <h3 className="mt-2 text-sm font-semibold text-gray-900">Brak podróży</h3>
         <p className="mt-1 text-sm text-gray-500">
-          Get started by creating your first trip.
+          Zacznij od stworzenia swojej pierwszej podróży.
         </p>
         <div className="mt-6">
           <a
@@ -91,7 +91,7 @@ export const TripsList: React.FC = () => {
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Create New Trip
+            Utwórz nową podróż
           </a>
         </div>
       </div>
@@ -117,35 +117,35 @@ export const TripsList: React.FC = () => {
               disabled={pagination.offset === 0}
               className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Previous
+              Poprzednia
             </button>
             <button
               onClick={nextPage}
               disabled={!pagination.has_more}
               className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Next
+              Następna
             </button>
           </div>
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing{' '}
-                <span className="font-medium">{pagination.offset + 1}</span> to{' '}
+                Pokazuję{' '}
+                <span className="font-medium">{pagination.offset + 1}</span> do{' '}
                 <span className="font-medium">
                   {Math.min(pagination.offset + pagination.limit, pagination.total)}
                 </span>{' '}
-                of <span className="font-medium">{pagination.total}</span> trips
+                z <span className="font-medium">{pagination.total}</span> podróży
               </p>
             </div>
             <div>
-              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Paginacja">
                 <button
                   onClick={prevPage}
                   disabled={pagination.offset === 0}
                   className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <span className="sr-only">Previous</span>
+                  <span className="sr-only">Poprzednia</span>
                   <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                       fillRule="evenodd"
@@ -159,7 +159,7 @@ export const TripsList: React.FC = () => {
                   disabled={!pagination.has_more}
                   className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <span className="sr-only">Next</span>
+                  <span className="sr-only">Następna</span>
                   <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                       fillRule="evenodd"

@@ -21,14 +21,14 @@ if (!id) {
 }
 
 const breadcrumbItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Trips', href: '/trips' },
-  { label: 'Details', href: `/trips/${id}` },
-  { label: 'Edit' },
+  { label: 'Start', href: '/' },
+  { label: 'Plany', href: '/trips' },
+  { label: 'Szczegóły', href: `/trips/${id}` },
+  { label: 'Edytuj' },
 ];
 ---
 
-<Layout title="Edit Trip - Magic Travel App">
+<Layout title="Edytuj podróż - Magic Travel App">
   <main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
     {/* Breadcrumb */}
     <div class="mb-6">
@@ -37,9 +37,9 @@ const breadcrumbItems = [
 
     {/* Header */}
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Edit Trip</h1>
+      <h1 class="text-3xl font-bold text-gray-900">Edytuj podróż</h1>
       <p class="mt-2 text-sm text-gray-600">
-        Update your trip details. AI-generated content cannot be edited directly.
+        Zaktualizuj szczegóły podróży i regeneruj treść AI z nowymi parametrami.
       </p>
     </div>
 

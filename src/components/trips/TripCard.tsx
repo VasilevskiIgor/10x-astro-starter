@@ -26,7 +26,7 @@ export interface TripCardProps {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('pl-PL', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -45,19 +45,19 @@ const getStatusBadge = (status: string) => {
   const badges = {
     draft: {
       color: 'bg-[var(--colorNeutralBackground4)] text-[var(--colorNeutralForeground2)] border border-[var(--colorNeutralStroke2)]',
-      label: 'Draft',
+      label: 'Szkic',
     },
     generating: {
       color: 'bg-[var(--colorStatusInfoBackground2)] text-[var(--colorStatusInfoForeground1)] border border-[var(--colorStatusInfoBorder1)]',
-      label: 'Generating...',
+      label: 'Generowanie...',
     },
     completed: {
       color: 'bg-[var(--colorStatusSuccessBackground2)] text-[var(--colorStatusSuccessForeground1)] border border-[var(--colorStatusSuccessBorder1)]',
-      label: 'Completed',
+      label: 'Ukończona',
     },
     failed: {
       color: 'bg-[var(--colorStatusDangerBackground2)] text-[var(--colorStatusDangerForeground1)] border border-[var(--colorStatusDangerBorder1)]',
-      label: 'Failed',
+      label: 'Nie powiodło się',
     },
   };
 
@@ -120,7 +120,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
         </span>
         <span className="text-[var(--colorNeutralForeground3)]">•</span>
         <span>
-          {duration} {duration === 1 ? 'day' : 'days'}
+          {duration} {duration === 1 ? 'dzień' : duration < 5 ? 'dni' : 'dni'}
         </span>
       </div>
 
@@ -143,12 +143,12 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                 />
               </svg>
-              <span>AI Generated</span>
+              <span>Wygenerowane przez AI</span>
             </div>
           )}
         </div>
         <div className="text-[var(--fontSizeBase200)] text-[var(--colorNeutralForeground3)]">
-          Created {formatDate(trip.created_at)}
+          Utworzone {formatDate(trip.created_at)}
         </div>
       </div>
     </a>

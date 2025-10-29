@@ -64,11 +64,11 @@ export function daysBetween(startDate: string, endDate: string): number {
  */
 function validateDestination(destination: string): string | undefined {
   if (!destination.trim()) {
-    return 'Destination is required';
+    return 'Miejsce docelowe jest wymagane';
   }
 
   if (destination.length > 200) {
-    return 'Destination must be less than 200 characters';
+    return 'Miejsce docelowe musi mieć mniej niż 200 znaków';
   }
 
   return undefined;
@@ -79,11 +79,11 @@ function validateDestination(destination: string): string | undefined {
  */
 function validateStartDate(startDate: string): string | undefined {
   if (!startDate) {
-    return 'Start date is required';
+    return 'Data rozpoczęcia jest wymagana';
   }
 
   if (!isValidDate(startDate)) {
-    return 'Start date must be a valid date';
+    return 'Data rozpoczęcia musi być prawidłową datą';
   }
 
   return undefined;
@@ -97,19 +97,19 @@ function validateEndDate(
   startDate: string
 ): string | undefined {
   if (!endDate) {
-    return 'End date is required';
+    return 'Data zakończenia jest wymagana';
   }
 
   if (!isValidDate(endDate)) {
-    return 'End date must be a valid date';
+    return 'Data zakończenia musi być prawidłową datą';
   }
 
   if (startDate && endDate < startDate) {
-    return 'End date must be after or equal to start date';
+    return 'Data zakończenia musi być późniejsza lub równa dacie rozpoczęcia';
   }
 
   if (startDate && daysBetween(startDate, endDate) > 365) {
-    return 'Trip duration cannot exceed 365 days';
+    return 'Czas trwania podróży nie może przekroczyć 365 dni';
   }
 
   return undefined;
@@ -120,7 +120,7 @@ function validateEndDate(
  */
 function validateDescription(description: string): string | undefined {
   if (description && description.length > 2000) {
-    return 'Description must be less than 2000 characters';
+    return 'Opis musi mieć mniej niż 2000 znaków';
   }
 
   return undefined;

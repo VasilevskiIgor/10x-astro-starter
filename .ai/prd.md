@@ -101,8 +101,8 @@ Aplikacja pozwala użytkownikom wygenerować podstawowy plan podróży używają
 **FR-007: UPDATE - Edycja planu**
 - Użytkownik może edytować podstawowe dane planu
 - Edytowalne pola: destination, start_date, end_date, description
-- Przycisk "Save" zapisuje zmiany w bazie
-- AI-generated content nie jest edytowalny (tylko re-generate)
+- Przycisk "Save" zapisuje zmiany w bazie bez wpływu na AI content
+- Przycisk "Regenerate AI Content" pozwala wygenerować nową treść AI z zaktualizowanymi parametrami
 
 **FR-008: DELETE - Usuwanie planu**
 - Użytkownik może usunąć swój plan
@@ -123,9 +123,16 @@ Aplikacja pozwala użytkownikom wygenerować podstawowy plan podróży używają
 - Wygenerowana treść jest wyświetlana w szczegółach planu
 - Format: prosty tekst lub lista punktów (dzień 1, dzień 2, etc.)
 
+**FR-011: Regeneracja AI content z nowymi parametrami**
+- W formularzu edycji użytkownik może zaktualizować parametry podróży
+- Przycisk "Regenerate AI Content" wywołuje regenerację z nowymi parametrami
+- System wyświetla potwierdzenie przed nadpisaniem istniejącej treści AI
+- Regeneracja aktualizuje zarówno parametry podróży jak i treść AI
+- Regeneracja podlega tym samym limitom rate-limit co pierwsze generowanie
+
 ### 3.4 Bezpieczeństwo (WYMAGANE)
 
-**FR-011: Autoryzacja dostępu do planów**
+**FR-012: Autoryzacja dostępu do planów**
 - Użytkownik może widzieć tylko swoje plany
 - System blokuje dostęp do planów innych użytkowników (403 error)
 - Próba dostępu do cudzego planu przekierowuje do dashboardu
@@ -142,13 +149,15 @@ Aplikacja pozwala użytkownikom wygenerować podstawowy plan podróży używają
 - Email notifications
 - PDF export
 - Rating i feedback system
-- Regeneracja planów
 - Współdzielenie planów
 - Landing page (prosta strona główna OK)
 - Fancy UI/UX (prosty design wystarczy)
 - Analytics i metryki
 - Preferencje użytkownika (save/load)
 - Filtry i wyszukiwanie w dashboardzie
+
+**Dodane funkcjonalności (poza oryginalny MVP):**
+- ✅ Regeneracja AI content z nowymi parametrami (umożliwia edycję + regenerację)
 
 ### 4.2 Funkcjonalności opcjonalne (jeśli zostanie czas)
 - Lepszy design (Tailwind + Shadcn/ui)
@@ -256,7 +265,7 @@ Kryteria akceptacji:
 - Przycisk "Edit" w szczegółach planu otwiera formularz edycji
 - Formularz jest pre-filled aktualnymi danymi
 - Edytowalne pola: Destination, Start Date, End Date, Description
-- AI-generated content NIE jest edytowalny
+- Sekcja "AI-Generated Content" z przyciskiem "Regenerate AI Content"
 
 **US-009: Zapisanie zmian w planie**
 Jako użytkownik edytujący plan
@@ -269,6 +278,20 @@ Kryteria akceptacji:
 - System aktualizuje rekord w bazie danych
 - Użytkownik przekierowany do szczegółów (zaktualizowane dane widoczne)
 - Komunikat "Plan updated successfully"
+
+**US-009a: Regeneracja AI content z nowymi parametrami**
+Jako użytkownik edytujący plan
+Chcę wygenerować nową treść AI z zaktualizowanymi parametrami
+Aby dopasować itinerarium do zmienionych szczegółów podróży
+
+Kryteria akceptacji:
+- Formularz edycji zawiera przycisk "Regenerate AI Content"
+- Przed regeneracją: modal potwierdzający "Are you sure? This will replace existing AI content"
+- Po potwierdzeniu: system waliduje formularz
+- Jeśli walidacja OK: system aktualizuje parametry + regeneruje AI (status: 'generating')
+- Loading state podczas generowania (może trwać 30-60 sekund)
+- Po sukcesie: przekierowanie do szczegółów z nową treścią AI
+- Jeśli błąd: komunikat błędu, możliwość ponownej próby
 
 ### 5.5 CRUD - Delete (1 story)
 
@@ -393,8 +416,9 @@ USING (auth.uid() = user_id);
 - Wszystkie operacje CRUD przez supabase.from('trips')
 - RLS automatycznie filtruje dane dla zalogowanego użytkownika
 
-**Custom API (opcjonalnie Supabase Edge Function lub client-side):**
-- Endpoint/funkcja do generowania AI (może być po stronie klienta dla uproszczenia w MVP minimum)
+**Custom API (Astro API Routes):**
+- POST /api/trips/:id/generate-ai - generowanie AI dla nowego planu
+- POST /api/trips/:id/regenerate - aktualizacja parametrów + regeneracja AI content
 
 ### 6.4 AI Prompt (prosty)
 
@@ -595,7 +619,7 @@ W ustawieniach repo GitHub → Settings → Secrets and variables → Actions:
 11. Przekierowanie do /plans/:id
 12. Widzi szczegóły + AI-generated itinerary
 
-### 9.2 Flow: Użytkownik edytuje plan
+### 9.2 Flow: Użytkownik edytuje plan (bez regeneracji AI)
 
 1. User zalogowany, w dashboardzie
 2. Kliknie na istniejący plan
@@ -606,6 +630,29 @@ W ustawieniach repo GitHub → Settings → Secrets and variables → Actions:
 7. Kliknie "Save Changes"
 8. Przekierowanie do szczegółów (nowa data widoczna)
 9. Komunikat "Plan updated"
+
+### 9.2a Flow: Użytkownik edytuje plan i regeneruje AI
+
+1. User zalogowany, w dashboardzie
+2. Kliknie na istniejący plan "Paris 5 dni"
+3. Widzi szczegóły planu z wygenerowanym itinerarium
+4. Kliknie "Edit"
+5. Formularz edycji pre-filled
+6. Zmienia:
+   - Destination: "Paris and Versailles, France"
+   - End Date: z 2025-12-05 na 2025-12-08 (wydłuża o 3 dni)
+   - Description: dodaje "Include day trip to Versailles Palace"
+7. Kliknie "Regenerate AI Content"
+8. Modal: "Are you sure? This will replace existing AI content"
+9. Potwierdza "Yes, Regenerate"
+10. Loading spinner "Regenerating AI Content..." (30-60 sekund)
+11. System:
+    - Aktualizuje destination, end_date, description
+    - Generuje nową treść AI z uwzględnieniem Wersalu i 8 dni
+    - Nadpisuje poprzednie itinerarium
+12. Przekierowanie do szczegółów
+13. Widzi zaktualizowane parametry + nowe itinerarium z Wersalem
+14. Komunikat "Trip updated and AI content regenerated successfully"
 
 ### 9.3 Flow: Użytkownik usuwa plan
 

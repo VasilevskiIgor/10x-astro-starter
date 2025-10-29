@@ -281,7 +281,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <p className="mt-4 text-sm text-gray-600">Checking authentication...</p>
+          <p className="mt-4 text-sm text-gray-600">Sprawdzanie uwierzytelnienia...</p>
         </div>
       </div>
     );
@@ -298,7 +298,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       {showDraftNotice && (
         <ErrorAlert
           type="info"
-          message="We've restored your previous draft. You can continue editing or start fresh."
+          message="Przywróciliśmy Twój poprzedni szkic. Możesz kontynuować edycję lub zacząć od nowa."
           dismissible
           onDismiss={handleDismissDraftNotice}
         />
@@ -315,7 +315,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           htmlFor="destination"
           className="block text-sm font-medium text-gray-700"
         >
-          Destination <span className="text-red-500" aria-label="required">*</span>
+          Miejsce docelowe <span className="text-red-500" aria-label="wymagane">*</span>
         </label>
         <input
           type="text"
@@ -325,7 +325,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           onChange={(e) => handleFieldChange('destination', e.target.value)}
           onBlur={() => handleFieldBlur('destination')}
           disabled={isLoading}
-          placeholder="e.g., Paris, France"
+          placeholder="np. Paryż, Francja"
           aria-invalid={displayErrors.destination ? 'true' : 'false'}
           aria-describedby={
             displayErrors.destination ? 'destination-error' : undefined
@@ -369,7 +369,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           htmlFor="description"
           className="block text-sm font-medium text-gray-700"
         >
-          Description <span className="text-gray-500 text-xs">(optional)</span>
+          Opis <span className="text-gray-500 text-xs">(opcjonalny)</span>
         </label>
         <textarea
           id="description"
@@ -378,7 +378,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           onChange={(e) => handleFieldChange('description', e.target.value)}
           onBlur={() => handleFieldBlur('description')}
           disabled={isLoading}
-          placeholder="Describe your trip preferences, interests, or special requirements..."
+          placeholder="Opisz swoje preferencje podróży, zainteresowania lub specjalne wymagania..."
           rows={4}
           aria-invalid={displayErrors.description ? 'true' : 'false'}
           aria-describedby={
@@ -400,7 +400,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           </p>
         ) : (
           <p id="description-hint" className="mt-1 text-sm text-gray-500">
-            {formData.description.length}/2000 characters
+            {formData.description.length}/2000 znaków
           </p>
         )}
       </div>
@@ -421,11 +421,11 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           </div>
           <div className="ml-3 text-sm">
             <label htmlFor="generate-ai" className="font-medium text-gray-700">
-              Generate AI Itinerary
+              Generuj plan podróży AI
             </label>
             <p className="text-gray-500">
-              Automatically create a detailed day-by-day itinerary using AI based on your
-              destination and preferences.
+              Automatycznie stwórz szczegółowy plan dzień po dniu używając AI na podstawie
+              miejsca docelowego i Twoich preferencji.
             </p>
           </div>
         </div>
@@ -441,7 +441,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
               onClick={handleClearDraft}
               disabled={isLoading}
             >
-              Clear Draft
+              Wyczyść szkic
             </Button>
           )}
           {onCancel && (
@@ -451,7 +451,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
               onClick={onCancel}
               disabled={isLoading}
             >
-              Cancel
+              Anuluj
             </Button>
           )}
         </div>
@@ -478,10 +478,10 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              {formData.generateAI ? 'Creating & Generating...' : 'Creating Trip...'}
+              {formData.generateAI ? 'Tworzenie i generowanie...' : 'Tworzenie podróży...'}
             </>
           ) : (
-            'Create Trip'
+            'Utwórz podróż'
           )}
         </Button>
       </div>

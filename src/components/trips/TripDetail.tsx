@@ -28,7 +28,7 @@ export interface TripDetailProps {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('pl-PL', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -78,13 +78,13 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error?.message || 'Failed to fetch trip');
+          throw new Error(errorData.error?.message || 'Nie udało się pobrać podróży');
         }
 
         const data: TripDetailDTO = await response.json();
         setTrip(data);
       } catch (err: any) {
-        setError(err.message || 'An error occurred while fetching trip details');
+        setError(err.message || 'Wystąpił błąd podczas pobierania szczegółów podróży');
       } finally {
         setIsLoading(false);
       }
@@ -101,7 +101,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       const { data: { session } } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error('Not authenticated. Please log in.');
+        throw new Error('Nie jesteś zalogowany. Zaloguj się.');
       }
 
       const response = await fetch(`/api/trips/${tripId}`, {
@@ -113,13 +113,13 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to delete trip');
+        throw new Error(errorData.error?.message || 'Nie udało się usunąć podróży');
       }
 
       // Redirect to trips list after successful deletion
       window.location.href = '/trips';
     } catch (err: any) {
-      setError(err.message || 'An error occurred while deleting trip');
+      setError(err.message || 'Wystąpił błąd podczas usuwania podróży');
       setIsDeleting(false);
     }
   };
@@ -133,7 +133,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       const { data: { session } } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error('Not authenticated. Please log in.');
+        throw new Error('Nie jesteś zalogowany. Zaloguj się.');
       }
 
       console.log('[TripDetail] Starting AI generation for trip:', tripId);
@@ -155,7 +155,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       console.log('[TripDetail] AI generation response:', response.status, responseData);
 
       if (!response.ok) {
-        throw new Error(responseData.error?.message || 'Failed to generate AI itinerary');
+        throw new Error(responseData.error?.message || 'Nie udało się wygenerować planu AI');
       }
 
       // Update trip with AI content
@@ -171,7 +171,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       console.log('[TripDetail] AI generation successful');
     } catch (err: any) {
       console.error('[TripDetail] AI generation error:', err);
-      setAiError(err.message || 'An error occurred while generating AI itinerary');
+      setAiError(err.message || 'Wystąpił błąd podczas generowania planu AI');
     } finally {
       setIsGeneratingAI(false);
     }
@@ -197,7 +197,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
   // No trip found
   if (!trip) {
-    return <ErrorAlert type="error" message="Trip not found" />;
+    return <ErrorAlert type="error" message="Podróż nie znaleziona" />;
   }
 
   const duration = calculateDuration(trip.start_date, trip.end_date);
@@ -229,7 +229,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             </div>
             <span className="text-gray-400">•</span>
             <span>
-              {duration} {duration === 1 ? 'day' : 'days'}
+              {duration} {duration === 1 ? 'dzień' : duration < 5 ? 'dni' : 'dni'}
             </span>
           </div>
         </div>
@@ -253,7 +253,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
-            Edit
+            Edytuj
           </a>
           <button
             onClick={() => setShowDeleteConfirm(true)}
@@ -272,7 +272,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
-            Delete
+            Usuń
           </button>
         </div>
       </div>
@@ -280,7 +280,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {/* Description */}
       {trip.description && (
         <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900">Description</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Opis</h2>
           <p className="mt-2 text-gray-700 whitespace-pre-wrap">{trip.description}</p>
         </div>
       )}
@@ -302,7 +302,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
               />
             </svg>
-            <h2 className="text-lg font-semibold text-purple-900">AI-Generated Itinerary</h2>
+            <h2 className="text-lg font-semibold text-purple-900">Plan podróży wygenerowany przez AI</h2>
           </div>
 
           {/* Summary */}
@@ -315,7 +315,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             {trip.ai_generated_content.days.map((day) => (
               <div key={day.day_number} className="rounded-lg bg-white p-4 shadow-sm">
                 <h3 className="text-md font-semibold text-gray-900">
-                  Day {day.day_number}: {day.title}
+                  Dzień {day.day_number}: {day.title}
                 </h3>
                 <p className="text-sm text-gray-500">{formatDate(day.date)}</p>
                 {day.summary && <p className="mt-2 text-sm text-gray-700">{day.summary}</p>}
@@ -355,28 +355,28 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           {/* Recommendations */}
           {trip.ai_generated_content.recommendations && (
             <div className="mt-6 rounded-lg bg-white p-4">
-              <h3 className="text-md font-semibold text-gray-900 mb-3">Recommendations</h3>
+              <h3 className="text-md font-semibold text-gray-900 mb-3">Rekomendacje</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Transportation:</span>
+                  <span className="text-sm font-medium text-gray-700">Transport:</span>
                   <p className="text-sm text-gray-600">
                     {trip.ai_generated_content.recommendations.transportation}
                   </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Accommodation:</span>
+                  <span className="text-sm font-medium text-gray-700">Zakwaterowanie:</span>
                   <p className="text-sm text-gray-600">
                     {trip.ai_generated_content.recommendations.accommodation}
                   </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Budget:</span>
+                  <span className="text-sm font-medium text-gray-700">Budżet:</span>
                   <p className="text-sm text-gray-600">
                     {trip.ai_generated_content.recommendations.budget}
                   </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Best Time:</span>
+                  <span className="text-sm font-medium text-gray-700">Najlepszy czas:</span>
                   <p className="text-sm text-gray-600">
                     {trip.ai_generated_content.recommendations.best_time}
                   </p>
@@ -391,10 +391,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {!trip.ai_generated_content && trip.status === 'draft' && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
           {aiError && (
-            <ErrorAlert type="error" message={aiError} className="mb-4" />
+            <ErrorAlert type="error" message={aiError} />
           )}
           <p className="text-gray-600">
-            This trip doesn't have an AI-generated itinerary yet.
+            Ta podróż nie ma jeszcze wygenerowanego planu AI.
           </p>
           <button
             onClick={handleGenerateAI}
@@ -423,10 +423,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Generating...
+                Generowanie...
               </>
             ) : (
-              'Generate AI Itinerary'
+              'Generuj plan podróży AI'
             )}
           </button>
         </div>
@@ -457,8 +457,8 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
               />
             </svg>
             <div>
-              <p className="font-medium text-purple-900">Generating AI Itinerary...</p>
-              <p className="text-sm text-purple-700">This may take up to 90 seconds</p>
+              <p className="font-medium text-purple-900">Generowanie planu podróży AI...</p>
+              <p className="text-sm text-purple-700">To może potrwać do 90 sekund</p>
             </div>
           </div>
         </div>
@@ -467,11 +467,11 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {/* Failed status */}
       {trip.status === 'failed' && !trip.ai_generated_content && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-          <ErrorAlert type="error" message="AI generation failed. Please try again." className="mb-4" />
+          <ErrorAlert type="error" message="Generowanie AI nie powiodło się. Spróbuj ponownie." />
           <button
             onClick={handleGenerateAI}
             disabled={isGeneratingAI}
-            className="inline-flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           >
             {isGeneratingAI ? (
               <>
@@ -495,10 +495,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Retrying...
+                Ponowna próba...
               </>
             ) : (
-              'Retry Generation'
+              'Spróbuj ponownie'
             )}
           </button>
         </div>
@@ -508,9 +508,9 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="mx-4 max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">Delete Trip?</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Usunąć podróż?</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to delete "{trip.destination}"? This action cannot be undone.
+              Czy na pewno chcesz usunąć "{trip.destination}"? Tej operacji nie można cofnąć.
             </p>
             <div className="mt-6 flex gap-3">
               <button
@@ -518,14 +518,14 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 disabled={isDeleting}
                 className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Cancel
+                Anuluj
               </button>
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className="flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? 'Usuwanie...' : 'Usuń'}
               </button>
             </div>
           </div>

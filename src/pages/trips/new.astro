@@ -18,21 +18,21 @@ import { TripForm } from '@/components/forms/TripForm';
 // For now, we'll just render the page
 
 const breadcrumbItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Trips', href: '/trips' },
-  { label: 'New Trip' },
+  { label: 'Start', href: '/' },
+  { label: 'Plany', href: '/trips' },
+  { label: 'Nowa podróż' },
 ];
 ---
 
-<Layout title="Create New Trip - Magic Travel App">
+<Layout title="Utwórz nową podróż - Magic Travel App">
   <main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
     {/* Header */}
     <div class="mb-8">
       <Breadcrumb items={breadcrumbItems} />
-      <h1 class="text-3xl font-bold text-gray-900">Create New Trip</h1>
+      <h1 class="text-3xl font-bold text-gray-900">Utwórz nową podróż</h1>
       <p class="mt-2 text-sm text-gray-600">
-        Plan your next adventure. Fill in the details below to create your trip, and optionally
-        generate an AI-powered itinerary.
+        Zaplanuj swoją następną przygodę. Wypełnij szczegóły poniżej, aby utworzyć podróż i opcjonalnie
+        wygenerować plan AI.
       </p>
     </div>
 
@@ -61,21 +61,21 @@ const breadcrumbItems = [
           </svg>
         </div>
         <div class="ml-3 flex-1">
-          <h3 class="text-sm font-medium text-blue-800">Tips for creating your trip</h3>
+          <h3 class="text-sm font-medium text-blue-800">Wskazówki dotyczące tworzenia podróży</h3>
           <div class="mt-2 text-sm text-blue-700">
             <ul class="list-disc space-y-1 pl-5">
               <li>
-                Be specific about your destination (e.g., "Paris, France" instead of just "Paris")
+                Bądź konkretny co do miejsca docelowego (np. "Paryż, Francja" zamiast tylko "Paryż")
               </li>
               <li>
-                Include details in the description about your travel style, budget, or special
-                interests
+                Uwzględnij w opisie szczegóły dotyczące stylu podróży, budżetu lub szczególnych
+                zainteresowań
               </li>
               <li>
-                Enable AI generation to get a detailed day-by-day itinerary with activities and
-                recommendations
+                Włącz generowanie AI, aby otrzymać szczegółowy plan dzień po dniu z aktywnościami i
+                rekomendacjami
               </li>
-              <li>Your draft is automatically saved as you type</li>
+              <li>Twój szkic jest automatycznie zapisywany podczas pisania</li>
             </ul>
           </div>
         </div>

@@ -80,7 +80,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
             htmlFor="start-date"
             className="block text-sm font-medium text-gray-700"
           >
-            Start Date <span className="text-red-500" aria-label="required">*</span>
+            Data rozpoczęcia <span className="text-red-500" aria-label="wymagane">*</span>
           </label>
           <input
             type="date"
@@ -117,7 +117,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
             htmlFor="end-date"
             className="block text-sm font-medium text-gray-700"
           >
-            End Date <span className="text-red-500" aria-label="required">*</span>
+            Data zakończenia <span className="text-red-500" aria-label="wymagane">*</span>
           </label>
           <input
             type="date"
@@ -167,7 +167,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
             />
           </svg>
           <span>
-            Trip duration: <strong>{duration}</strong> {duration === 1 ? 'day' : 'days'}
+            Czas trwania podróży: <strong>{duration}</strong> {duration === 1 ? 'dzień' : duration < 5 ? 'dni' : 'dni'}
           </span>
         </div>
       )}

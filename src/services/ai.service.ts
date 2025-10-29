@@ -144,7 +144,7 @@ export class AIService {
             {
               role: 'system',
               content:
-                'You are an expert travel planner. Generate detailed, practical, and personalized travel itineraries in JSON format. Always respond with valid JSON matching the specified structure.',
+                'Jesteś ekspertem od planowania podróży. Generujesz szczegółowe, praktyczne i spersonalizowane plany podróży w formacie JSON. Zawsze odpowiadaj poprawnym JSON-em zgodnym z określoną strukturą. WAŻNE: Wszystkie treści generuj w języku polskim.',
             },
             {
               role: 'user',
@@ -220,58 +220,59 @@ export class AIService {
    */
   private buildPrompt(tripContext: TripContext): string {
     return `
-Create a detailed travel itinerary for the following trip:
+Stwórz szczegółowy plan podróży dla następującej wycieczki:
 
-Destination: ${tripContext.destination}
-Start Date: ${tripContext.startDate}
-End Date: ${tripContext.endDate}
-Duration: ${tripContext.durationDays} days
-${tripContext.description ? `Additional Information: ${tripContext.description}` : ''}
+Miejsce docelowe: ${tripContext.destination}
+Data rozpoczęcia: ${tripContext.startDate}
+Data zakończenia: ${tripContext.endDate}
+Czas trwania: ${tripContext.durationDays} dni
+${tripContext.description ? `Dodatkowe informacje: ${tripContext.description}` : ''}
 
-Please provide:
-1. A brief summary of the trip (2-3 sentences)
-2. Day-by-day itinerary with:
-   - Suggested activities with times
-   - Locations and descriptions
-   - Estimated duration and cost
-   - Practical tips
-3. General recommendations for:
-   - Transportation options
-   - Accommodation areas
-   - Budget estimates
-   - Best time to visit considerations
+Proszę o podanie:
+1. Krótkiego podsumowania podróży (2-3 zdania)
+2. Plan dzień po dniu zawierający:
+   - Sugerowane aktywności z godzinami
+   - Lokalizacje i opisy
+   - Szacowany czas trwania i koszt
+   - Praktyczne wskazówki
+3. Ogólne rekomendacje dotyczące:
+   - Opcji transportu
+   - Obszarów zakwaterowania
+   - Szacunków budżetowych
+   - Najlepszego czasu na wizytę
 
-IMPORTANT: Format the response as valid JSON matching this exact structure:
+WAŻNE: Odpowiedź sformatuj jako poprawny JSON zgodny z dokładnie tą strukturą:
 {
-  "summary": "Brief 2-3 sentence trip overview",
+  "summary": "Krótkie podsumowanie podróży w 2-3 zdaniach",
   "days": [
     {
       "day_number": 1,
       "date": "YYYY-MM-DD",
-      "title": "Day title",
+      "title": "Tytuł dnia",
       "activities": [
         {
           "time": "HH:MM",
-          "title": "Activity title",
-          "description": "Detailed activity description",
-          "location": "Specific location name",
+          "title": "Tytuł aktywności",
+          "description": "Szczegółowy opis aktywności",
+          "location": "Nazwa konkretnej lokalizacji",
           "duration_minutes": 120,
           "cost_estimate": "$$",
-          "tips": "Practical tips for this activity"
+          "tips": "Praktyczne wskazówki dla tej aktywności"
         }
       ]
     }
   ],
   "recommendations": {
-    "transportation": "Transportation recommendations",
-    "accommodation": "Accommodation recommendations",
-    "budget": "Budget estimates",
-    "best_time": "Best time to visit information"
+    "transportation": "Rekomendacje dotyczące transportu",
+    "accommodation": "Rekomendacje dotyczące zakwaterowania",
+    "budget": "Szacunki budżetowe",
+    "best_time": "Informacje o najlepszym czasie na wizytę"
   }
 }
 
-Generate ${tripContext.durationDays} days of activities. Each day should have 3-5 activities.
-Cost estimates should use: "$" (budget), "$$" (moderate), "$$$" (expensive), "$$$$" (luxury).
+Wygeneruj ${tripContext.durationDays} dni aktywności. Każdy dzień powinien mieć 3-5 aktywności.
+Szacunki kosztów powinny używać: "$" (budżetowe), "$$" (umiarkowane), "$$$" (drogie), "$$$$" (luksusowe).
+WSZYSTKIE TREŚCI GENERUJ W JĘZYKU POLSKIM.
 `;
   }
 
