@@ -1,7 +1,7 @@
 # VibeTravels
 
 AI-powered travel itinerary planning application that helps users generate personalized trip plans with the power of artificial intelligence.
-
+echo "<!-- Testing GitHub Actions workflow -->" >>
 ## 📋 Table of Contents
 
 - [About The Project](#about-the-project)
