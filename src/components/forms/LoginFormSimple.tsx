@@ -2,33 +2,34 @@
  * LoginFormSimple - Ultra prosta wersja bez shadcn/ui
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 export const LoginFormSimple: React.FC = () => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
+  const [error, setError] = React.useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:54321/auth/v1/token?grant_type=password', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:54321/auth/v1/token?grant_type=password", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+          "Content-Type": "application/json",
+          apikey:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error_description || errorData.msg || 'Login failed');
+        throw new Error(errorData.error_description || errorData.msg || "Login failed");
       }
 
       const data = await response.json();
@@ -40,20 +41,16 @@ export const LoginFormSimple: React.FC = () => {
       });
 
       // Redirect to trips page
-      window.location.href = '/trips/new';
+      window.location.href = "/trips/new";
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || "Login failed");
       setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-red-800">
-          {error}
-        </div>
-      )}
+      {error && <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-red-800">{error}</div>}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -90,7 +87,7 @@ export const LoginFormSimple: React.FC = () => {
         disabled={isLoading || !email || !password}
         className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Signing in...' : 'Sign In'}
+        {isLoading ? "Signing in..." : "Sign In"}
       </button>
     </form>
   );

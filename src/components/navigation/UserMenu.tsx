@@ -9,9 +9,9 @@
  * - Keyboard navigation (Escape to close)
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
-import type { User } from '@supabase/supabase-js';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import type { User } from "@supabase/supabase-js";
 
 // ============================================================================
 // Type Definitions
@@ -31,7 +31,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const menuRef = React.useRef<HTMLDivElement>(null);
 
   // Get user initials for avatar
-  const userInitial = user.email?.[0]?.toUpperCase() || 'U';
+  const userInitial = user.email?.[0]?.toUpperCase() || "U";
 
   // Handle logout
   const handleLogout = React.useCallback(async () => {
@@ -39,12 +39,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     try {
       await supabaseBrowser.auth.signOut();
       // Redirect to login after successful logout
-      window.location.href = '/auth/login';
+      window.location.href = "/auth/login";
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       setIsLoggingOut(false);
       // Show error to user (optional - could use toast notification)
-      alert('Wystąpił błąd podczas wylogowania. Spróbuj ponownie.');
+      alert("Wystąpił błąd podczas wylogowania. Spróbuj ponownie.");
     }
   }, []);
 
@@ -57,28 +57,28 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
   // Close menu on Escape key
   React.useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
 
@@ -93,24 +93,17 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         aria-label="Menu użytkownika"
       >
         <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center border-2 border-blue-200">
-          <span className="text-blue-600 font-semibold text-sm">
-            {userInitial}
-          </span>
+          <span className="text-blue-600 font-semibold text-sm">{userInitial}</span>
         </div>
         {/* Chevron icon */}
         <svg
-          className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
           aria-hidden="true"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
@@ -124,7 +117,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
           {/* User Info Section */}
           <div className="px-4 py-3 border-b border-gray-200">
             <p className="text-xs text-gray-500 mb-1">Zalogowany jako</p>
-            <p className="text-sm font-medium text-gray-900 truncate" title={user.email || ''}>
+            <p className="text-sm font-medium text-gray-900 truncate" title={user.email || ""}>
               {user.email}
             </p>
           </div>
@@ -138,20 +131,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
           >
             {isLoggingOut ? (
               <>
-                <svg
-                  className="w-4 h-4 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -162,13 +143,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
               </>
             ) : (
               <>
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

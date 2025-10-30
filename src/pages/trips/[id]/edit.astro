@@ -10,21 +10,21 @@
  * - Authentication required
  */
 
-import Layout from '@/layouts/Layout.astro';
-import Breadcrumb from '@/components/ui/Breadcrumb.astro';
-import { TripEditForm } from '@/components/trips/TripEditForm';
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
+import { TripEditForm } from "@/components/trips/TripEditForm";
 
 const { id } = Astro.params;
 
 if (!id) {
-  return Astro.redirect('/trips');
+  return Astro.redirect("/trips");
 }
 
 const breadcrumbItems = [
-  { label: 'Start', href: '/' },
-  { label: 'Plany', href: '/trips' },
-  { label: 'Szczegóły', href: `/trips/${id}` },
-  { label: 'Edytuj' },
+  { label: "Start", href: "/" },
+  { label: "Plany", href: "/trips" },
+  { label: "Szczegóły", href: `/trips/${id}` },
+  { label: "Edytuj" },
 ];
 ---
 
@@ -38,9 +38,7 @@ const breadcrumbItems = [
     {/* Header */}
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Edytuj podróż</h1>
-      <p class="mt-2 text-sm text-gray-600">
-        Zaktualizuj szczegóły podróży i regeneruj treść AI z nowymi parametrami.
-      </p>
+      <p class="mt-2 text-sm text-gray-600">Zaktualizuj szczegóły podróży i regeneruj treść AI z nowymi parametrami.</p>
     </div>
 
     {/* Form */}

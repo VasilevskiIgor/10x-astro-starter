@@ -4,10 +4,10 @@
  * Form for creating and editing business rules.
  */
 
-import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import type { Rule, RuleStatus, RulePriority } from './RulePreview';
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import type { Rule, RuleStatus, RulePriority } from "./RulePreview";
 
 export interface RuleEditorProps {
   rule?: Rule;
@@ -15,18 +15,14 @@ export interface RuleEditorProps {
   onCancel: () => void;
 }
 
-export const RuleEditor: React.FC<RuleEditorProps> = ({
-  rule,
-  onSave,
-  onCancel,
-}) => {
-  const [name, setName] = React.useState(rule?.name || '');
-  const [description, setDescription] = React.useState(rule?.description || '');
-  const [status, setStatus] = React.useState<RuleStatus>(rule?.status || 'draft');
-  const [priority, setPriority] = React.useState<RulePriority>(rule?.priority || 'medium');
-  const [expression, setExpression] = React.useState(rule?.condition.expression || '');
-  const [actionType, setActionType] = React.useState(rule?.action.type || 'validate');
-  const [actionMessage, setActionMessage] = React.useState(rule?.action.message || '');
+export const RuleEditor: React.FC<RuleEditorProps> = ({ rule, onSave, onCancel }) => {
+  const [name, setName] = React.useState(rule?.name || "");
+  const [description, setDescription] = React.useState(rule?.description || "");
+  const [status, setStatus] = React.useState<RuleStatus>(rule?.status || "draft");
+  const [priority, setPriority] = React.useState<RulePriority>(rule?.priority || "medium");
+  const [expression, setExpression] = React.useState(rule?.condition.expression || "");
+  const [actionType, setActionType] = React.useState(rule?.action.type || "validate");
+  const [actionMessage, setActionMessage] = React.useState(rule?.action.message || "");
   const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -52,7 +48,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
         },
       });
     } catch (err: any) {
-      setError(err.message || 'Failed to save rule');
+      setError(err.message || "Failed to save rule");
       setIsSaving(false);
     }
   };
@@ -62,9 +58,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
       {error && <ErrorAlert type="error" message={error} />}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Rule Name *
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Rule Name *</label>
         <input
           type="text"
           value={name}
@@ -75,9 +69,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -88,9 +80,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as RuleStatus)}
@@ -103,9 +93,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Priority
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value as RulePriority)}
@@ -120,9 +108,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Condition Expression *
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Condition Expression *</label>
         <textarea
           value={expression}
           onChange={(e) => setExpression(e.target.value)}
@@ -135,9 +121,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Action Type
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Action Type</label>
           <select
             value={actionType}
             onChange={(e) => setActionType(e.target.value)}
@@ -151,9 +135,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Action Message
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Action Message</label>
           <input
             type="text"
             value={actionMessage}
@@ -166,7 +148,7 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
 
       <div className="flex gap-3">
         <Button type="submit" disabled={isSaving}>
-          {isSaving ? 'Saving...' : rule ? 'Update Rule' : 'Create Rule'}
+          {isSaving ? "Saving..." : rule ? "Update Rule" : "Create Rule"}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel

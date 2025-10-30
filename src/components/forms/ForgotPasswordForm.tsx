@@ -10,18 +10,18 @@
  * - Loading state
  */
 
-import * as React from 'react';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { supabaseBrowser } from '@/lib/supabase-browser';
+import * as React from "react";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 // ============================================================================
 // Validation Functions
 // ============================================================================
 
 const validateEmail = (email: string): string | null => {
-  if (!email) return 'Email jest wymagany';
+  if (!email) return "Email jest wymagany";
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return 'Nieprawidłowy format email';
+  if (!emailRegex.test(email)) return "Nieprawidłowy format email";
   return null;
 };
 
@@ -30,7 +30,7 @@ const validateEmail = (email: string): string | null => {
 // ============================================================================
 
 export const ForgotPasswordForm: React.FC = () => {
-  const [email, setEmail] = React.useState('');
+  const [email, setEmail] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
@@ -60,10 +60,10 @@ export const ForgotPasswordForm: React.FC = () => {
 
       if (error) throw error;
 
-      setSuccessMessage('Link do resetowania hasła został wysłany na Twój email');
-      setEmail(''); // Clear the form
+      setSuccessMessage("Link do resetowania hasła został wysłany na Twój email");
+      setEmail(""); // Clear the form
     } catch (error: any) {
-      setError(error.message || 'Wystąpił błąd podczas wysyłania emaila');
+      setError(error.message || "Wystąpił błąd podczas wysyłania emaila");
     } finally {
       setIsLoading(false);
     }
@@ -72,14 +72,10 @@ export const ForgotPasswordForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
       {/* Error Alert */}
-      {error && (
-        <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />
-      )}
+      {error && <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />}
 
       {/* Success Alert */}
-      {successMessage && (
-        <ErrorAlert type="success" message={successMessage} />
-      )}
+      {successMessage && <ErrorAlert type="success" message={successMessage} />}
 
       {/* Email Field */}
       <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
@@ -87,7 +83,10 @@ export const ForgotPasswordForm: React.FC = () => {
           htmlFor="email"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Email <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+          Email{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="email"
@@ -116,20 +115,8 @@ export const ForgotPasswordForm: React.FC = () => {
         >
           {isLoading ? (
             <>
-              <svg
-                className="h-4 w-4 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path
                   className="opacity-75"
                   fill="currentColor"
@@ -139,7 +126,7 @@ export const ForgotPasswordForm: React.FC = () => {
               Wysyłanie...
             </>
           ) : (
-            'Wyślij link resetujący'
+            "Wyślij link resetujący"
           )}
         </button>
       </div>

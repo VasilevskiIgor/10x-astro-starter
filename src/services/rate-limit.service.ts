@@ -7,8 +7,8 @@
  * @see api-plan.md section 4.1 for API response format
  */
 
-import type { Tables } from '../db/database.types';
-import type { RateLimitsDTO } from '../types/dto';
+import type { Tables } from "../db/database.types";
+import type { RateLimitsDTO } from "../types/dto";
 
 /**
  * Rate limit configuration constants
@@ -49,9 +49,7 @@ export const RATE_LIMITS = {
  * //   updated_at: '2025-01-15T12:30:00Z'
  * // }
  */
-export function transformRateLimitsToDTO(
-  dbRow: Tables<'user_rate_limits'>
-): RateLimitsDTO {
+export function transformRateLimitsToDTO(dbRow: Tables<"user_rate_limits">): RateLimitsDTO {
   return {
     user_id: dbRow.user_id,
     hourly: {
@@ -76,7 +74,7 @@ export function transformRateLimitsToDTO(
  * @param dbRow - Rate limit data from user_rate_limits table
  * @returns true if hourly limit is exceeded, false otherwise
  */
-export function isHourlyLimitExceeded(dbRow: Tables<'user_rate_limits'>): boolean {
+export function isHourlyLimitExceeded(dbRow: Tables<"user_rate_limits">): boolean {
   return dbRow.hourly_generations_count >= RATE_LIMITS.HOURLY_LIMIT;
 }
 
@@ -86,7 +84,7 @@ export function isHourlyLimitExceeded(dbRow: Tables<'user_rate_limits'>): boolea
  * @param dbRow - Rate limit data from user_rate_limits table
  * @returns true if daily limit is exceeded, false otherwise
  */
-export function isDailyLimitExceeded(dbRow: Tables<'user_rate_limits'>): boolean {
+export function isDailyLimitExceeded(dbRow: Tables<"user_rate_limits">): boolean {
   return dbRow.daily_generations_count >= RATE_LIMITS.DAILY_LIMIT;
 }
 
@@ -96,7 +94,7 @@ export function isDailyLimitExceeded(dbRow: Tables<'user_rate_limits'>): boolean
  * @param dbRow - Rate limit data from user_rate_limits table
  * @returns true if any limit is exceeded, false otherwise
  */
-export function isRateLimitExceeded(dbRow: Tables<'user_rate_limits'>): boolean {
+export function isRateLimitExceeded(dbRow: Tables<"user_rate_limits">): boolean {
   return isHourlyLimitExceeded(dbRow) || isDailyLimitExceeded(dbRow);
 }
 
@@ -107,13 +105,11 @@ export function isRateLimitExceeded(dbRow: Tables<'user_rate_limits'>): boolean 
  * @param dbRow - Rate limit data from user_rate_limits table
  * @returns ISO 8601 timestamp of next reset
  */
-export function getNextResetTime(dbRow: Tables<'user_rate_limits'>): string {
+export function getNextResetTime(dbRow: Tables<"user_rate_limits">): string {
   const hourlyReset = new Date(dbRow.hourly_limit_reset_at).getTime();
   const dailyReset = new Date(dbRow.daily_limit_reset_at).getTime();
 
-  return hourlyReset < dailyReset
-    ? dbRow.hourly_limit_reset_at
-    : dbRow.daily_limit_reset_at;
+  return hourlyReset < dailyReset ? dbRow.hourly_limit_reset_at : dbRow.daily_limit_reset_at;
 }
 
 /**
@@ -122,14 +118,12 @@ export function getNextResetTime(dbRow: Tables<'user_rate_limits'>): string {
  * @param dbRow - Rate limit data from user_rate_limits table
  * @returns 'hourly' | 'daily' | 'both' | null
  */
-export function getExceededLimitType(
-  dbRow: Tables<'user_rate_limits'>
-): 'hourly' | 'daily' | 'both' | null {
+export function getExceededLimitType(dbRow: Tables<"user_rate_limits">): "hourly" | "daily" | "both" | null {
   const hourlyExceeded = isHourlyLimitExceeded(dbRow);
   const dailyExceeded = isDailyLimitExceeded(dbRow);
 
-  if (hourlyExceeded && dailyExceeded) return 'both';
-  if (hourlyExceeded) return 'hourly';
-  if (dailyExceeded) return 'daily';
+  if (hourlyExceeded && dailyExceeded) return "both";
+  if (hourlyExceeded) return "hourly";
+  if (dailyExceeded) return "daily";
   return null;
 }

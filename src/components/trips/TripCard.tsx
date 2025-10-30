@@ -9,8 +9,8 @@
  * - Visual indicators for AI-generated content
  */
 
-import * as React from 'react';
-import type { TripListItemDTO } from '@/types/dto';
+import * as React from "react";
+import type { TripListItemDTO } from "@/types/dto";
 
 // ============================================================================
 // Type Definitions
@@ -26,10 +26,10 @@ export interface TripCardProps {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('pl-PL', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
+  return date.toLocaleDateString("pl-PL", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 };
 
@@ -44,20 +44,24 @@ const calculateDuration = (startDate: string, endDate: string): number => {
 const getStatusBadge = (status: string) => {
   const badges = {
     draft: {
-      color: 'bg-[var(--colorNeutralBackground4)] text-[var(--colorNeutralForeground2)] border border-[var(--colorNeutralStroke2)]',
-      label: 'Szkic',
+      color:
+        "bg-[var(--colorNeutralBackground4)] text-[var(--colorNeutralForeground2)] border border-[var(--colorNeutralStroke2)]",
+      label: "Szkic",
     },
     generating: {
-      color: 'bg-[var(--colorStatusInfoBackground2)] text-[var(--colorStatusInfoForeground1)] border border-[var(--colorStatusInfoBorder1)]',
-      label: 'Generowanie...',
+      color:
+        "bg-[var(--colorStatusInfoBackground2)] text-[var(--colorStatusInfoForeground1)] border border-[var(--colorStatusInfoBorder1)]",
+      label: "Generowanie...",
     },
     completed: {
-      color: 'bg-[var(--colorStatusSuccessBackground2)] text-[var(--colorStatusSuccessForeground1)] border border-[var(--colorStatusSuccessBorder1)]',
-      label: 'Ukończona',
+      color:
+        "bg-[var(--colorStatusSuccessBackground2)] text-[var(--colorStatusSuccessForeground1)] border border-[var(--colorStatusSuccessBorder1)]",
+      label: "Ukończona",
     },
     failed: {
-      color: 'bg-[var(--colorStatusDangerBackground2)] text-[var(--colorStatusDangerForeground1)] border border-[var(--colorStatusDangerBorder1)]',
-      label: 'Nie powiodło się',
+      color:
+        "bg-[var(--colorStatusDangerBackground2)] text-[var(--colorStatusDangerForeground1)] border border-[var(--colorStatusDangerBorder1)]",
+      label: "Nie powiodło się",
     },
   };
 
@@ -120,7 +124,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
         </span>
         <span className="text-[var(--colorNeutralForeground3)]">•</span>
         <span>
-          {duration} {duration === 1 ? 'dzień' : duration < 5 ? 'dni' : 'dni'}
+          {duration} {duration === 1 ? "dzień" : duration < 5 ? "dni" : "dni"}
         </span>
       </div>
 

@@ -19,7 +19,9 @@ const { items } = Astro.props;
 ---
 
 <nav aria-label="Breadcrumb" class="mb-[var(--spacingVerticalL)]">
-  <ol class="flex items-center gap-[var(--spacingHorizontalXS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground2)]">
+  <ol
+    class="flex items-center gap-[var(--spacingHorizontalXS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground2)]"
+  >
     {
       items.map((item, index) => (
         <li class="flex items-center">
@@ -31,27 +33,19 @@ const { items } = Astro.props;
               stroke="currentColor"
               aria-hidden="true"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width={2}
-                d="M9 5l7 7-7 7"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 5l7 7-7 7" />
             </svg>
           )}
           {item.href ? (
             <a
               href={item.href}
               class="text-[var(--colorBrandForegroundLink)] hover:text-[var(--colorBrandBackgroundHover)] hover:underline focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] rounded-[var(--borderRadiusSmall)] px-[var(--spacingHorizontalXXS)] transition-colors duration-100"
-              aria-current={index === items.length - 1 ? 'page' : undefined}
+              aria-current={index === items.length - 1 ? "page" : undefined}
             >
               {item.label}
             </a>
           ) : (
-            <span
-              class="font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
-              aria-current="page"
-            >
+            <span class="font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]" aria-current="page">
               {item.label}
             </span>
           )}

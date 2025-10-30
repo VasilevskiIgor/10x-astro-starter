@@ -18,21 +18,21 @@
  * Cost estimate levels
  */
 export enum CostLevel {
-  BUDGET = '$',
-  MODERATE = '$$',
-  EXPENSIVE = '$$$',
-  LUXURY = '$$$$',
+  BUDGET = "$",
+  MODERATE = "$$",
+  EXPENSIVE = "$$$",
+  LUXURY = "$$$$",
 }
 
 /**
  * Activity time slot categories
  */
 export enum TimeSlot {
-  EARLY_MORNING = 'early_morning', // 05:00-08:00
-  MORNING = 'morning', // 08:00-12:00
-  AFTERNOON = 'afternoon', // 12:00-17:00
-  EVENING = 'evening', // 17:00-21:00
-  NIGHT = 'night', // 21:00-24:00
+  EARLY_MORNING = "early_morning", // 05:00-08:00
+  MORNING = "morning", // 08:00-12:00
+  AFTERNOON = "afternoon", // 12:00-17:00
+  EVENING = "evening", // 17:00-21:00
+  NIGHT = "night", // 21:00-24:00
 }
 
 /**
@@ -75,12 +75,7 @@ const DEFAULT_RULES_CONFIG: Required<RulesConfig> = {
   maxActivitiesPerDay: 5,
   minActivityDurationMinutes: 15,
   maxActivityDurationMinutes: 480, // 8 hours
-  allowedCostLevels: [
-    CostLevel.BUDGET,
-    CostLevel.MODERATE,
-    CostLevel.EXPENSIVE,
-    CostLevel.LUXURY,
-  ],
+  allowedCostLevels: [CostLevel.BUDGET, CostLevel.MODERATE, CostLevel.EXPENSIVE, CostLevel.LUXURY],
   strictTimeValidation: true,
 };
 
@@ -113,38 +108,32 @@ export class RulesBuilderService {
   generateRulesContent(tripDuration: number, budget?: string): string {
     // Validate input
     if (!this.isValidTripDuration(tripDuration)) {
-      throw new Error(
-        `Invalid trip duration: ${tripDuration}. Must be between 1 and 365 days.`
-      );
+      throw new Error(`Invalid trip duration: ${tripDuration}. Must be between 1 and 365 days.`);
     }
 
     const budgetLevel = this.parseBudgetLevel(budget);
     const rules: string[] = [];
 
     // Header
-    rules.push('=== CONTENT GENERATION RULES ===\n');
+    rules.push("=== CONTENT GENERATION RULES ===\n");
 
     // Core rules
-    rules.push('1. ACTIVITY REQUIREMENTS:');
+    rules.push("1. ACTIVITY REQUIREMENTS:");
     rules.push(
       `   - Each day MUST have ${this.config.minActivitiesPerDay}-${this.config.maxActivitiesPerDay} activities`
     );
     rules.push(
       `   - Activity duration: ${this.config.minActivityDurationMinutes}-${this.config.maxActivityDurationMinutes} minutes`
     );
-    rules.push('   - Activities must follow logical time progression');
-    rules.push('   - No overlapping activity times\n');
+    rules.push("   - Activities must follow logical time progression");
+    rules.push("   - No overlapping activity times\n");
 
     // Cost rules
-    rules.push('2. COST ESTIMATE RULES:');
-    rules.push(
-      `   - Use ONLY these cost levels: ${this.config.allowedCostLevels.join(', ')}`
-    );
+    rules.push("2. COST ESTIMATE RULES:");
+    rules.push(`   - Use ONLY these cost levels: ${this.config.allowedCostLevels.join(", ")}`);
     if (budgetLevel) {
       rules.push(`   - Preferred budget level: ${budgetLevel}`);
-      rules.push(
-        `   - ${this.getBudgetGuidance(budgetLevel)}`
-      );
+      rules.push(`   - ${this.getBudgetGuidance(budgetLevel)}`);
     }
     rules.push('   - "$" = Budget (<$20)');
     rules.push('   - "$$" = Moderate ($20-$50)');
@@ -152,33 +141,27 @@ export class RulesBuilderService {
     rules.push('   - "$$$$" = Luxury (>$100)\n');
 
     // Time slot rules
-    rules.push('3. TIME SLOT RULES:');
-    rules.push('   - Early Morning (05:00-08:00): Exercise, sunrise activities');
-    rules.push('   - Morning (08:00-12:00): Museums, tours, sightseeing');
-    rules.push('   - Afternoon (12:00-17:00): Lunch, outdoor activities');
-    rules.push('   - Evening (17:00-21:00): Dinner, entertainment');
-    rules.push('   - Night (21:00-24:00): Bars, nightlife\n');
+    rules.push("3. TIME SLOT RULES:");
+    rules.push("   - Early Morning (05:00-08:00): Exercise, sunrise activities");
+    rules.push("   - Morning (08:00-12:00): Museums, tours, sightseeing");
+    rules.push("   - Afternoon (12:00-17:00): Lunch, outdoor activities");
+    rules.push("   - Evening (17:00-21:00): Dinner, entertainment");
+    rules.push("   - Night (21:00-24:00): Bars, nightlife\n");
 
     // Trip-specific rules
-    rules.push('4. TRIP-SPECIFIC RULES:');
+    rules.push("4. TRIP-SPECIFIC RULES:");
     rules.push(`   - Total duration: ${tripDuration} days`);
     rules.push(`   - Total activities: ${this.calculateTotalActivities(tripDuration)}`);
-    rules.push(
-      `   - Balance activity types: ${this.getActivityTypeBalance()}`
-    );
+    rules.push(`   - Balance activity types: ${this.getActivityTypeBalance()}`);
 
-    return rules.join('\n');
+    return rules.join("\n");
   }
 
   /**
    * Validates if trip duration is within acceptable range
    */
   isValidTripDuration(duration: number): boolean {
-    return (
-      Number.isInteger(duration) &&
-      duration >= 1 &&
-      duration <= 365
-    );
+    return Number.isInteger(duration) && duration >= 1 && duration <= 365;
   }
 
   /**
@@ -190,20 +173,20 @@ export class RulesBuilderService {
     const normalized = budget.toLowerCase().trim();
 
     switch (normalized) {
-      case 'budget':
-      case 'low':
-      case 'cheap':
+      case "budget":
+      case "low":
+      case "cheap":
         return CostLevel.BUDGET;
-      case 'moderate':
-      case 'medium':
-      case 'mid':
+      case "moderate":
+      case "medium":
+      case "mid":
         return CostLevel.MODERATE;
-      case 'expensive':
-      case 'high':
+      case "expensive":
+      case "high":
         return CostLevel.EXPENSIVE;
-      case 'luxury':
-      case 'premium':
-      case 'deluxe':
+      case "luxury":
+      case "premium":
+      case "deluxe":
         return CostLevel.LUXURY;
       default:
         return null;
@@ -216,13 +199,13 @@ export class RulesBuilderService {
   private getBudgetGuidance(budgetLevel: CostLevel): string {
     switch (budgetLevel) {
       case CostLevel.BUDGET:
-        return 'Focus on free/cheap activities, local food, public transport';
+        return "Focus on free/cheap activities, local food, public transport";
       case CostLevel.MODERATE:
-        return 'Mix of paid attractions and free activities, local restaurants';
+        return "Mix of paid attractions and free activities, local restaurants";
       case CostLevel.EXPENSIVE:
-        return 'Premium attractions, guided tours, nice restaurants';
+        return "Premium attractions, guided tours, nice restaurants";
       case CostLevel.LUXURY:
-        return 'Exclusive experiences, fine dining, private tours';
+        return "Exclusive experiences, fine dining, private tours";
     }
   }
 
@@ -239,7 +222,7 @@ export class RulesBuilderService {
    * Gets activity type balance recommendation
    */
   private getActivityTypeBalance(): string {
-    return '40% cultural, 30% food/dining, 20% outdoor, 10% relaxation';
+    return "40% cultural, 30% food/dining, 20% outdoor, 10% relaxation";
   }
 
   /**
@@ -250,19 +233,15 @@ export class RulesBuilderService {
     const warnings: string[] = [];
 
     if (activityCount < this.config.minActivitiesPerDay) {
-      violations.push(
-        `Too few activities: ${activityCount}. Minimum is ${this.config.minActivitiesPerDay}`
-      );
+      violations.push(`Too few activities: ${activityCount}. Minimum is ${this.config.minActivitiesPerDay}`);
     }
 
     if (activityCount > this.config.maxActivitiesPerDay) {
-      violations.push(
-        `Too many activities: ${activityCount}. Maximum is ${this.config.maxActivitiesPerDay}`
-      );
+      violations.push(`Too many activities: ${activityCount}. Maximum is ${this.config.maxActivitiesPerDay}`);
     }
 
     if (activityCount === this.config.minActivitiesPerDay) {
-      warnings.push('Consider adding more activities for better experience');
+      warnings.push("Consider adding more activities for better experience");
     }
 
     return {
@@ -293,7 +272,7 @@ export class RulesBuilderService {
 
     if (durationMinutes > 240) {
       // 4 hours
-      warnings.push('Consider splitting long activities into multiple parts');
+      warnings.push("Consider splitting long activities into multiple parts");
     }
 
     return {
@@ -310,14 +289,10 @@ export class RulesBuilderService {
     const violations: string[] = [];
     const warnings: string[] = [];
 
-    const validCostLevels = this.config.allowedCostLevels.map((c) =>
-      c.toString()
-    );
+    const validCostLevels = this.config.allowedCostLevels.map((c) => c.toString());
 
     if (!validCostLevels.includes(costEstimate)) {
-      violations.push(
-        `Invalid cost estimate: "${costEstimate}". Must be one of: ${validCostLevels.join(', ')}`
-      );
+      violations.push(`Invalid cost estimate: "${costEstimate}". Must be one of: ${validCostLevels.join(", ")}`);
     }
 
     return {
@@ -361,9 +336,7 @@ export class RulesBuilderService {
   /**
    * Validates time progression (activities don't overlap)
    */
-  validateTimeProgression(
-    activities: Array<{ time: string; duration_minutes: number }>
-  ): RuleValidationResult {
+  validateTimeProgression(activities: { time: string; duration_minutes: number }[]): RuleValidationResult {
     const violations: string[] = [];
     const warnings: string[] = [];
 
@@ -371,10 +344,7 @@ export class RulesBuilderService {
       const current = activities[i];
       const next = activities[i + 1];
 
-      const currentEnd = this.addMinutesToTime(
-        current.time,
-        current.duration_minutes
-      );
+      const currentEnd = this.addMinutesToTime(current.time, current.duration_minutes);
 
       if (!currentEnd) {
         violations.push(`Invalid time format: ${current.time}`);
@@ -409,7 +379,7 @@ export class RulesBuilderService {
     const newHours = Math.floor(totalMinutes / 60) % 24;
     const newMins = totalMinutes % 60;
 
-    return `${String(newHours).padStart(2, '0')}:${String(newMins).padStart(2, '0')}`;
+    return `${String(newHours).padStart(2, "0")}:${String(newMins).padStart(2, "0")}`;
   }
 
   /**

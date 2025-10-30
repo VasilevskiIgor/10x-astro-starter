@@ -10,9 +10,9 @@
  * - Refetch capability
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
-import type { PaginatedTripsResponse, TripListItemDTO, TripsQueryParams } from '@/types/dto';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import type { PaginatedTripsResponse, TripListItemDTO, TripsQueryParams } from "@/types/dto";
 
 // ============================================================================
 // Type Definitions
@@ -58,66 +58,71 @@ export function useTrips(initialParams?: TripsQueryParams): UseTripsReturn {
     limit: initialParams?.limit || 20,
     offset: initialParams?.offset || 0,
     status: initialParams?.status,
-    sort: initialParams?.sort || 'created_at:desc',
+    sort: initialParams?.sort || "created_at:desc",
   });
 
-  const fetchTrips = React.useCallback(async (params?: TripsQueryParams) => {
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+  const fetchTrips = React.useCallback(
+    async (params?: TripsQueryParams) => {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-    try {
-      // Get session to retrieve access token
-      const { data: { session } } = await supabaseBrowser.auth.getSession();
+      try {
+        // Get session to retrieve access token
+        const {
+          data: { session },
+        } = await supabaseBrowser.auth.getSession();
 
-      if (!session) {
-        throw new Error('Not authenticated. Please log in.');
+        if (!session) {
+          throw new Error("Not authenticated. Please log in.");
+        }
+
+        // Build query string
+        const finalParams = { ...queryParams, ...params };
+        const queryString = new URLSearchParams();
+
+        queryString.append("limit", String(finalParams.limit || 20));
+        queryString.append("offset", String(finalParams.offset || 0));
+
+        if (finalParams.status) {
+          queryString.append("status", finalParams.status);
+        }
+
+        if (finalParams.sort) {
+          queryString.append("sort", finalParams.sort);
+        }
+
+        // Fetch trips from API
+        const response = await fetch(`/api/trips?${queryString.toString()}`, {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || "Failed to fetch trips");
+        }
+
+        const data: PaginatedTripsResponse = await response.json();
+
+        setState({
+          trips: data.data,
+          isLoading: false,
+          error: null,
+          pagination: data.pagination,
+        });
+
+        // Update query params
+        setQueryParams(finalParams);
+      } catch (err: any) {
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: err.message || "An error occurred while fetching trips",
+        }));
       }
-
-      // Build query string
-      const finalParams = { ...queryParams, ...params };
-      const queryString = new URLSearchParams();
-
-      queryString.append('limit', String(finalParams.limit || 20));
-      queryString.append('offset', String(finalParams.offset || 0));
-
-      if (finalParams.status) {
-        queryString.append('status', finalParams.status);
-      }
-
-      if (finalParams.sort) {
-        queryString.append('sort', finalParams.sort);
-      }
-
-      // Fetch trips from API
-      const response = await fetch(`/api/trips?${queryString.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to fetch trips');
-      }
-
-      const data: PaginatedTripsResponse = await response.json();
-
-      setState({
-        trips: data.data,
-        isLoading: false,
-        error: null,
-        pagination: data.pagination,
-      });
-
-      // Update query params
-      setQueryParams(finalParams);
-    } catch (err: any) {
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: err.message || 'An error occurred while fetching trips',
-      }));
-    }
-  }, [queryParams]);
+    },
+    [queryParams]
+  );
 
   const refetch = React.useCallback(async () => {
     await fetchTrips(queryParams);

@@ -7,26 +7,23 @@
  * @see api-plan.md for API specifications
  */
 
-import type { APIRoute } from 'astro';
-import type { CreateTripCommand, TripsQueryParams } from '../../types/dto';
-import {
-  validateCreateTripCommand,
-  validateTripsQueryParams,
-} from '../../lib/validation';
-import { errorResponse, successResponse } from '../../lib/api-helpers';
-import { TripService } from '../../services/trip.service';
-import { createSupabaseClientWithAuth } from '../../db/supabase.client';
+import type { APIRoute } from "astro";
+import type { CreateTripCommand, TripsQueryParams } from "../../types/dto";
+import { validateCreateTripCommand, validateTripsQueryParams } from "../../lib/validation";
+import { errorResponse, successResponse } from "../../lib/api-helpers";
+import { TripService } from "../../services/trip.service";
+import { createSupabaseClientWithAuth } from "../../db/supabase.client";
 
 /**
  * Helper function to extract and validate JWT token
  */
 async function authenticateRequest(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { error: errorResponse('UNAUTHORIZED', 'Authentication required') };
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return { error: errorResponse("UNAUTHORIZED", "Authentication required") };
   }
 
-  const token = authHeader.replace('Bearer ', '');
+  const token = authHeader.replace("Bearer ", "");
   const supabase = createSupabaseClientWithAuth(token);
 
   const {
@@ -36,10 +33,7 @@ async function authenticateRequest(request: Request) {
 
   if (authError || !user) {
     return {
-      error: errorResponse(
-        'INVALID_TOKEN',
-        'Invalid or expired authentication token'
-      ),
+      error: errorResponse("INVALID_TOKEN", "Invalid or expired authentication token"),
     };
   }
 
@@ -67,7 +61,7 @@ export const GET: APIRoute = async ({ request }) => {
   try {
     // 1. Authenticate request
     const auth = await authenticateRequest(request);
-    if ('error' in auth) {
+    if ("error" in auth) {
       return auth.error;
     }
     const { supabase, userId } = auth;
@@ -78,16 +72,13 @@ export const GET: APIRoute = async ({ request }) => {
 
     if (!validationResult.success) {
       return errorResponse(
-        'INVALID_PARAMS',
-        'Invalid query parameters',
-        'errors' in validationResult ? validationResult.errors : undefined
+        "INVALID_PARAMS",
+        "Invalid query parameters",
+        "errors" in validationResult ? validationResult.errors : undefined
       );
     }
 
-    const queryParams =
-      'data' in validationResult
-        ? (validationResult.data as TripsQueryParams)
-        : {};
+    const queryParams = "data" in validationResult ? (validationResult.data as TripsQueryParams) : {};
 
     // 3. Get trips from service
     const tripService = new TripService(supabase);
@@ -95,15 +86,16 @@ export const GET: APIRoute = async ({ request }) => {
 
     // 4. Handle service errors
     if (!result.success) {
-      return errorResponse('INTERNAL_ERROR', 'Failed to retrieve trips');
+      return errorResponse("INTERNAL_ERROR", "Failed to retrieve trips");
     }
 
     // 5. Return success response
-    const trips = 'data' in result ? result.data : { data: [], pagination: { total: 0, limit: 20, offset: 0, has_more: false } };
+    const trips =
+      "data" in result ? result.data : { data: [], pagination: { total: 0, limit: 20, offset: 0, has_more: false } };
     return successResponse(trips);
   } catch (error) {
-    console.error('Unexpected error in GET /api/trips:', error);
-    return errorResponse('INTERNAL_ERROR', 'An unexpected error occurred');
+    console.error("Unexpected error in GET /api/trips:", error);
+    return errorResponse("INTERNAL_ERROR", "An unexpected error occurred");
   }
 };
 
@@ -126,17 +118,14 @@ export const GET: APIRoute = async ({ request }) => {
 export const POST: APIRoute = async ({ request }) => {
   try {
     // 1. Verify Content-Type header
-    const contentType = request.headers.get('Content-Type');
-    if (!contentType || !contentType.includes('application/json')) {
-      return errorResponse(
-        'INVALID_PARAMS',
-        'Content-Type must be application/json'
-      );
+    const contentType = request.headers.get("Content-Type");
+    if (!contentType || !contentType.includes("application/json")) {
+      return errorResponse("INVALID_PARAMS", "Content-Type must be application/json");
     }
 
     // 2. Authenticate request
     const auth = await authenticateRequest(request);
-    if ('error' in auth) {
+    if ("error" in auth) {
       return auth.error;
     }
     const { supabase, userId } = auth;
@@ -146,20 +135,21 @@ export const POST: APIRoute = async ({ request }) => {
     try {
       requestBody = await request.json();
     } catch (error) {
-      return errorResponse('INVALID_PARAMS', 'Invalid JSON format');
+      return errorResponse("INVALID_PARAMS", "Invalid JSON format");
     }
 
     // 6. Validate request data
     const validationResult = validateCreateTripCommand(requestBody);
     if (!validationResult.success) {
       return errorResponse(
-        'VALIDATION_ERROR',
-        'Invalid request data',
-        'errors' in validationResult ? validationResult.errors : undefined
+        "VALIDATION_ERROR",
+        "Invalid request data",
+        "errors" in validationResult ? validationResult.errors : undefined
       );
     }
 
-    const command = 'data' in validationResult ? validationResult.data as CreateTripCommand : {} as CreateTripCommand;
+    const command =
+      "data" in validationResult ? (validationResult.data as CreateTripCommand) : ({} as CreateTripCommand);
 
     // 7. Create trip using TripService
     const tripService = new TripService(supabase);
@@ -167,39 +157,33 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 8. Handle service errors
     if (!result.success) {
-      const error = 'error' in result ? result.error : null;
+      const error = "error" in result ? result.error : null;
 
       // Map service error codes to API error codes
-      if (error && error.code === 'TRIP_LIMIT_EXCEEDED') {
-        return errorResponse(
-          'TRIP_LIMIT_EXCEEDED',
-          'You have reached the maximum limit of 100 trips'
-        );
+      if (error && error.code === "TRIP_LIMIT_EXCEEDED") {
+        return errorResponse("TRIP_LIMIT_EXCEEDED", "You have reached the maximum limit of 100 trips");
       }
 
       // Generic database/internal error
-      return errorResponse('INTERNAL_ERROR', 'Failed to create trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to create trip");
     }
 
     // 9. Return success response with 201 Created
-    const trip = 'data' in result ? result.data : null;
+    const trip = "data" in result ? result.data : null;
     if (!trip) {
-      return errorResponse('INTERNAL_ERROR', 'Failed to create trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to create trip");
     }
     return new Response(JSON.stringify(trip), {
       status: 201,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Location: `/api/trips/${trip.id}`,
       },
     });
   } catch (error) {
     // Log unexpected errors
-    console.error('Unexpected error in POST /api/trips:', error);
+    console.error("Unexpected error in POST /api/trips:", error);
 
-    return errorResponse(
-      'INTERNAL_ERROR',
-      'An unexpected error occurred'
-    );
+    return errorResponse("INTERNAL_ERROR", "An unexpected error occurred");
   }
 };

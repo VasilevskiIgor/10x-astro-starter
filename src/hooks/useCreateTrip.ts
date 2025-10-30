@@ -5,13 +5,9 @@
  * Handles authentication, API calls, error handling, and retry logic.
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
-import type {
-  CreateTripCommand,
-  TripResponseDTO,
-  ErrorResponse,
-} from '@/types/dto';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import type { CreateTripCommand, TripResponseDTO, ErrorResponse } from "@/types/dto";
 
 // ============================================================================
 // Type Definitions
@@ -33,7 +29,7 @@ interface UseCreateTripReturn extends UseCreateTripState {
 // Constants
 // ============================================================================
 
-const API_ENDPOINT = '/api/trips';
+const API_ENDPOINT = "/api/trips";
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 1000;
 
@@ -52,13 +48,13 @@ async function getAccessToken(): Promise<string | null> {
     } = await supabaseBrowser.auth.getSession();
 
     if (error) {
-      console.error('Failed to get session:', error);
+      console.error("Failed to get session:", error);
       return null;
     }
 
     return session?.access_token ?? null;
   } catch (error) {
-    console.error('Failed to get access token:', error);
+    console.error("Failed to get access token:", error);
     return null;
   }
 }
@@ -74,7 +70,7 @@ function delay(ms: number): Promise<void> {
  * Checks if error is a network error that should be retried
  */
 function isRetriableError(error: unknown): boolean {
-  if (error instanceof TypeError && error.message.includes('fetch')) {
+  if (error instanceof TypeError && error.message.includes("fetch")) {
     return true; // Network error
   }
   return false;
@@ -86,13 +82,13 @@ function isRetriableError(error: unknown): boolean {
 async function makeCreateTripRequest(
   data: CreateTripCommand,
   accessToken: string,
-  retryCount: number = 0
+  retryCount = 0
 ): Promise<TripResponseDTO> {
   try {
     const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
@@ -108,16 +104,13 @@ async function makeCreateTripRequest(
     const errorData: ErrorResponse = await response.json();
 
     // Special handling for validation errors
-    if (response.status === 400 && errorData.error.code === 'VALIDATION_ERROR') {
-      throw new ValidationError(
-        errorData.error.message,
-        errorData.error.details as Record<string, string>
-      );
+    if (response.status === 400 && errorData.error.code === "VALIDATION_ERROR") {
+      throw new ValidationError(errorData.error.message, errorData.error.details as Record<string, string>);
     }
 
     // Handle other error types
     if (response.status === 401) {
-      throw new AuthenticationError('Authentication failed. Please log in again.');
+      throw new AuthenticationError("Authentication failed. Please log in again.");
     }
 
     if (response.status === 403) {
@@ -129,10 +122,7 @@ async function makeCreateTripRequest(
     }
 
     // Generic error
-    throw new APIError(
-      errorData.error.message || 'Failed to create trip',
-      response.status
-    );
+    throw new APIError(errorData.error.message || "Failed to create trip", response.status);
   } catch (error) {
     // Retry on network errors
     if (isRetriableError(error) && retryCount < MAX_RETRIES) {
@@ -154,7 +144,7 @@ class APIError extends Error {
     public statusCode: number
   ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 }
 
@@ -164,28 +154,28 @@ class ValidationError extends Error {
     public details: Record<string, string>
   ) {
     super(message);
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
   }
 }
 
 class AuthenticationError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'AuthenticationError';
+    this.name = "AuthenticationError";
   }
 }
 
 class AuthorizationError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'AuthorizationError';
+    this.name = "AuthorizationError";
   }
 }
 
 class RateLimitError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'RateLimitError';
+    this.name = "RateLimitError";
   }
 }
 
@@ -201,128 +191,123 @@ export function useCreateTrip(): UseCreateTripReturn {
     trip: null,
   });
 
-  const createTrip = React.useCallback(
-    async (data: CreateTripCommand): Promise<TripResponseDTO | null> => {
-      console.log('[useCreateTrip] Starting createTrip with data:', data);
+  const createTrip = React.useCallback(async (data: CreateTripCommand): Promise<TripResponseDTO | null> => {
+    console.log("[useCreateTrip] Starting createTrip with data:", data);
 
-      // Reset state
+    // Reset state
+    setState({
+      isLoading: true,
+      error: null,
+      validationErrors: null,
+      trip: null,
+    });
+
+    try {
+      // Get access token
+      console.log("[useCreateTrip] Getting access token...");
+      const accessToken = await getAccessToken();
+      console.log("[useCreateTrip] Access token retrieved:", accessToken ? "YES" : "NO");
+
+      if (!accessToken) {
+        throw new AuthenticationError("You must be logged in to create a trip");
+      }
+
+      // Make API request
+      console.log("[useCreateTrip] Making API request...");
+      const trip = await makeCreateTripRequest(data, accessToken);
+      console.log("[useCreateTrip] API request successful:", trip);
+
+      // Update state with success
       setState({
-        isLoading: true,
+        isLoading: false,
         error: null,
         validationErrors: null,
-        trip: null,
+        trip,
       });
 
-      try {
-        // Get access token
-        console.log('[useCreateTrip] Getting access token...');
-        const accessToken = await getAccessToken();
-        console.log('[useCreateTrip] Access token retrieved:', accessToken ? 'YES' : 'NO');
+      return trip;
+    } catch (error) {
+      console.log("[useCreateTrip] Error caught:", error);
 
-        if (!accessToken) {
-          throw new AuthenticationError(
-            'You must be logged in to create a trip'
-          );
-        }
-
-        // Make API request
-        console.log('[useCreateTrip] Making API request...');
-        const trip = await makeCreateTripRequest(data, accessToken);
-        console.log('[useCreateTrip] API request successful:', trip);
-
-        // Update state with success
+      // Handle validation errors
+      if (error instanceof ValidationError) {
+        console.log("[useCreateTrip] Validation error:", error.details);
         setState({
           isLoading: false,
-          error: null,
-          validationErrors: null,
-          trip,
+          error: error.message,
+          validationErrors: error.details,
+          trip: null,
         });
+        return null;
+      }
 
-        return trip;
-      } catch (error) {
-        console.log('[useCreateTrip] Error caught:', error);
-
-        // Handle validation errors
-        if (error instanceof ValidationError) {
-          console.log('[useCreateTrip] Validation error:', error.details);
-          setState({
-            isLoading: false,
-            error: error.message,
-            validationErrors: error.details,
-            trip: null,
-          });
-          return null;
-        }
-
-        // Handle authentication errors
-        if (error instanceof AuthenticationError) {
-          console.log('[useCreateTrip] Authentication error');
-          setState({
-            isLoading: false,
-            error: error.message,
-            validationErrors: null,
-            trip: null,
-          });
-          return null;
-        }
-
-        // Handle authorization errors
-        if (error instanceof AuthorizationError) {
-          setState({
-            isLoading: false,
-            error: error.message,
-            validationErrors: null,
-            trip: null,
-          });
-          return null;
-        }
-
-        // Handle rate limit errors
-        if (error instanceof RateLimitError) {
-          setState({
-            isLoading: false,
-            error: error.message,
-            validationErrors: null,
-            trip: null,
-          });
-          return null;
-        }
-
-        // Handle API errors
-        if (error instanceof APIError) {
-          setState({
-            isLoading: false,
-            error: error.message,
-            validationErrors: null,
-            trip: null,
-          });
-          return null;
-        }
-
-        // Handle network errors
-        if (isRetriableError(error)) {
-          setState({
-            isLoading: false,
-            error: 'Network error. Please check your connection and try again.',
-            validationErrors: null,
-            trip: null,
-          });
-          return null;
-        }
-
-        // Handle unknown errors
-        console.error('Unexpected error creating trip:', error);
+      // Handle authentication errors
+      if (error instanceof AuthenticationError) {
+        console.log("[useCreateTrip] Authentication error");
         setState({
           isLoading: false,
-          error: 'An unexpected error occurred. Please try again.',
+          error: error.message,
           validationErrors: null,
           trip: null,
         });
         return null;
       }
-    },
-    []
-  );
+
+      // Handle authorization errors
+      if (error instanceof AuthorizationError) {
+        setState({
+          isLoading: false,
+          error: error.message,
+          validationErrors: null,
+          trip: null,
+        });
+        return null;
+      }
+
+      // Handle rate limit errors
+      if (error instanceof RateLimitError) {
+        setState({
+          isLoading: false,
+          error: error.message,
+          validationErrors: null,
+          trip: null,
+        });
+        return null;
+      }
+
+      // Handle API errors
+      if (error instanceof APIError) {
+        setState({
+          isLoading: false,
+          error: error.message,
+          validationErrors: null,
+          trip: null,
+        });
+        return null;
+      }
+
+      // Handle network errors
+      if (isRetriableError(error)) {
+        setState({
+          isLoading: false,
+          error: "Network error. Please check your connection and try again.",
+          validationErrors: null,
+          trip: null,
+        });
+        return null;
+      }
+
+      // Handle unknown errors
+      console.error("Unexpected error creating trip:", error);
+      setState({
+        isLoading: false,
+        error: "An unexpected error occurred. Please try again.",
+        validationErrors: null,
+        trip: null,
+      });
+      return null;
+    }
+  }, []);
 
   const reset = React.useCallback(() => {
     setState({

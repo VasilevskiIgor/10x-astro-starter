@@ -1,12 +1,12 @@
-import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
+import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
 
 // Load environment variables from .env.test
-dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
+dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
 
   // Run tests in files in parallel
   fullyParallel: true,
@@ -21,35 +21,35 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   // Reporter to use
-  reporter: 'html',
+  reporter: "html",
 
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: 'http://localhost:3000',
+    baseURL: "http://localhost:3000",
 
     // Collect trace when retrying the failed test
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
 
     // Screenshot on failure
-    screenshot: 'only-on-failure',
+    screenshot: "only-on-failure",
   },
 
   // Configure projects for major browsers
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
     },
 
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
     },
 
     // Test against mobile viewports
@@ -65,8 +65,8 @@ export default defineConfig({
 
   // Run your local dev server before starting the tests
   webServer: {
-    command: 'npm run dev:e2e',
-    url: 'http://localhost:3000',
+    command: "npm run dev:e2e",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes timeout for server startup
   },

@@ -10,21 +10,17 @@
  * - Authentication required
  */
 
-import Layout from '@/layouts/Layout.astro';
-import Breadcrumb from '@/components/ui/Breadcrumb.astro';
-import { TripDetail } from '@/components/trips/TripDetail';
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
+import { TripDetail } from "@/components/trips/TripDetail";
 
 const { id } = Astro.params;
 
 if (!id) {
-  return Astro.redirect('/trips');
+  return Astro.redirect("/trips");
 }
 
-const breadcrumbItems = [
-  { label: 'Start', href: '/' },
-  { label: 'Plany', href: '/trips' },
-  { label: 'Szczegóły' },
-];
+const breadcrumbItems = [{ label: "Start", href: "/" }, { label: "Plany", href: "/trips" }, { label: "Szczegóły" }];
 ---
 
 <Layout title="Szczegóły podróży - Magic Travel App">

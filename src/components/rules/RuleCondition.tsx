@@ -4,7 +4,7 @@
  * Displays rule condition with syntax highlighting and parameter preview.
  */
 
-import * as React from 'react';
+import * as React from "react";
 
 export interface RuleConditionData {
   expression: string;
@@ -20,9 +20,7 @@ export const RuleCondition: React.FC<RuleConditionProps> = ({ condition }) => {
     <div className="space-y-2">
       {/* Expression */}
       <div className="rounded bg-white p-3 font-mono text-sm border border-blue-300">
-        <pre className="text-blue-900 whitespace-pre-wrap break-words">
-          {condition.expression}
-        </pre>
+        <pre className="text-blue-900 whitespace-pre-wrap break-words">{condition.expression}</pre>
       </div>
 
       {/* Parameters */}
@@ -34,7 +32,7 @@ export const RuleCondition: React.FC<RuleConditionProps> = ({ condition }) => {
               <div key={key} className="flex items-center gap-2 text-xs">
                 <span className="font-medium text-blue-700">{key}:</span>
                 <span className="text-blue-900 font-mono">
-                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                  {typeof value === "object" ? JSON.stringify(value) : String(value)}
                 </span>
               </div>
             ))}

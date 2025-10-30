@@ -4,10 +4,10 @@
  * Displays rule action configuration and message.
  */
 
-import * as React from 'react';
+import * as React from "react";
 
 export interface RuleActionData {
-  type: 'validate' | 'transform' | 'notify' | 'reject';
+  type: "validate" | "transform" | "notify" | "reject";
   config: Record<string, any>;
   message?: string;
 }
@@ -18,22 +18,22 @@ export interface RuleActionProps {
 
 const getActionIcon = (type: string) => {
   const icons = {
-    validate: '✓',
-    transform: '↻',
-    notify: '🔔',
-    reject: '✕',
+    validate: "✓",
+    transform: "↻",
+    notify: "🔔",
+    reject: "✕",
   };
-  return icons[type as keyof typeof icons] || '•';
+  return icons[type as keyof typeof icons] || "•";
 };
 
 const getActionColor = (type: string) => {
   const colors = {
-    validate: 'text-green-700',
-    transform: 'text-blue-700',
-    notify: 'text-yellow-700',
-    reject: 'text-red-700',
+    validate: "text-green-700",
+    transform: "text-blue-700",
+    notify: "text-yellow-700",
+    reject: "text-red-700",
   };
-  return colors[type as keyof typeof colors] || 'text-gray-700';
+  return colors[type as keyof typeof colors] || "text-gray-700";
 };
 
 export const RuleAction: React.FC<RuleActionProps> = ({ action }) => {
@@ -41,12 +41,8 @@ export const RuleAction: React.FC<RuleActionProps> = ({ action }) => {
     <div className="space-y-2">
       {/* Action Type */}
       <div className="flex items-center gap-2">
-        <span className={`text-lg ${getActionColor(action.type)}`}>
-          {getActionIcon(action.type)}
-        </span>
-        <span className="text-sm font-semibold text-purple-900 capitalize">
-          {action.type}
-        </span>
+        <span className={`text-lg ${getActionColor(action.type)}`}>{getActionIcon(action.type)}</span>
+        <span className="text-sm font-semibold text-purple-900 capitalize">{action.type}</span>
       </div>
 
       {/* Message */}
@@ -65,7 +61,7 @@ export const RuleAction: React.FC<RuleActionProps> = ({ action }) => {
               <div key={key} className="flex items-center gap-2 text-xs">
                 <span className="font-medium text-purple-700">{key}:</span>
                 <span className="text-purple-900 font-mono">
-                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                  {typeof value === "object" ? JSON.stringify(value) : String(value)}
                 </span>
               </div>
             ))}

@@ -8,7 +8,7 @@
  * @see api-plan.md for API response standards
  */
 
-import type { ErrorResponse, ErrorCode } from '../types/dto';
+import type { ErrorResponse, ErrorCode } from "../types/dto";
 
 /**
  * Creates a standardized error response
@@ -24,16 +24,12 @@ import type { ErrorResponse, ErrorCode } from '../types/dto';
  *   { status: 404, headers: { 'Content-Type': 'application/json' } }
  * );
  */
-export function createErrorResponse(
-  code: ErrorCode,
-  message: string,
-  details?: unknown
-): ErrorResponse {
+export function createErrorResponse(code: ErrorCode, message: string, details?: unknown): ErrorResponse {
   return {
     error: {
       code,
       message,
-      ...(details && { details: details as ErrorResponse['error']['details'] }),
+      ...(details && { details: details as ErrorResponse["error"]["details"] }),
     },
   };
 }
@@ -79,19 +75,14 @@ export function getStatusForErrorCode(code: ErrorCode): number {
  * return errorResponse('UNAUTHORIZED', 'Authentication required');
  * return errorResponse('GENERATION_IN_PROGRESS', 'Already generating', {}, 409);
  */
-export function errorResponse(
-  code: ErrorCode,
-  message: string,
-  details?: unknown,
-  statusOverride?: number
-): Response {
+export function errorResponse(code: ErrorCode, message: string, details?: unknown, statusOverride?: number): Response {
   const status = statusOverride ?? getStatusForErrorCode(code);
   const body = createErrorResponse(code, message, details);
 
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 }
@@ -110,7 +101,7 @@ export function successResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 }
@@ -178,11 +169,9 @@ export async function parseRequestBody(request: Request): Promise<unknown | Resp
     const body = await request.json();
     return body;
   } catch (error) {
-    return errorResponse(
-      'VALIDATION_ERROR',
-      'Invalid JSON in request body',
-      { details: 'Request body must be valid JSON' }
-    );
+    return errorResponse("VALIDATION_ERROR", "Invalid JSON in request body", {
+      details: "Request body must be valid JSON",
+    });
   }
 }
 
@@ -190,10 +179,10 @@ export async function parseRequestBody(request: Request): Promise<unknown | Resp
  * CORS headers for API responses
  */
 export const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*', // Configure for your domain in production
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Authorization, Content-Type',
-  'Access-Control-Allow-Credentials': 'true',
+  "Access-Control-Allow-Origin": "*", // Configure for your domain in production
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  "Access-Control-Allow-Credentials": "true",
 };
 
 /**

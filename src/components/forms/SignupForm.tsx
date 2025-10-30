@@ -11,9 +11,9 @@
  * - Auto-login and redirect after successful signup
  */
 
-import * as React from 'react';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { supabaseBrowser } from '@/lib/supabase-browser';
+import * as React from "react";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 // ============================================================================
 // Type Definitions
@@ -34,20 +34,20 @@ interface SignupFormData {
 // ============================================================================
 
 const validateEmail = (email: string): string | null => {
-  if (!email) return 'Email jest wymagany';
+  if (!email) return "Email jest wymagany";
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return 'Nieprawidłowy format email';
+  if (!emailRegex.test(email)) return "Nieprawidłowy format email";
   return null;
 };
 
 const validatePassword = (password: string): string | null => {
-  if (!password) return 'Hasło jest wymagane';
-  if (password.length < 8) return 'Hasło musi mieć co najmniej 8 znaków';
+  if (!password) return "Hasło jest wymagane";
+  if (password.length < 8) return "Hasło musi mieć co najmniej 8 znaków";
   return null;
 };
 
 const validatePasswordMatch = (password: string, confirm: string): string | null => {
-  if (password !== confirm) return 'Hasła nie pasują do siebie';
+  if (password !== confirm) return "Hasła nie pasują do siebie";
   return null;
 };
 
@@ -55,13 +55,11 @@ const validatePasswordMatch = (password: string, confirm: string): string | null
 // Component
 // ============================================================================
 
-export const SignupForm: React.FC<SignupFormProps> = ({
-  redirectTo = '/trips'
-}) => {
+export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" }) => {
   const [formData, setFormData] = React.useState<SignupFormData>({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -96,7 +94,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       // MVP: Email confirmation is DISABLED in Supabase
       // User is automatically logged in after signup
       if (data.session) {
-        setSuccessMessage('Konto utworzone! Przekierowujemy...');
+        setSuccessMessage("Konto utworzone! Przekierowujemy...");
         // Small delay for UX (show success message)
         setTimeout(() => {
           window.location.href = redirectTo;
@@ -104,18 +102,18 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       } else {
         // This should not happen with email confirmation disabled
         // But handle gracefully just in case
-        setError('Konto utworzone, ale nie udało się zalogować automatycznie. Spróbuj zalogować się ręcznie.');
+        setError("Konto utworzone, ale nie udało się zalogować automatycznie. Spróbuj zalogować się ręcznie.");
       }
     } catch (error: any) {
       // Handle Supabase errors
-      if (error.message?.includes('already registered')) {
-        setError('Ten adres email jest już zarejestrowany');
-      } else if (error.message?.includes('User already registered')) {
-        setError('Ten adres email jest już zarejestrowany');
-      } else if (error.message?.includes('password')) {
-        setError('Hasło jest zbyt słabe. Użyj silniejszego hasła.');
+      if (error.message?.includes("already registered")) {
+        setError("Ten adres email jest już zarejestrowany");
+      } else if (error.message?.includes("User already registered")) {
+        setError("Ten adres email jest już zarejestrowany");
+      } else if (error.message?.includes("password")) {
+        setError("Hasło jest zbyt słabe. Użyj silniejszego hasła.");
       } else {
-        setError(error.message || 'Wystąpił błąd podczas rejestracji');
+        setError(error.message || "Wystąpił błąd podczas rejestracji");
       }
       setIsLoading(false);
     }
@@ -132,14 +130,10 @@ export const SignupForm: React.FC<SignupFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
       {/* Error Alert */}
-      {error && (
-        <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />
-      )}
+      {error && <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />}
 
       {/* Success Alert */}
-      {successMessage && (
-        <ErrorAlert type="success" message={successMessage} />
-      )}
+      {successMessage && <ErrorAlert type="success" message={successMessage} />}
 
       {/* Email Field */}
       <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
@@ -147,14 +141,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           htmlFor="email"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Email <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+          Email{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="email"
           id="email"
           name="email"
           value={formData.email}
-          onChange={(e) => handleFieldChange('email', e.target.value)}
+          onChange={(e) => handleFieldChange("email", e.target.value)}
           disabled={isLoading}
           required
           autoComplete="email"
@@ -170,14 +167,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           htmlFor="password"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+          Hasło{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="password"
           id="password"
           name="password"
           value={formData.password}
-          onChange={(e) => handleFieldChange('password', e.target.value)}
+          onChange={(e) => handleFieldChange("password", e.target.value)}
           disabled={isLoading}
           required
           autoComplete="new-password"
@@ -193,14 +193,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           htmlFor="confirmPassword"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Potwierdź hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+          Potwierdź hasło{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="password"
           id="confirmPassword"
           name="confirmPassword"
           value={formData.confirmPassword}
-          onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
+          onChange={(e) => handleFieldChange("confirmPassword", e.target.value)}
           disabled={isLoading}
           required
           autoComplete="new-password"
@@ -218,20 +221,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         >
           {isLoading ? (
             <>
-              <svg
-                className="h-4 w-4 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path
                   className="opacity-75"
                   fill="currentColor"
@@ -241,7 +232,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
               Rejestracja...
             </>
           ) : (
-            'Utwórz konto'
+            "Utwórz konto"
           )}
         </button>
       </div>
@@ -249,7 +240,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       {/* Help Text */}
       <div className="text-center text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground2)]">
         <p>
-          Masz już konto?{' '}
+          Masz już konto?{" "}
           <a
             href="/auth/login"
             className="text-[var(--colorBrandForegroundLink)] hover:text-[var(--colorBrandBackgroundHover)] hover:underline font-[var(--fontWeightSemibold)] transition-colors duration-100"

@@ -9,19 +9,19 @@
  * - Error handling
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
-import type { TripDetailDTO, UpdateTripCommand } from '@/types/dto';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { Button } from '@/components/ui/button';
-import { DateRangePicker } from '@/components/forms/DateRangePicker';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import type { TripDetailDTO, UpdateTripCommand } from "@/types/dto";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { Button } from "@/components/ui/button";
+import { DateRangePicker } from "@/components/forms/DateRangePicker";
 import {
   validateTripForm,
   validateField,
   hasValidationErrors,
   type TripFormData,
   type TripFormValidation,
-} from '@/lib/validation-client';
+} from "@/lib/validation-client";
 
 // ============================================================================
 // Type Definitions
@@ -37,10 +37,10 @@ export interface TripEditFormProps {
 
 export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
   const [formData, setFormData] = React.useState<TripFormData>({
-    destination: '',
-    startDate: '',
-    endDate: '',
-    description: '',
+    destination: "",
+    startDate: "",
+    endDate: "",
+    description: "",
     generateAI: false,
   });
 
@@ -58,21 +58,23 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
       setError(null);
 
       try {
-        const { data: { session } } = await supabaseBrowser.auth.getSession();
+        const {
+          data: { session },
+        } = await supabaseBrowser.auth.getSession();
 
         if (!session) {
-          throw new Error('Nie jesteś zalogowany. Zaloguj się.');
+          throw new Error("Nie jesteś zalogowany. Zaloguj się.");
         }
 
         const response = await fetch(`/api/trips/${tripId}`, {
           headers: {
-            'Authorization': `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error?.message || 'Nie udało się pobrać podróży');
+          throw new Error(errorData.error?.message || "Nie udało się pobrać podróży");
         }
 
         const trip: TripDetailDTO = await response.json();
@@ -82,11 +84,11 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
           destination: trip.destination,
           startDate: trip.start_date,
           endDate: trip.end_date,
-          description: trip.description || '',
+          description: trip.description || "",
           generateAI: false, // Not editable
         });
       } catch (err: any) {
-        setError(err.message || 'Wystąpił błąd podczas pobierania podróży');
+        setError(err.message || "Wystąpił błąd podczas pobierania podróży");
       } finally {
         setIsLoadingTrip(false);
       }
@@ -100,7 +102,7 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Real-time validation for touched fields
-    if (touchedFields.has(field) && typeof value === 'string') {
+    if (touchedFields.has(field) && typeof value === "string") {
       const error = validateField(field, value, {
         ...formData,
         [field]: value,
@@ -116,7 +118,7 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
     setTouchedFields((prev) => new Set(prev).add(field));
 
     const value = formData[field];
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const error = validateField(field, value, formData);
       setValidationErrors((prev) => ({
         ...prev,
@@ -128,8 +130,8 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
   const handleDateChange = (startDate: string, endDate: string) => {
     setFormData((prev) => ({ ...prev, startDate, endDate }));
 
-    if (touchedFields.has('startDate')) {
-      const startDateError = validateField('startDate', startDate, {
+    if (touchedFields.has("startDate")) {
+      const startDateError = validateField("startDate", startDate, {
         ...formData,
         startDate,
         endDate,
@@ -140,8 +142,8 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
       }));
     }
 
-    if (touchedFields.has('endDate')) {
-      const endDateError = validateField('endDate', endDate, {
+    if (touchedFields.has("endDate")) {
+      const endDateError = validateField("endDate", endDate, {
         ...formData,
         startDate,
         endDate,
@@ -156,19 +158,19 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
   // Handle regenerate AI content
   const handleRegenerateAI = async () => {
     // Mark all fields as touched
-    setTouchedFields(new Set(['destination', 'startDate', 'endDate', 'description']));
+    setTouchedFields(new Set(["destination", "startDate", "endDate", "description"]));
 
     // Validate entire form
     const errors = validateTripForm(formData);
     setValidationErrors(errors);
 
     if (hasValidationErrors(errors)) {
-      setError('Popraw błędy walidacji przed regenerowaniem treści AI.');
+      setError("Popraw błędy walidacji przed regenerowaniem treści AI.");
       return;
     }
 
     const confirmRegenerate = window.confirm(
-      'Czy na pewno chcesz regenerować treść AI? To zastąpi istniejący plan podróży AI nową treścią opartą na zaktualizowanych szczegółach podróży.'
+      "Czy na pewno chcesz regenerować treść AI? To zastąpi istniejący plan podróży AI nową treścią opartą na zaktualizowanych szczegółach podróży."
     );
 
     if (!confirmRegenerate) {
@@ -179,18 +181,20 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
     setError(null);
 
     try {
-      const { data: { session } } = await supabaseBrowser.auth.getSession();
+      const {
+        data: { session },
+      } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error('Nie jesteś zalogowany. Zaloguj się.');
+        throw new Error("Nie jesteś zalogowany. Zaloguj się.");
       }
 
       // Call the regenerate API endpoint
       const response = await fetch(`/api/trips/${tripId}/regenerate`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           destination: formData.destination.trim(),
@@ -202,13 +206,13 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Nie udało się regenerować treści AI');
+        throw new Error(errorData.error?.message || "Nie udało się regenerować treści AI");
       }
 
       // Redirect to trip detail page to see the updated content
       window.location.href = `/trips/${tripId}`;
     } catch (err: any) {
-      setError(err.message || 'Wystąpił błąd podczas regenerowania treści AI');
+      setError(err.message || "Wystąpił błąd podczas regenerowania treści AI");
       setIsRegenerating(false);
     }
   };
@@ -218,7 +222,7 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
     e.preventDefault();
 
     // Mark all fields as touched
-    setTouchedFields(new Set(['destination', 'startDate', 'endDate', 'description']));
+    setTouchedFields(new Set(["destination", "startDate", "endDate", "description"]));
 
     // Validate entire form
     const errors = validateTripForm(formData);
@@ -232,10 +236,12 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
     setError(null);
 
     try {
-      const { data: { session } } = await supabaseBrowser.auth.getSession();
+      const {
+        data: { session },
+      } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error('Nie jesteś zalogowany. Zaloguj się.');
+        throw new Error("Nie jesteś zalogowany. Zaloguj się.");
       }
 
       // Prepare update payload
@@ -247,23 +253,23 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
       };
 
       const response = await fetch(`/api/trips/${tripId}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Nie udało się zaktualizować podróży');
+        throw new Error(errorData.error?.message || "Nie udało się zaktualizować podróży");
       }
 
       // Redirect to trip detail page
       window.location.href = `/trips/${tripId}`;
     } catch (err: any) {
-      setError(err.message || 'Wystąpił błąd podczas aktualizacji podróży');
+      setError(err.message || "Wystąpił błąd podczas aktualizacji podróży");
       setIsSaving(false);
     }
   };
@@ -287,26 +293,27 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
       {/* Destination Field */}
       <div>
         <label htmlFor="destination" className="block text-sm font-medium text-gray-700">
-          Miejsce docelowe <span className="text-red-500" aria-label="wymagane">*</span>
+          Miejsce docelowe{" "}
+          <span className="text-red-500" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="text"
           id="destination"
           name="destination"
           value={formData.destination}
-          onChange={(e) => handleFieldChange('destination', e.target.value)}
-          onBlur={() => handleFieldBlur('destination')}
+          onChange={(e) => handleFieldChange("destination", e.target.value)}
+          onBlur={() => handleFieldBlur("destination")}
           disabled={isSaving || isRegenerating}
           placeholder="np. Paryż, Francja"
           className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
             validationErrors.destination
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-          } ${isSaving || isRegenerating ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          } ${isSaving || isRegenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
-        {validationErrors.destination && (
-          <p className="mt-1 text-sm text-red-600">{validationErrors.destination}</p>
-        )}
+        {validationErrors.destination && <p className="mt-1 text-sm text-red-600">{validationErrors.destination}</p>}
       </div>
 
       {/* Date Range Picker */}
@@ -330,23 +337,21 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
           id="description"
           name="description"
           value={formData.description}
-          onChange={(e) => handleFieldChange('description', e.target.value)}
-          onBlur={() => handleFieldBlur('description')}
+          onChange={(e) => handleFieldChange("description", e.target.value)}
+          onBlur={() => handleFieldBlur("description")}
           disabled={isSaving || isRegenerating}
           placeholder="Opisz swoje preferencje podróży, zainteresowania lub specjalne wymagania..."
           rows={4}
           className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
             validationErrors.description
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-          } ${isSaving || isRegenerating ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          } ${isSaving || isRegenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
         {validationErrors.description ? (
           <p className="mt-1 text-sm text-red-600">{validationErrors.description}</p>
         ) : (
-          <p className="mt-1 text-sm text-gray-500">
-            {formData.description.length}/2000 znaków
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{formData.description.length}/2000 znaków</p>
         )}
       </div>
 
@@ -367,16 +372,36 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
         >
           {isRegenerating ? (
             <>
-              <svg className="mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg
+                className="mr-2 h-4 w-4 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               Regenerowanie treści AI...
             </>
           ) : (
             <>
-              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <svg
+                className="mr-2 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
               Regeneruj treść AI
             </>
@@ -395,7 +420,7 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
           Anuluj
         </Button>
         <Button type="submit" disabled={isSaving || isRegenerating}>
-          {isSaving ? 'Zapisywanie...' : 'Zapisz zmiany'}
+          {isSaving ? "Zapisywanie..." : "Zapisz zmiany"}
         </Button>
       </div>
     </form>

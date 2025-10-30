@@ -16,14 +16,14 @@ export {
   getNextResetTime,
   getExceededLimitType,
   RATE_LIMITS,
-} from './rate-limit.service';
+} from "./rate-limit.service";
 
 // Trip service
-export { TripService } from './trip.service';
-export type { ServiceResult, ServiceError } from './trip.service';
+export { TripService } from "./trip.service";
+export type { ServiceResult, ServiceError } from "./trip.service";
 
 // OpenRouter service (replaces AIService)
-export { OpenRouterService } from './openrouter.service';
+export { OpenRouterService } from "./openrouter.service";
 export type {
   OpenRouterConfig,
   TripContext,
@@ -32,13 +32,8 @@ export type {
   OpenRouterError,
   OpenRouterErrorCode,
   ModelInfo,
-} from './openrouter.service';
+} from "./openrouter.service";
 
 // Legacy AI service (deprecated - use OpenRouterService)
-export { AIService } from './ai.service';
-export type {
-  AIConfig,
-  AIGenerationResult,
-  AIGenerationError,
-  AIServiceResult,
-} from './ai.service';
+export { AIService } from "./ai.service";
+export type { AIConfig, AIGenerationResult, AIGenerationError, AIServiceResult } from "./ai.service";

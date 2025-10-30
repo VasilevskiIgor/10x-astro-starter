@@ -9,13 +9,8 @@
  * @see dto.ts for AIGeneratedContent type definition
  */
 
-import OpenAI from 'openai';
-import type {
-  AIGeneratedContent,
-  DayDetail,
-  ActivityDetail,
-  TripRecommendations,
-} from '../types/dto';
+import OpenAI from "openai";
+import type { AIGeneratedContent, DayDetail, ActivityDetail, TripRecommendations } from "../types/dto";
 
 /**
  * Configuration for AI generation
@@ -55,7 +50,7 @@ export interface AIGenerationResult {
 export interface AIGenerationError {
   success: false;
   error: string;
-  code: 'TIMEOUT' | 'INVALID_RESPONSE' | 'API_ERROR' | 'PARSING_ERROR';
+  code: "TIMEOUT" | "INVALID_RESPONSE" | "API_ERROR" | "PARSING_ERROR";
   details?: unknown;
 }
 
@@ -68,7 +63,7 @@ export type AIServiceResult = AIGenerationResult | AIGenerationError;
  * Default AI configuration
  */
 const DEFAULT_CONFIG: Required<AIConfig> = {
-  model: 'gpt-3.5-turbo',
+  model: "gpt-3.5-turbo",
   temperature: 0.7,
   maxTokens: 3000,
   timeout: 60000, // 60 seconds
@@ -89,10 +84,10 @@ export class AIService {
       // Use OpenRouter (requires OpenRouter API key)
       this.client = new OpenAI({
         apiKey: apiKey,
-        baseURL: 'https://openrouter.ai/api/v1',
+        baseURL: "https://openrouter.ai/api/v1",
         defaultHeaders: {
-          'HTTP-Referer': 'https://vibetravels.com',
-          'X-Title': 'VibeTravels',
+          "HTTP-Referer": "https://vibetravels.com",
+          "X-Title": "VibeTravels",
         },
       });
     } else {
@@ -125,10 +120,7 @@ export class AIService {
    *   durationDays: 7
    * });
    */
-  async generateItinerary(
-    tripContext: TripContext,
-    config?: AIConfig
-  ): Promise<AIServiceResult> {
+  async generateItinerary(tripContext: TripContext, config?: AIConfig): Promise<AIServiceResult> {
     const startTime = Date.now();
     const effectiveConfig = { ...this.config, ...config };
 
@@ -142,28 +134,28 @@ export class AIService {
           model: effectiveConfig.model,
           messages: [
             {
-              role: 'system',
+              role: "system",
               content:
-                'Jesteś ekspertem od planowania podróży. Generujesz szczegółowe, praktyczne i spersonalizowane plany podróży w formacie JSON. Zawsze odpowiadaj poprawnym JSON-em zgodnym z określoną strukturą. WAŻNE: Wszystkie treści generuj w języku polskim.',
+                "Jesteś ekspertem od planowania podróży. Generujesz szczegółowe, praktyczne i spersonalizowane plany podróży w formacie JSON. Zawsze odpowiadaj poprawnym JSON-em zgodnym z określoną strukturą. WAŻNE: Wszystkie treści generuj w języku polskim.",
             },
             {
-              role: 'user',
+              role: "user",
               content: prompt,
             },
           ],
           temperature: effectiveConfig.temperature,
           max_tokens: effectiveConfig.maxTokens,
-          response_format: { type: 'json_object' },
+          response_format: { type: "json_object" },
         }),
         this.createTimeoutPromise(effectiveConfig.timeout),
       ]);
 
       // Check if timed out
-      if (!completion || !('choices' in completion)) {
+      if (!completion || !("choices" in completion)) {
         return {
           success: false,
-          error: 'AI generation request timed out',
-          code: 'TIMEOUT',
+          error: "AI generation request timed out",
+          code: "TIMEOUT",
         };
       }
 
@@ -174,8 +166,8 @@ export class AIService {
       if (!responseText) {
         return {
           success: false,
-          error: 'Empty response from AI service',
-          code: 'INVALID_RESPONSE',
+          error: "Empty response from AI service",
+          code: "INVALID_RESPONSE",
         };
       }
 
@@ -195,21 +187,21 @@ export class AIService {
       };
     } catch (error) {
       // Handle API errors
-      console.error('AI Service error:', error);
+      console.error("AI Service error:", error);
 
       if (error instanceof Error) {
         return {
           success: false,
           error: `AI API error: ${error.message}`,
-          code: 'API_ERROR',
+          code: "API_ERROR",
           details: error,
         };
       }
 
       return {
         success: false,
-        error: 'Unknown error occurred during AI generation',
-        code: 'API_ERROR',
+        error: "Unknown error occurred during AI generation",
+        code: "API_ERROR",
         details: error,
       };
     }
@@ -226,7 +218,7 @@ Miejsce docelowe: ${tripContext.destination}
 Data rozpoczęcia: ${tripContext.startDate}
 Data zakończenia: ${tripContext.endDate}
 Czas trwania: ${tripContext.durationDays} dni
-${tripContext.description ? `Dodatkowe informacje: ${tripContext.description}` : ''}
+${tripContext.description ? `Dodatkowe informacje: ${tripContext.description}` : ""}
 
 Proszę o podanie:
 1. Krótkiego podsumowania podróży (2-3 zdania)
@@ -289,8 +281,8 @@ WSZYSTKIE TREŚCI GENERUJ W JĘZYKU POLSKIM.
       if (!this.isValidAIResponse(parsed)) {
         return {
           success: false,
-          error: 'AI response does not match expected structure',
-          code: 'PARSING_ERROR',
+          error: "AI response does not match expected structure",
+          code: "PARSING_ERROR",
           details: { response: responseText },
         };
       }
@@ -302,8 +294,8 @@ WSZYSTKIE TREŚCI GENERUJ W JĘZYKU POLSKIM.
     } catch (error) {
       return {
         success: false,
-        error: 'Failed to parse AI response as JSON',
-        code: 'PARSING_ERROR',
+        error: "Failed to parse AI response as JSON",
+        code: "PARSING_ERROR",
         details: { response: responseText, error },
       };
     }
@@ -313,12 +305,12 @@ WSZYSTKIE TREŚCI GENERUJ W JĘZYKU POLSKIM.
    * Type guard to validate AI response structure
    */
   private isValidAIResponse(data: unknown): data is AIGeneratedContent {
-    if (typeof data !== 'object' || data === null) return false;
+    if (typeof data !== "object" || data === null) return false;
 
     const obj = data as Record<string, unknown>;
 
     // Check summary
-    if (typeof obj.summary !== 'string') return false;
+    if (typeof obj.summary !== "string") return false;
 
     // Check days array
     if (!Array.isArray(obj.days)) return false;
@@ -339,13 +331,13 @@ WSZYSTKIE TREŚCI GENERUJ W JĘZYKU POLSKIM.
    * Validates a single day structure
    */
   private isValidDayDetail(data: unknown): data is DayDetail {
-    if (typeof data !== 'object' || data === null) return false;
+    if (typeof data !== "object" || data === null) return false;
 
     const day = data as Record<string, unknown>;
 
-    if (typeof day.day_number !== 'number') return false;
-    if (typeof day.date !== 'string') return false;
-    if (typeof day.title !== 'string') return false;
+    if (typeof day.day_number !== "number") return false;
+    if (typeof day.date !== "string") return false;
+    if (typeof day.title !== "string") return false;
     if (!Array.isArray(day.activities)) return false;
 
     // Validate each activity
@@ -360,36 +352,34 @@ WSZYSTKIE TREŚCI GENERUJ W JĘZYKU POLSKIM.
    * Validates a single activity structure
    */
   private isValidActivity(data: unknown): data is ActivityDetail {
-    if (typeof data !== 'object' || data === null) return false;
+    if (typeof data !== "object" || data === null) return false;
 
     const activity = data as Record<string, unknown>;
 
     return (
-      typeof activity.time === 'string' &&
-      typeof activity.title === 'string' &&
-      typeof activity.description === 'string' &&
-      typeof activity.location === 'string' &&
-      typeof activity.duration_minutes === 'number' &&
-      typeof activity.cost_estimate === 'string' &&
-      typeof activity.tips === 'string'
+      typeof activity.time === "string" &&
+      typeof activity.title === "string" &&
+      typeof activity.description === "string" &&
+      typeof activity.location === "string" &&
+      typeof activity.duration_minutes === "number" &&
+      typeof activity.cost_estimate === "string" &&
+      typeof activity.tips === "string"
     );
   }
 
   /**
    * Validates recommendations structure
    */
-  private isValidRecommendations(
-    data: unknown
-  ): data is TripRecommendations {
-    if (typeof data !== 'object' || data === null) return false;
+  private isValidRecommendations(data: unknown): data is TripRecommendations {
+    if (typeof data !== "object" || data === null) return false;
 
     const rec = data as Record<string, unknown>;
 
     return (
-      typeof rec.transportation === 'string' &&
-      typeof rec.accommodation === 'string' &&
-      typeof rec.budget === 'string' &&
-      typeof rec.best_time === 'string'
+      typeof rec.transportation === "string" &&
+      typeof rec.accommodation === "string" &&
+      typeof rec.budget === "string" &&
+      typeof rec.best_time === "string"
     );
   }
 

@@ -5,7 +5,7 @@
  * navigate away or close the browser.
  */
 
-import type { TripFormData } from './validation-client';
+import type { TripFormData } from "./validation-client";
 
 // ============================================================================
 // Type Definitions
@@ -23,7 +23,7 @@ interface LocalStorageTripDraft {
 // Constants
 // ============================================================================
 
-const STORAGE_KEY = 'vibetravels_new_trip_draft';
+const STORAGE_KEY = "vibetravels_new_trip_draft";
 const DRAFT_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 // ============================================================================
@@ -35,7 +35,7 @@ const DRAFT_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
  */
 function isLocalStorageAvailable(): boolean {
   try {
-    const test = '__storage_test__';
+    const test = "__storage_test__";
     localStorage.setItem(test, test);
     localStorage.removeItem(test);
     return true;
@@ -62,7 +62,7 @@ export function isDraftValid(savedAt: string): boolean {
  */
 export function saveTripDraft(data: TripFormData): void {
   if (!isLocalStorageAvailable()) {
-    console.warn('localStorage is not available');
+    console.warn("localStorage is not available");
     return;
   }
 
@@ -77,7 +77,7 @@ export function saveTripDraft(data: TripFormData): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
   } catch (error) {
-    console.error('Failed to save trip draft:', error);
+    console.error("Failed to save trip draft:", error);
   }
 }
 
@@ -112,7 +112,7 @@ export function loadTripDraft(): Partial<TripFormData> | null {
       generateAI: false, // Always default to false
     };
   } catch (error) {
-    console.error('Failed to load trip draft:', error);
+    console.error("Failed to load trip draft:", error);
     clearTripDraft();
     return null;
   }
@@ -129,7 +129,7 @@ export function clearTripDraft(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.error('Failed to clear trip draft:', error);
+    console.error("Failed to clear trip draft:", error);
   }
 }
 
@@ -137,7 +137,7 @@ export function clearTripDraft(): void {
  * Creates a debounced version of saveTripDraft
  * Used to avoid excessive localStorage writes during typing
  */
-export function createDebouncedSave(delayMs: number = 500) {
+export function createDebouncedSave(delayMs = 500) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   return (data: TripFormData) => {

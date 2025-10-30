@@ -10,19 +10,19 @@
  * - Status badges (active/inactive/draft)
  */
 
-import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { RuleEditor } from '@/components/rules/RuleEditor';
-import { RuleCondition } from '@/components/rules/RuleCondition';
-import { RuleAction } from '@/components/rules/RuleAction';
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { RuleEditor } from "@/components/rules/RuleEditor";
+import { RuleCondition } from "@/components/rules/RuleCondition";
+import { RuleAction } from "@/components/rules/RuleAction";
 
 // ============================================================================
 // Type Definitions
 // ============================================================================
 
-export type RuleStatus = 'active' | 'inactive' | 'draft';
-export type RulePriority = 'low' | 'medium' | 'high' | 'critical';
+export type RuleStatus = "active" | "inactive" | "draft";
+export type RulePriority = "low" | "medium" | "high" | "critical";
 
 export interface Rule {
   id: string;
@@ -43,7 +43,7 @@ export interface RuleConditionData {
 }
 
 export interface RuleActionData {
-  type: 'validate' | 'transform' | 'notify' | 'reject';
+  type: "validate" | "transform" | "notify" | "reject";
   config: Record<string, any>;
   message?: string;
 }
@@ -63,30 +63,30 @@ export interface RulePreviewProps {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
 const getPriorityColor = (priority: RulePriority): string => {
   const colors = {
-    low: 'bg-gray-100 text-gray-800 border-gray-300',
-    medium: 'bg-blue-100 text-blue-800 border-blue-300',
-    high: 'bg-orange-100 text-orange-800 border-orange-300',
-    critical: 'bg-red-100 text-red-800 border-red-300',
+    low: "bg-gray-100 text-gray-800 border-gray-300",
+    medium: "bg-blue-100 text-blue-800 border-blue-300",
+    high: "bg-orange-100 text-orange-800 border-orange-300",
+    critical: "bg-red-100 text-red-800 border-red-300",
   };
   return colors[priority];
 };
 
 const getStatusColor = (status: RuleStatus): string => {
   const colors = {
-    active: 'bg-green-100 text-green-800 border-green-300',
-    inactive: 'bg-gray-100 text-gray-800 border-gray-300',
-    draft: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    active: "bg-green-100 text-green-800 border-green-300",
+    inactive: "bg-gray-100 text-gray-800 border-gray-300",
+    draft: "bg-yellow-100 text-yellow-800 border-yellow-300",
   };
   return colors[status];
 };
@@ -124,7 +124,7 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
       await onDelete(rule.id);
       setShowDeleteConfirm(false);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete rule');
+      setError(err.message || "Failed to delete rule");
       setIsDeleting(false);
     }
   };
@@ -132,7 +132,7 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
   const handleToggleStatus = () => {
     if (!onToggleStatus) return;
 
-    const newStatus: RuleStatus = rule.status === 'active' ? 'inactive' : 'active';
+    const newStatus: RuleStatus = rule.status === "active" ? "inactive" : "active";
     onToggleStatus(rule.id, newStatus);
   };
 
@@ -150,21 +150,21 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
           <div className="flex-1">
             <div className="flex items-center gap-3">
               <h3 className="text-lg font-semibold text-gray-900">{rule.name}</h3>
-              <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getStatusColor(rule.status)}`}>
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getStatusColor(rule.status)}`}
+              >
                 {rule.status}
               </span>
-              <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getPriorityColor(rule.priority)}`}>
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getPriorityColor(rule.priority)}`}
+              >
                 {rule.priority}
               </span>
             </div>
-            {rule.description && (
-              <p className="mt-1 text-sm text-gray-600">{rule.description}</p>
-            )}
+            {rule.description && <p className="mt-1 text-sm text-gray-600">{rule.description}</p>}
             <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
               <span>Created: {formatDate(rule.created_at)}</span>
-              {rule.updated_at !== rule.created_at && (
-                <span>Updated: {formatDate(rule.updated_at)}</span>
-              )}
+              {rule.updated_at !== rule.created_at && <span>Updated: {formatDate(rule.updated_at)}</span>}
             </div>
           </div>
 
@@ -172,38 +172,22 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
           {showActions && (
             <div className="flex items-center gap-2 ml-4">
               {compact && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowDetails(!showDetails)}
-                >
-                  {showDetails ? 'Hide' : 'Show'} Details
+                <Button variant="ghost" size="sm" onClick={() => setShowDetails(!showDetails)}>
+                  {showDetails ? "Hide" : "Show"} Details
                 </Button>
               )}
               {onToggleStatus && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleToggleStatus}
-                >
-                  {rule.status === 'active' ? 'Deactivate' : 'Activate'}
+                <Button variant="outline" size="sm" onClick={handleToggleStatus}>
+                  {rule.status === "active" ? "Deactivate" : "Activate"}
                 </Button>
               )}
               {onEdit && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleEdit}
-                >
+                <Button variant="outline" size="sm" onClick={handleEdit}>
                   Edit
                 </Button>
               )}
               {onDelete && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => setShowDeleteConfirm(true)}
-                >
+                <Button variant="destructive" size="sm" onClick={() => setShowDeleteConfirm(true)}>
                   Delete
                 </Button>
               )}
@@ -246,13 +230,8 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
               >
                 Cancel
               </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="flex-1"
-              >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+              <Button variant="destructive" onClick={handleDelete} disabled={isDeleting} className="flex-1">
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>

@@ -10,18 +10,14 @@
  * - Authentication required
  */
 
-import Layout from '@/layouts/Layout.astro';
-import Breadcrumb from '@/components/ui/Breadcrumb.astro';
-import { TripForm } from '@/components/forms/TripForm';
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
+import { TripForm } from "@/components/forms/TripForm";
 
 // Check authentication (will be handled by middleware)
 // For now, we'll just render the page
 
-const breadcrumbItems = [
-  { label: 'Start', href: '/' },
-  { label: 'Plany', href: '/trips' },
-  { label: 'Nowa podróż' },
-];
+const breadcrumbItems = [{ label: "Start", href: "/" }, { label: "Plany", href: "/trips" }, { label: "Nowa podróż" }];
 ---
 
 <Layout title="Utwórz nową podróż - Magic Travel App">
@@ -31,8 +27,8 @@ const breadcrumbItems = [
       <Breadcrumb items={breadcrumbItems} />
       <h1 class="text-3xl font-bold text-gray-900">Utwórz nową podróż</h1>
       <p class="mt-2 text-sm text-gray-600">
-        Zaplanuj swoją następną przygodę. Wypełnij szczegóły poniżej, aby utworzyć podróż i opcjonalnie
-        wygenerować plan AI.
+        Zaplanuj swoją następną przygodę. Wypełnij szczegóły poniżej, aby utworzyć podróż i opcjonalnie wygenerować plan
+        AI.
       </p>
     </div>
 
@@ -45,35 +41,22 @@ const breadcrumbItems = [
     <div class="mt-6 rounded-lg bg-blue-50 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
-          <svg
-            class="h-5 w-5 text-blue-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
+          <svg class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width={2}
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
         <div class="ml-3 flex-1">
           <h3 class="text-sm font-medium text-blue-800">Wskazówki dotyczące tworzenia podróży</h3>
           <div class="mt-2 text-sm text-blue-700">
             <ul class="list-disc space-y-1 pl-5">
+              <li>Bądź konkretny co do miejsca docelowego (np. "Paryż, Francja" zamiast tylko "Paryż")</li>
+              <li>Uwzględnij w opisie szczegóły dotyczące stylu podróży, budżetu lub szczególnych zainteresowań</li>
               <li>
-                Bądź konkretny co do miejsca docelowego (np. "Paryż, Francja" zamiast tylko "Paryż")
-              </li>
-              <li>
-                Uwzględnij w opisie szczegóły dotyczące stylu podróży, budżetu lub szczególnych
-                zainteresowań
-              </li>
-              <li>
-                Włącz generowanie AI, aby otrzymać szczegółowy plan dzień po dniu z aktywnościami i
-                rekomendacjami
+                Włącz generowanie AI, aby otrzymać szczegółowy plan dzień po dniu z aktywnościami i rekomendacjami
               </li>
               <li>Twój szkic jest automatycznie zapisywany podczas pisania</li>
             </ul>

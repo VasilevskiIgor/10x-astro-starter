@@ -8,13 +8,8 @@
  * @see dto.ts for AIGeneratedContent type definition
  */
 
-import OpenAI from 'openai';
-import type {
-  AIGeneratedContent,
-  DayDetail,
-  ActivityDetail,
-  TripRecommendations,
-} from '../types/dto';
+import OpenAI from "openai";
+import type { AIGeneratedContent, DayDetail, ActivityDetail, TripRecommendations } from "../types/dto";
 
 // ============================================================================
 // Configuration Types
@@ -62,13 +57,13 @@ export interface OpenRouterError {
 }
 
 export type OpenRouterErrorCode =
-  | 'TIMEOUT'
-  | 'INVALID_RESPONSE'
-  | 'API_ERROR'
-  | 'PARSING_ERROR'
-  | 'RATE_LIMIT'
-  | 'INVALID_MODEL'
-  | 'SCHEMA_VALIDATION_ERROR';
+  | "TIMEOUT"
+  | "INVALID_RESPONSE"
+  | "API_ERROR"
+  | "PARSING_ERROR"
+  | "RATE_LIMIT"
+  | "INVALID_MODEL"
+  | "SCHEMA_VALIDATION_ERROR";
 
 export type OpenRouterResult = OpenRouterSuccess | OpenRouterError;
 
@@ -88,29 +83,26 @@ export interface ModelInfo {
 // ============================================================================
 
 const DEFAULT_CONFIG: Required<OpenRouterConfig> = {
-  model: 'openai/gpt-4o-mini',
+  model: "openai/gpt-4o-mini",
   temperature: 0.7,
   maxTokens: 4000,
   timeout: 90000,
-  siteUrl: 'https://vibetravels.com',
-  siteName: 'VibeTravels',
+  siteUrl: "https://vibetravels.com",
+  siteName: "VibeTravels",
   topP: 1.0,
   frequencyPenalty: 0.0,
   presencePenalty: 0.0,
 };
 
 // Fallback pricing for popular models (USD per 1M tokens)
-const DEFAULT_PRICING: Record<
-  string,
-  { prompt: number; completion: number }
-> = {
-  'openai/gpt-3.5-turbo': { prompt: 0.5, completion: 1.5 },
-  'openai/gpt-4o-mini': { prompt: 0.15, completion: 0.6 },
-  'openai/gpt-4-turbo': { prompt: 10.0, completion: 30.0 },
-  'openai/gpt-4o': { prompt: 5.0, completion: 15.0 },
-  'anthropic/claude-3-sonnet': { prompt: 3.0, completion: 15.0 },
-  'anthropic/claude-3-opus': { prompt: 15.0, completion: 75.0 },
-  'google/gemini-pro': { prompt: 0.5, completion: 1.5 },
+const DEFAULT_PRICING: Record<string, { prompt: number; completion: number }> = {
+  "openai/gpt-3.5-turbo": { prompt: 0.5, completion: 1.5 },
+  "openai/gpt-4o-mini": { prompt: 0.15, completion: 0.6 },
+  "openai/gpt-4-turbo": { prompt: 10.0, completion: 30.0 },
+  "openai/gpt-4o": { prompt: 5.0, completion: 15.0 },
+  "anthropic/claude-3-sonnet": { prompt: 3.0, completion: 15.0 },
+  "anthropic/claude-3-opus": { prompt: 15.0, completion: 75.0 },
+  "google/gemini-pro": { prompt: 0.5, completion: 1.5 },
 };
 
 // ============================================================================
@@ -131,10 +123,10 @@ export class OpenRouterService {
 
     this.client = new OpenAI({
       apiKey: apiKey,
-      baseURL: 'https://openrouter.ai/api/v1',
+      baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
-        'HTTP-Referer': this.config.siteUrl,
-        'X-Title': this.config.siteName,
+        "HTTP-Referer": this.config.siteUrl,
+        "X-Title": this.config.siteName,
       },
     });
   }
@@ -150,14 +142,11 @@ export class OpenRouterService {
    * @param config - Optional configuration overrides for this specific request
    * @returns Promise resolving to either success result with content or error details
    */
-  async generateItinerary(
-    tripContext: TripContext,
-    config?: Partial<OpenRouterConfig>
-  ): Promise<OpenRouterResult> {
+  async generateItinerary(tripContext: TripContext, config?: Partial<OpenRouterConfig>): Promise<OpenRouterResult> {
     const startTime = Date.now();
     const effectiveConfig = { ...this.config, ...config };
 
-    console.log('[OpenRouter] Starting generation:', {
+    console.log("[OpenRouter] Starting generation:", {
       destination: tripContext.destination,
       duration: tripContext.durationDays,
       model: effectiveConfig.model,
@@ -169,11 +158,9 @@ export class OpenRouterService {
       const systemPrompt = this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(tripContext);
       const supportsJsonSchema = this.modelSupportsJsonSchema(effectiveConfig.model);
-      const responseFormat = supportsJsonSchema
-        ? this.buildResponseFormat()
-        : { type: 'json_object' as const };
+      const responseFormat = supportsJsonSchema ? this.buildResponseFormat() : { type: "json_object" as const };
 
-      console.log('[OpenRouter] Using response format:', supportsJsonSchema ? 'json_schema (strict)' : 'json_object');
+      console.log("[OpenRouter] Using response format:", supportsJsonSchema ? "json_schema (strict)" : "json_object");
 
       // 2. Call OpenRouter API with timeout
       const completion = await Promise.race([
@@ -181,11 +168,11 @@ export class OpenRouterService {
           model: effectiveConfig.model,
           messages: [
             {
-              role: 'system',
+              role: "system",
               content: systemPrompt,
             },
             {
-              role: 'user',
+              role: "user",
               content: userPrompt,
             },
           ],
@@ -200,12 +187,12 @@ export class OpenRouterService {
       ]);
 
       // 3. Check for timeout
-      if (!completion || !('choices' in completion)) {
-        console.error('[OpenRouter] Request timed out');
+      if (!completion || !("choices" in completion)) {
+        console.error("[OpenRouter] Request timed out");
         return {
           success: false,
           error: `Request timed out after ${effectiveConfig.timeout}ms`,
-          code: 'TIMEOUT',
+          code: "TIMEOUT",
           details: { timeoutMs: effectiveConfig.timeout },
         };
       }
@@ -215,11 +202,11 @@ export class OpenRouterService {
       const responseText = completion.choices[0]?.message?.content;
 
       if (!responseText) {
-        console.error('[OpenRouter] Empty response');
+        console.error("[OpenRouter] Empty response");
         return {
           success: false,
-          error: 'Empty response from OpenRouter',
-          code: 'INVALID_RESPONSE',
+          error: "Empty response from OpenRouter",
+          code: "INVALID_RESPONSE",
         };
       }
 
@@ -233,13 +220,9 @@ export class OpenRouterService {
       const promptTokens = completion.usage?.prompt_tokens ?? 0;
       const completionTokens = completion.usage?.completion_tokens ?? 0;
       const totalTokens = completion.usage?.total_tokens ?? 0;
-      const costUsd = this.calculateCost(
-        effectiveConfig.model,
-        promptTokens,
-        completionTokens
-      );
+      const costUsd = this.calculateCost(effectiveConfig.model, promptTokens, completionTokens);
 
-      console.log('[OpenRouter] Generation successful:', {
+      console.log("[OpenRouter] Generation successful:", {
         model: effectiveConfig.model,
         tokens: totalTokens,
         cost: costUsd.toFixed(4),
@@ -256,10 +239,10 @@ export class OpenRouterService {
         costUsd,
       };
     } catch (error) {
-      console.error('[OpenRouter] Generation failed:', error);
+      console.error("[OpenRouter] Generation failed:", error);
 
       // Handle OpenRouter-specific errors
-      if (error && typeof error === 'object' && 'status' in error) {
+      if (error && typeof error === "object" && "status" in error) {
         const apiError = error as { status: number; message?: string };
 
         // Rate limiting
@@ -268,18 +251,18 @@ export class OpenRouterService {
           return {
             success: false,
             error: `Rate limit exceeded. Retry after ${retryAfter} seconds`,
-            code: 'RATE_LIMIT',
+            code: "RATE_LIMIT",
             retryAfter,
             details: error,
           };
         }
 
         // Invalid model
-        if (apiError.status === 400 && apiError.message?.includes('model')) {
+        if (apiError.status === 400 && apiError.message?.includes("model")) {
           return {
             success: false,
             error: `Model "${effectiveConfig.model}" is not available`,
-            code: 'INVALID_MODEL',
+            code: "INVALID_MODEL",
             details: { requestedModel: effectiveConfig.model },
           };
         }
@@ -290,15 +273,15 @@ export class OpenRouterService {
         return {
           success: false,
           error: `API error: ${error.message}`,
-          code: 'API_ERROR',
+          code: "API_ERROR",
           details: error,
         };
       }
 
       return {
         success: false,
-        error: 'Unknown error occurred',
-        code: 'API_ERROR',
+        error: "Unknown error occurred",
+        code: "API_ERROR",
         details: error,
       };
     }
@@ -326,7 +309,7 @@ export class OpenRouterService {
    */
   async getSupportedModels(): Promise<ModelInfo[]> {
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/models', {
+      const response = await fetch("https://openrouter.ai/api/v1/models", {
         headers: {
           Authorization: `Bearer ${this.client.apiKey}`,
         },
@@ -337,7 +320,7 @@ export class OpenRouterService {
       }
 
       const data = (await response.json()) as {
-        data: Array<{
+        data: {
           id: string;
           name: string;
           pricing: {
@@ -346,7 +329,7 @@ export class OpenRouterService {
           };
           context_length: number;
           description?: string;
-        }>;
+        }[];
       };
 
       return data.data.map((model) => ({
@@ -360,7 +343,7 @@ export class OpenRouterService {
         description: model.description,
       }));
     } catch (error) {
-      console.error('[OpenRouter] Failed to fetch models:', error);
+      console.error("[OpenRouter] Failed to fetch models:", error);
       return [];
     }
   }
@@ -373,10 +356,8 @@ export class OpenRouterService {
    * Validate OpenRouter API key format
    */
   private validateApiKey(apiKey: string): void {
-    if (!apiKey || !apiKey.startsWith('sk-or-v1-')) {
-      throw new Error(
-        'Invalid OpenRouter API key. Key must start with "sk-or-v1-"'
-      );
+    if (!apiKey || !apiKey.startsWith("sk-or-v1-")) {
+      throw new Error('Invalid OpenRouter API key. Key must start with "sk-or-v1-"');
     }
   }
 
@@ -386,11 +367,11 @@ export class OpenRouterService {
    */
   private modelSupportsJsonSchema(model: string): boolean {
     const supportsJsonSchema = [
-      'openai/gpt-4-turbo',
-      'openai/gpt-4-turbo-preview',
-      'openai/gpt-4o',
-      'openai/gpt-4o-mini',
-      'openai/chatgpt-4o-latest',
+      "openai/gpt-4-turbo",
+      "openai/gpt-4-turbo-preview",
+      "openai/gpt-4o",
+      "openai/gpt-4o-mini",
+      "openai/chatgpt-4o-latest",
     ];
     return supportsJsonSchema.some((m) => model.includes(m));
   }
@@ -444,15 +425,13 @@ Required JSON structure:
    * Build user prompt with trip context
    */
   private buildUserPrompt(tripContext: TripContext): string {
-    const safeDescription = tripContext.description
-      ? this.sanitizeUserInput(tripContext.description)
-      : '';
+    const safeDescription = tripContext.description ? this.sanitizeUserInput(tripContext.description) : "";
 
     return `Create a detailed ${tripContext.durationDays}-day travel itinerary for:
 
 **Destination**: ${tripContext.destination}
 **Dates**: ${tripContext.startDate} to ${tripContext.endDate}
-${safeDescription ? `**Traveler Notes**: ${safeDescription}` : ''}
+${safeDescription ? `**Traveler Notes**: ${safeDescription}` : ""}
 
 Requirements:
 - Generate exactly ${tripContext.durationDays} days of activities
@@ -475,118 +454,113 @@ Provide:
    */
   private buildResponseFormat(): any {
     return {
-      type: 'json_schema',
+      type: "json_schema",
       json_schema: {
-        name: 'travel_itinerary',
+        name: "travel_itinerary",
         strict: true,
         schema: {
-          type: 'object',
+          type: "object",
           properties: {
             summary: {
-              type: 'string',
-              description: 'Brief 2-3 sentence overview of the trip',
+              type: "string",
+              description: "Brief 2-3 sentence overview of the trip",
             },
             days: {
-              type: 'array',
-              description: 'Day-by-day itinerary',
+              type: "array",
+              description: "Day-by-day itinerary",
               items: {
-                type: 'object',
+                type: "object",
                 properties: {
                   day_number: {
-                    type: 'number',
-                    description: 'Day number (1, 2, 3, ...)',
+                    type: "number",
+                    description: "Day number (1, 2, 3, ...)",
                   },
                   date: {
-                    type: 'string',
-                    description: 'Date in ISO 8601 format (YYYY-MM-DD)',
+                    type: "string",
+                    description: "Date in ISO 8601 format (YYYY-MM-DD)",
                   },
                   title: {
-                    type: 'string',
+                    type: "string",
                     description: 'Title for the day (e.g., "Exploring Tokyo")',
                   },
                   activities: {
-                    type: 'array',
-                    description: 'Activities for this day',
+                    type: "array",
+                    description: "Activities for this day",
                     items: {
-                      type: 'object',
+                      type: "object",
                       properties: {
                         time: {
-                          type: 'string',
-                          description: 'Activity start time (HH:MM format)',
+                          type: "string",
+                          description: "Activity start time (HH:MM format)",
                         },
                         title: {
-                          type: 'string',
-                          description: 'Activity title',
+                          type: "string",
+                          description: "Activity title",
                         },
                         description: {
-                          type: 'string',
-                          description: 'Detailed description of the activity',
+                          type: "string",
+                          description: "Detailed description of the activity",
                         },
                         location: {
-                          type: 'string',
-                          description: 'Specific location name',
+                          type: "string",
+                          description: "Specific location name",
                         },
                         duration_minutes: {
-                          type: 'number',
-                          description: 'Estimated duration in minutes',
+                          type: "number",
+                          description: "Estimated duration in minutes",
                         },
                         cost_estimate: {
-                          type: 'string',
-                          description: 'Cost estimate: $, $$, $$$, or $$$$',
+                          type: "string",
+                          description: "Cost estimate: $, $$, $$$, or $$$$",
                         },
                         tips: {
-                          type: 'string',
-                          description: 'Practical tips for this activity',
+                          type: "string",
+                          description: "Practical tips for this activity",
                         },
                       },
                       required: [
-                        'time',
-                        'title',
-                        'description',
-                        'location',
-                        'duration_minutes',
-                        'cost_estimate',
-                        'tips',
+                        "time",
+                        "title",
+                        "description",
+                        "location",
+                        "duration_minutes",
+                        "cost_estimate",
+                        "tips",
                       ],
                       additionalProperties: false,
                     },
                   },
                 },
-                required: ['day_number', 'date', 'title', 'activities'],
+                required: ["day_number", "date", "title", "activities"],
                 additionalProperties: false,
               },
             },
             recommendations: {
-              type: 'object',
-              description: 'General trip recommendations',
+              type: "object",
+              description: "General trip recommendations",
               properties: {
                 transportation: {
-                  type: 'string',
-                  description: 'Transportation recommendations',
+                  type: "string",
+                  description: "Transportation recommendations",
                 },
                 accommodation: {
-                  type: 'string',
-                  description: 'Accommodation area recommendations',
+                  type: "string",
+                  description: "Accommodation area recommendations",
                 },
                 budget: {
-                  type: 'string',
-                  description: 'Overall budget estimates',
+                  type: "string",
+                  description: "Overall budget estimates",
                 },
                 best_time: {
-                  type: 'string',
-                  description: 'Best time to visit information',
+                  type: "string",
+                  description: "Best time to visit information",
                 },
               },
-              required: [
-                'transportation',
-                'accommodation',
-                'budget',
-                'best_time',
-              ],
+              required: ["transportation", "accommodation", "budget", "best_time"],
               additionalProperties: false,
             },
           },
-          required: ['summary', 'days', 'recommendations'],
+          required: ["summary", "days", "recommendations"],
           additionalProperties: false,
         },
       },
@@ -618,8 +592,8 @@ Provide:
       if (!this.isValidAIResponse(parsed)) {
         return {
           success: false,
-          error: 'Response does not match AIGeneratedContent structure',
-          code: 'SCHEMA_VALIDATION_ERROR',
+          error: "Response does not match AIGeneratedContent structure",
+          code: "SCHEMA_VALIDATION_ERROR",
           details: { response: responseText },
         };
       }
@@ -631,8 +605,8 @@ Provide:
     } catch (error) {
       return {
         success: false,
-        error: 'Failed to parse JSON response',
-        code: 'PARSING_ERROR',
+        error: "Failed to parse JSON response",
+        code: "PARSING_ERROR",
         details: { response: responseText, error },
       };
     }
@@ -642,12 +616,12 @@ Provide:
    * Validate if data matches AIGeneratedContent structure
    */
   private isValidAIResponse(data: unknown): data is AIGeneratedContent {
-    if (typeof data !== 'object' || data === null) return false;
+    if (typeof data !== "object" || data === null) return false;
 
     const obj = data as Record<string, unknown>;
 
     return (
-      typeof obj.summary === 'string' &&
+      typeof obj.summary === "string" &&
       Array.isArray(obj.days) &&
       obj.days.length > 0 &&
       obj.days.every((day) => this.isValidDayDetail(day)) &&
@@ -659,14 +633,14 @@ Provide:
    * Validate if data matches DayDetail structure
    */
   private isValidDayDetail(data: unknown): data is DayDetail {
-    if (typeof data !== 'object' || data === null) return false;
+    if (typeof data !== "object" || data === null) return false;
 
     const day = data as Record<string, unknown>;
 
     return (
-      typeof day.day_number === 'number' &&
-      typeof day.date === 'string' &&
-      typeof day.title === 'string' &&
+      typeof day.day_number === "number" &&
+      typeof day.date === "string" &&
+      typeof day.title === "string" &&
       Array.isArray(day.activities) &&
       day.activities.every((activity) => this.isValidActivity(activity))
     );
@@ -676,47 +650,41 @@ Provide:
    * Validate if data matches ActivityDetail structure
    */
   private isValidActivity(data: unknown): data is ActivityDetail {
-    if (typeof data !== 'object' || data === null) return false;
+    if (typeof data !== "object" || data === null) return false;
 
     const activity = data as Record<string, unknown>;
 
     return (
-      typeof activity.time === 'string' &&
-      typeof activity.title === 'string' &&
-      typeof activity.description === 'string' &&
-      typeof activity.location === 'string' &&
-      typeof activity.duration_minutes === 'number' &&
-      typeof activity.cost_estimate === 'string' &&
-      typeof activity.tips === 'string'
+      typeof activity.time === "string" &&
+      typeof activity.title === "string" &&
+      typeof activity.description === "string" &&
+      typeof activity.location === "string" &&
+      typeof activity.duration_minutes === "number" &&
+      typeof activity.cost_estimate === "string" &&
+      typeof activity.tips === "string"
     );
   }
 
   /**
    * Validate if data matches TripRecommendations structure
    */
-  private isValidRecommendations(
-    data: unknown
-  ): data is TripRecommendations {
-    if (typeof data !== 'object' || data === null) return false;
+  private isValidRecommendations(data: unknown): data is TripRecommendations {
+    if (typeof data !== "object" || data === null) return false;
 
     const rec = data as Record<string, unknown>;
 
     return (
-      typeof rec.transportation === 'string' &&
-      typeof rec.accommodation === 'string' &&
-      typeof rec.budget === 'string' &&
-      typeof rec.best_time === 'string'
+      typeof rec.transportation === "string" &&
+      typeof rec.accommodation === "string" &&
+      typeof rec.budget === "string" &&
+      typeof rec.best_time === "string"
     );
   }
 
   /**
    * Calculate estimated cost in USD based on token usage
    */
-  private calculateCost(
-    model: string,
-    promptTokens: number,
-    completionTokens: number
-  ): number {
+  private calculateCost(model: string, promptTokens: number, completionTokens: number): number {
     const pricing = DEFAULT_PRICING[model] || { prompt: 1.0, completion: 3.0 };
 
     const promptCost = (promptTokens / 1_000_000) * pricing.prompt;
@@ -730,16 +698,11 @@ Provide:
    */
   private sanitizeUserInput(text: string): string {
     // Remove potentially dangerous instructions
-    const dangerous = [
-      /ignore\s+previous\s+instructions/gi,
-      /disregard\s+above/gi,
-      /system\s*:/gi,
-      /assistant\s*:/gi,
-    ];
+    const dangerous = [/ignore\s+previous\s+instructions/gi, /disregard\s+above/gi, /system\s*:/gi, /assistant\s*:/gi];
 
     let sanitized = text;
     for (const pattern of dangerous) {
-      sanitized = sanitized.replace(pattern, '');
+      sanitized = sanitized.replace(pattern, "");
     }
 
     return sanitized.trim();

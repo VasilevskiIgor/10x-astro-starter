@@ -5,8 +5,8 @@
  * This file runs before all test files.
  */
 
-import '@testing-library/jest-dom';
-import { afterEach } from 'vitest';
+import "@testing-library/jest-dom";
+import { afterEach } from "vitest";
 
 /**
  * Cleanup after each test

@@ -16,7 +16,10 @@
     <div class="flex justify-between items-center h-16">
       {/* Logo */}
       <div class="flex items-center">
-        <a href="/" class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text hover:from-purple-700 hover:to-pink-700 transition-all">
+        <a
+          href="/"
+          class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text hover:from-purple-700 hover:to-pink-700 transition-all"
+        >
           Magic Travel App
         </a>
       </div>
@@ -30,9 +33,9 @@
 </nav>
 
 <script>
-  import { supabaseBrowser } from '@/lib/supabase-browser';
+  import { supabaseBrowser } from "@/lib/supabase-browser";
 
-  const navLinks = document.getElementById('navLinks');
+  const navLinks = document.getElementById("navLinks");
 
   // Check auth state and render appropriate navigation
   supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
@@ -52,7 +55,7 @@
           >
             <div class="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center border-2 border-blue-200">
               <span class="text-blue-600 font-semibold text-sm">
-                ${session.user.email?.[0]?.toUpperCase() || 'U'}
+                ${session.user.email?.[0]?.toUpperCase() || "U"}
               </span>
             </div>
             <svg
@@ -101,27 +104,26 @@
       `;
 
       // Add menu toggle functionality
-      const menuButton = document.getElementById('userMenuButton');
-      const menu = document.getElementById('userMenu');
+      const menuButton = document.getElementById("userMenuButton");
+      const menu = document.getElementById("userMenu");
 
-      menuButton?.addEventListener('click', () => {
-        menu?.classList.toggle('hidden');
+      menuButton?.addEventListener("click", () => {
+        menu?.classList.toggle("hidden");
       });
 
       // Close menu when clicking outside
-      document.addEventListener('click', (e) => {
-        const container = document.getElementById('userMenuContainer');
+      document.addEventListener("click", (e) => {
+        const container = document.getElementById("userMenuContainer");
         if (container && !container.contains(e.target as Node)) {
-          menu?.classList.add('hidden');
+          menu?.classList.add("hidden");
         }
       });
 
       // Handle logout
-      document.getElementById('logoutButton')?.addEventListener('click', async () => {
+      document.getElementById("logoutButton")?.addEventListener("click", async () => {
         await supabaseBrowser.auth.signOut();
-        window.location.href = '/auth/login';
+        window.location.href = "/auth/login";
       });
-
     } else {
       // Logged out navigation
       navLinks!.innerHTML = `

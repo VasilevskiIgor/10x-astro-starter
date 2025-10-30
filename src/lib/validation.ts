@@ -16,15 +16,13 @@ import type {
   AILogsQueryParams,
   ValidationErrorDetail,
   TripSortField,
-} from '../types/dto';
+} from "../types/dto";
 
 /**
  * Validation result type
  * Contains both success flag and error details for failed validations
  */
-export type ValidationResult =
-  | { success: true; data: unknown }
-  | { success: false; errors: ValidationErrorDetail[] };
+export type ValidationResult = { success: true; data: unknown } | { success: false; errors: ValidationErrorDetail[] };
 
 /**
  * Validates CreateTripCommand request body
@@ -42,10 +40,10 @@ export type ValidationResult =
 export function validateCreateTripCommand(data: unknown): ValidationResult {
   const errors: ValidationErrorDetail[] = [];
 
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     errors.push({
-      field: 'body',
-      message: 'Request body must be a valid JSON object',
+      field: "body",
+      message: "Request body must be a valid JSON object",
     });
     return { success: false, errors };
   }
@@ -55,24 +53,24 @@ export function validateCreateTripCommand(data: unknown): ValidationResult {
   // Validate destination
   if (!body.destination) {
     errors.push({
-      field: 'destination',
-      message: 'Destination is required',
+      field: "destination",
+      message: "Destination is required",
     });
-  } else if (typeof body.destination !== 'string') {
+  } else if (typeof body.destination !== "string") {
     errors.push({
-      field: 'destination',
-      message: 'Destination must be a string',
+      field: "destination",
+      message: "Destination must be a string",
       value: body.destination,
     });
   } else if (body.destination.length === 0) {
     errors.push({
-      field: 'destination',
-      message: 'Destination cannot be empty',
+      field: "destination",
+      message: "Destination cannot be empty",
     });
   } else if (body.destination.length > 200) {
     errors.push({
-      field: 'destination',
-      message: 'Destination must be less than 200 characters',
+      field: "destination",
+      message: "Destination must be less than 200 characters",
       value: body.destination.length,
     });
   }
@@ -80,19 +78,19 @@ export function validateCreateTripCommand(data: unknown): ValidationResult {
   // Validate start_date
   if (!body.start_date) {
     errors.push({
-      field: 'start_date',
-      message: 'Start date is required',
+      field: "start_date",
+      message: "Start date is required",
     });
-  } else if (typeof body.start_date !== 'string') {
+  } else if (typeof body.start_date !== "string") {
     errors.push({
-      field: 'start_date',
-      message: 'Start date must be a string in ISO 8601 format',
+      field: "start_date",
+      message: "Start date must be a string in ISO 8601 format",
       value: body.start_date,
     });
   } else if (!isValidISODate(body.start_date)) {
     errors.push({
-      field: 'start_date',
-      message: 'Start date must be a valid ISO 8601 date (YYYY-MM-DD)',
+      field: "start_date",
+      message: "Start date must be a valid ISO 8601 date (YYYY-MM-DD)",
       value: body.start_date,
     });
   }
@@ -100,49 +98,42 @@ export function validateCreateTripCommand(data: unknown): ValidationResult {
   // Validate end_date
   if (!body.end_date) {
     errors.push({
-      field: 'end_date',
-      message: 'End date is required',
+      field: "end_date",
+      message: "End date is required",
     });
-  } else if (typeof body.end_date !== 'string') {
+  } else if (typeof body.end_date !== "string") {
     errors.push({
-      field: 'end_date',
-      message: 'End date must be a string in ISO 8601 format',
+      field: "end_date",
+      message: "End date must be a string in ISO 8601 format",
       value: body.end_date,
     });
   } else if (!isValidISODate(body.end_date)) {
     errors.push({
-      field: 'end_date',
-      message: 'End date must be a valid ISO 8601 date (YYYY-MM-DD)',
+      field: "end_date",
+      message: "End date must be a valid ISO 8601 date (YYYY-MM-DD)",
       value: body.end_date,
     });
   }
 
   // Cross-field validation: end_date >= start_date
-  if (
-    body.start_date &&
-    body.end_date &&
-    isValidISODate(body.start_date) &&
-    isValidISODate(body.end_date)
-  ) {
+  if (body.start_date && body.end_date && isValidISODate(body.start_date) && isValidISODate(body.end_date)) {
     const startDate = new Date(body.start_date);
     const endDate = new Date(body.end_date);
 
     if (endDate < startDate) {
       errors.push({
-        field: 'end_date',
-        message: 'End date must be after or equal to start date',
+        field: "end_date",
+        message: "End date must be after or equal to start date",
         value: body.end_date,
       });
     }
 
     // Check trip duration <= 365 days
-    const diffDays = Math.ceil(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays > 365) {
       errors.push({
-        field: 'end_date',
-        message: 'Trip duration cannot exceed 365 days',
+        field: "end_date",
+        message: "Trip duration cannot exceed 365 days",
         value: diffDays,
       });
     }
@@ -150,26 +141,26 @@ export function validateCreateTripCommand(data: unknown): ValidationResult {
 
   // Validate description (optional)
   if (body.description !== undefined) {
-    if (typeof body.description !== 'string') {
+    if (typeof body.description !== "string") {
       errors.push({
-        field: 'description',
-        message: 'Description must be a string',
+        field: "description",
+        message: "Description must be a string",
         value: body.description,
       });
     } else if (body.description.length > 2000) {
       errors.push({
-        field: 'description',
-        message: 'Description must be less than 2000 characters',
+        field: "description",
+        message: "Description must be less than 2000 characters",
         value: body.description.length,
       });
     }
   }
 
   // Validate generate_ai (optional)
-  if (body.generate_ai !== undefined && typeof body.generate_ai !== 'boolean') {
+  if (body.generate_ai !== undefined && typeof body.generate_ai !== "boolean") {
     errors.push({
-      field: 'generate_ai',
-      message: 'generate_ai must be a boolean',
+      field: "generate_ai",
+      message: "generate_ai must be a boolean",
       value: body.generate_ai,
     });
   }
@@ -192,10 +183,10 @@ export function validateCreateTripCommand(data: unknown): ValidationResult {
 export function validateUpdateTripCommand(data: unknown): ValidationResult {
   const errors: ValidationErrorDetail[] = [];
 
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     errors.push({
-      field: 'body',
-      message: 'Request body must be a valid JSON object',
+      field: "body",
+      message: "Request body must be a valid JSON object",
     });
     return { success: false, errors };
   }
@@ -205,29 +196,29 @@ export function validateUpdateTripCommand(data: unknown): ValidationResult {
   // At least one field must be provided
   if (Object.keys(body).length === 0) {
     errors.push({
-      field: 'body',
-      message: 'At least one field must be provided for update',
+      field: "body",
+      message: "At least one field must be provided for update",
     });
     return { success: false, errors };
   }
 
   // Validate destination (optional)
   if (body.destination !== undefined) {
-    if (typeof body.destination !== 'string') {
+    if (typeof body.destination !== "string") {
       errors.push({
-        field: 'destination',
-        message: 'Destination must be a string',
+        field: "destination",
+        message: "Destination must be a string",
         value: body.destination,
       });
     } else if (body.destination.length === 0) {
       errors.push({
-        field: 'destination',
-        message: 'Destination cannot be empty',
+        field: "destination",
+        message: "Destination cannot be empty",
       });
     } else if (body.destination.length > 200) {
       errors.push({
-        field: 'destination',
-        message: 'Destination must be less than 200 characters',
+        field: "destination",
+        message: "Destination must be less than 200 characters",
         value: body.destination.length,
       });
     }
@@ -235,16 +226,16 @@ export function validateUpdateTripCommand(data: unknown): ValidationResult {
 
   // Validate start_date (optional)
   if (body.start_date !== undefined) {
-    if (typeof body.start_date !== 'string') {
+    if (typeof body.start_date !== "string") {
       errors.push({
-        field: 'start_date',
-        message: 'Start date must be a string in ISO 8601 format',
+        field: "start_date",
+        message: "Start date must be a string in ISO 8601 format",
         value: body.start_date,
       });
     } else if (!isValidISODate(body.start_date)) {
       errors.push({
-        field: 'start_date',
-        message: 'Start date must be a valid ISO 8601 date (YYYY-MM-DD)',
+        field: "start_date",
+        message: "Start date must be a valid ISO 8601 date (YYYY-MM-DD)",
         value: body.start_date,
       });
     }
@@ -252,46 +243,39 @@ export function validateUpdateTripCommand(data: unknown): ValidationResult {
 
   // Validate end_date (optional)
   if (body.end_date !== undefined) {
-    if (typeof body.end_date !== 'string') {
+    if (typeof body.end_date !== "string") {
       errors.push({
-        field: 'end_date',
-        message: 'End date must be a string in ISO 8601 format',
+        field: "end_date",
+        message: "End date must be a string in ISO 8601 format",
         value: body.end_date,
       });
     } else if (!isValidISODate(body.end_date)) {
       errors.push({
-        field: 'end_date',
-        message: 'End date must be a valid ISO 8601 date (YYYY-MM-DD)',
+        field: "end_date",
+        message: "End date must be a valid ISO 8601 date (YYYY-MM-DD)",
         value: body.end_date,
       });
     }
   }
 
   // Cross-field validation: if both dates provided, end_date >= start_date
-  if (
-    body.start_date &&
-    body.end_date &&
-    isValidISODate(body.start_date) &&
-    isValidISODate(body.end_date)
-  ) {
+  if (body.start_date && body.end_date && isValidISODate(body.start_date) && isValidISODate(body.end_date)) {
     const startDate = new Date(body.start_date);
     const endDate = new Date(body.end_date);
 
     if (endDate < startDate) {
       errors.push({
-        field: 'end_date',
-        message: 'End date must be after or equal to start date',
+        field: "end_date",
+        message: "End date must be after or equal to start date",
         value: body.end_date,
       });
     }
 
-    const diffDays = Math.ceil(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays > 365) {
       errors.push({
-        field: 'end_date',
-        message: 'Trip duration cannot exceed 365 days',
+        field: "end_date",
+        message: "Trip duration cannot exceed 365 days",
         value: diffDays,
       });
     }
@@ -299,16 +283,16 @@ export function validateUpdateTripCommand(data: unknown): ValidationResult {
 
   // Validate description (optional)
   if (body.description !== undefined) {
-    if (typeof body.description !== 'string') {
+    if (typeof body.description !== "string") {
       errors.push({
-        field: 'description',
-        message: 'Description must be a string',
+        field: "description",
+        message: "Description must be a string",
         value: body.description,
       });
     } else if (body.description.length > 2000) {
       errors.push({
-        field: 'description',
-        message: 'Description must be less than 2000 characters',
+        field: "description",
+        message: "Description must be less than 2000 characters",
         value: body.description.length,
       });
     }
@@ -331,43 +315,43 @@ export function validateGenerateAICommand(data: unknown): ValidationResult {
   const errors: ValidationErrorDetail[] = [];
 
   // Body is optional, can be empty
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     return { success: true, data: {} as GenerateAICommand };
   }
 
   const body = data as Partial<GenerateAICommand>;
 
   // Validate model (optional)
-  if (body.model !== undefined && typeof body.model !== 'string') {
+  if (body.model !== undefined && typeof body.model !== "string") {
     errors.push({
-      field: 'model',
-      message: 'Model must be a string',
+      field: "model",
+      message: "Model must be a string",
       value: body.model,
     });
   }
 
   // Validate temperature (optional)
   if (body.temperature !== undefined) {
-    if (typeof body.temperature !== 'number') {
+    if (typeof body.temperature !== "number") {
       errors.push({
-        field: 'temperature',
-        message: 'Temperature must be a number',
+        field: "temperature",
+        message: "Temperature must be a number",
         value: body.temperature,
       });
     } else if (body.temperature < 0 || body.temperature > 1) {
       errors.push({
-        field: 'temperature',
-        message: 'Temperature must be between 0.0 and 1.0',
+        field: "temperature",
+        message: "Temperature must be between 0.0 and 1.0",
         value: body.temperature,
       });
     }
   }
 
   // Validate force_regenerate (optional)
-  if (body.force_regenerate !== undefined && typeof body.force_regenerate !== 'boolean') {
+  if (body.force_regenerate !== undefined && typeof body.force_regenerate !== "boolean") {
     errors.push({
-      field: 'force_regenerate',
-      message: 'force_regenerate must be a boolean',
+      field: "force_regenerate",
+      message: "force_regenerate must be a boolean",
       value: body.force_regenerate,
     });
   }
@@ -390,19 +374,19 @@ export function validateTripsQueryParams(params: URLSearchParams): ValidationRes
   const result: Partial<TripsQueryParams> = {};
 
   // Validate limit
-  const limit = params.get('limit');
+  const limit = params.get("limit");
   if (limit !== null) {
     const limitNum = parseInt(limit, 10);
     if (isNaN(limitNum)) {
       errors.push({
-        field: 'limit',
-        message: 'Limit must be a valid integer',
+        field: "limit",
+        message: "Limit must be a valid integer",
         value: limit,
       });
     } else if (limitNum < 1 || limitNum > 100) {
       errors.push({
-        field: 'limit',
-        message: 'Limit must be between 1 and 100',
+        field: "limit",
+        message: "Limit must be between 1 and 100",
         value: limitNum,
       });
     } else {
@@ -411,19 +395,19 @@ export function validateTripsQueryParams(params: URLSearchParams): ValidationRes
   }
 
   // Validate offset
-  const offset = params.get('offset');
+  const offset = params.get("offset");
   if (offset !== null) {
     const offsetNum = parseInt(offset, 10);
     if (isNaN(offsetNum)) {
       errors.push({
-        field: 'offset',
-        message: 'Offset must be a valid integer',
+        field: "offset",
+        message: "Offset must be a valid integer",
         value: offset,
       });
     } else if (offsetNum < 0) {
       errors.push({
-        field: 'offset',
-        message: 'Offset must be greater than or equal to 0',
+        field: "offset",
+        message: "Offset must be greater than or equal to 0",
         value: offsetNum,
       });
     } else {
@@ -432,26 +416,26 @@ export function validateTripsQueryParams(params: URLSearchParams): ValidationRes
   }
 
   // Validate status
-  const status = params.get('status');
+  const status = params.get("status");
   if (status !== null) {
-    const validStatuses = ['draft', 'generating', 'completed', 'failed'];
+    const validStatuses = ["draft", "generating", "completed", "failed"];
     if (!validStatuses.includes(status)) {
       errors.push({
-        field: 'status',
-        message: `Status must be one of: ${validStatuses.join(', ')}`,
+        field: "status",
+        message: `Status must be one of: ${validStatuses.join(", ")}`,
         value: status,
       });
     } else {
-      result.status = status as 'draft' | 'generating' | 'completed' | 'failed';
+      result.status = status as "draft" | "generating" | "completed" | "failed";
     }
   }
 
   // Validate sort
-  const sort = params.get('sort');
+  const sort = params.get("sort");
   if (sort !== null) {
     const validationResult = validateSortParam(sort);
     if (!validationResult.success) {
-      const sortErrors = 'errors' in validationResult ? validationResult.errors : [];
+      const sortErrors = "errors" in validationResult ? validationResult.errors : [];
       errors.push(...sortErrors);
     } else {
       result.sort = sort;
@@ -476,19 +460,19 @@ export function validateAILogsQueryParams(params: URLSearchParams): ValidationRe
   const result: Partial<AILogsQueryParams> = {};
 
   // Validate limit
-  const limit = params.get('limit');
+  const limit = params.get("limit");
   if (limit !== null) {
     const limitNum = parseInt(limit, 10);
     if (isNaN(limitNum)) {
       errors.push({
-        field: 'limit',
-        message: 'Limit must be a valid integer',
+        field: "limit",
+        message: "Limit must be a valid integer",
         value: limit,
       });
     } else if (limitNum < 1 || limitNum > 100) {
       errors.push({
-        field: 'limit',
-        message: 'Limit must be between 1 and 100',
+        field: "limit",
+        message: "Limit must be between 1 and 100",
         value: limitNum,
       });
     } else {
@@ -497,19 +481,19 @@ export function validateAILogsQueryParams(params: URLSearchParams): ValidationRe
   }
 
   // Validate offset
-  const offset = params.get('offset');
+  const offset = params.get("offset");
   if (offset !== null) {
     const offsetNum = parseInt(offset, 10);
     if (isNaN(offsetNum)) {
       errors.push({
-        field: 'offset',
-        message: 'Offset must be a valid integer',
+        field: "offset",
+        message: "Offset must be a valid integer",
         value: offset,
       });
     } else if (offsetNum < 0) {
       errors.push({
-        field: 'offset',
-        message: 'Offset must be greater than or equal to 0',
+        field: "offset",
+        message: "Offset must be greater than or equal to 0",
         value: offsetNum,
       });
     } else {
@@ -536,24 +520,17 @@ export function validateAILogsQueryParams(params: URLSearchParams): ValidationRe
 function validateSortParam(sort: string): ValidationResult {
   const errors: ValidationErrorDetail[] = [];
 
-  const validFields: TripSortField[] = [
-    'created_at',
-    'updated_at',
-    'start_date',
-    'end_date',
-    'destination',
-    'status',
-  ];
-  const validDirections = ['asc', 'desc'];
+  const validFields: TripSortField[] = ["created_at", "updated_at", "start_date", "end_date", "destination", "status"];
+  const validDirections = ["asc", "desc"];
 
-  const sortParts = sort.split(',');
+  const sortParts = sort.split(",");
 
   for (const part of sortParts) {
-    const [field, direction] = part.split(':');
+    const [field, direction] = part.split(":");
 
     if (!field || !direction) {
       errors.push({
-        field: 'sort',
+        field: "sort",
         message: 'Sort format must be "field:direction" (e.g., "created_at:desc")',
         value: part,
       });
@@ -562,15 +539,15 @@ function validateSortParam(sort: string): ValidationResult {
 
     if (!validFields.includes(field as TripSortField)) {
       errors.push({
-        field: 'sort',
-        message: `Invalid sort field. Must be one of: ${validFields.join(', ')}`,
+        field: "sort",
+        message: `Invalid sort field. Must be one of: ${validFields.join(", ")}`,
         value: field,
       });
     }
 
     if (!validDirections.includes(direction)) {
       errors.push({
-        field: 'sort',
+        field: "sort",
         message: 'Sort direction must be "asc" or "desc"',
         value: direction,
       });
@@ -605,12 +582,8 @@ function isValidISODate(dateString: string): boolean {
 
   // Ensure the date string matches the parsed date
   // (prevents cases like "2025-02-30" being parsed as "2025-03-02")
-  const [year, month, day] = dateString.split('-').map(Number);
-  return (
-    date.getFullYear() === year &&
-    date.getMonth() + 1 === month &&
-    date.getDate() === day
-  );
+  const [year, month, day] = dateString.split("-").map(Number);
+  return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
 }
 
 /**
@@ -620,7 +593,6 @@ function isValidISODate(dateString: string): boolean {
  * @returns true if valid UUID, false otherwise
  */
 export function isValidUUID(uuid: string): boolean {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 }

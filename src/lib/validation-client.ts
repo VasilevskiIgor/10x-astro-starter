@@ -64,11 +64,11 @@ export function daysBetween(startDate: string, endDate: string): number {
  */
 function validateDestination(destination: string): string | undefined {
   if (!destination.trim()) {
-    return 'Miejsce docelowe jest wymagane';
+    return "Miejsce docelowe jest wymagane";
   }
 
   if (destination.length > 200) {
-    return 'Miejsce docelowe musi mieć mniej niż 200 znaków';
+    return "Miejsce docelowe musi mieć mniej niż 200 znaków";
   }
 
   return undefined;
@@ -79,11 +79,11 @@ function validateDestination(destination: string): string | undefined {
  */
 function validateStartDate(startDate: string): string | undefined {
   if (!startDate) {
-    return 'Data rozpoczęcia jest wymagana';
+    return "Data rozpoczęcia jest wymagana";
   }
 
   if (!isValidDate(startDate)) {
-    return 'Data rozpoczęcia musi być prawidłową datą';
+    return "Data rozpoczęcia musi być prawidłową datą";
   }
 
   return undefined;
@@ -92,24 +92,21 @@ function validateStartDate(startDate: string): string | undefined {
 /**
  * Validates end date field
  */
-function validateEndDate(
-  endDate: string,
-  startDate: string
-): string | undefined {
+function validateEndDate(endDate: string, startDate: string): string | undefined {
   if (!endDate) {
-    return 'Data zakończenia jest wymagana';
+    return "Data zakończenia jest wymagana";
   }
 
   if (!isValidDate(endDate)) {
-    return 'Data zakończenia musi być prawidłową datą';
+    return "Data zakończenia musi być prawidłową datą";
   }
 
   if (startDate && endDate < startDate) {
-    return 'Data zakończenia musi być późniejsza lub równa dacie rozpoczęcia';
+    return "Data zakończenia musi być późniejsza lub równa dacie rozpoczęcia";
   }
 
   if (startDate && daysBetween(startDate, endDate) > 365) {
-    return 'Czas trwania podróży nie może przekroczyć 365 dni';
+    return "Czas trwania podróży nie może przekroczyć 365 dni";
   }
 
   return undefined;
@@ -120,7 +117,7 @@ function validateEndDate(
  */
 function validateDescription(description: string): string | undefined {
   if (description && description.length > 2000) {
-    return 'Opis musi mieć mniej niż 2000 znaków';
+    return "Opis musi mieć mniej niż 2000 znaków";
   }
 
   return undefined;
@@ -180,13 +177,13 @@ export function validateField(
   formData: TripFormData
 ): string | undefined {
   switch (fieldName) {
-    case 'destination':
+    case "destination":
       return validateDestination(value);
-    case 'startDate':
+    case "startDate":
       return validateStartDate(value);
-    case 'endDate':
+    case "endDate":
       return validateEndDate(value, formData.startDate);
-    case 'description':
+    case "description":
       return validateDescription(value);
     default:
       return undefined;

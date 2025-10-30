@@ -4,10 +4,10 @@
  * Displays a list of rules with filtering and sorting capabilities.
  */
 
-import * as React from 'react';
-import { RulePreview } from './RulePreview';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import type { Rule } from './RulePreview';
+import * as React from "react";
+import { RulePreview } from "./RulePreview";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import type { Rule } from "./RulePreview";
 
 export interface RulesListProps {
   rules: Rule[];
@@ -26,10 +26,10 @@ export const RulesList: React.FC<RulesListProps> = ({
   onDelete,
   onToggleStatus,
 }) => {
-  const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive' | 'draft'>('all');
+  const [filter, setFilter] = React.useState<"all" | "active" | "inactive" | "draft">("all");
 
   const filteredRules = React.useMemo(() => {
-    if (filter === 'all') return rules;
+    if (filter === "all") return rules;
     return rules.filter((rule) => rule.status === filter);
   }, [rules, filter]);
 
@@ -63,14 +63,12 @@ export const RulesList: React.FC<RulesListProps> = ({
       {/* Filter */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-gray-700">Filter:</span>
-        {(['all', 'active', 'inactive', 'draft'] as const).map((status) => (
+        {(["all", "active", "inactive", "draft"] as const).map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
             className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-              filter === status
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              filter === status ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -92,7 +90,7 @@ export const RulesList: React.FC<RulesListProps> = ({
         ))}
       </div>
 
-      {filteredRules.length === 0 && filter !== 'all' && (
+      {filteredRules.length === 0 && filter !== "all" && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
           <p className="text-gray-600">No {filter} rules found.</p>
         </div>

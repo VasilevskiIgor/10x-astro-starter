@@ -10,9 +10,9 @@
  * - Loading state
  */
 
-import * as React from 'react';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { supabaseBrowser } from '@/lib/supabase-browser';
+import * as React from "react";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 // ============================================================================
 // Type Definitions
@@ -27,13 +27,13 @@ export interface ResetPasswordFormProps {
 // ============================================================================
 
 const validatePassword = (password: string): string | null => {
-  if (!password) return 'Hasło jest wymagane';
-  if (password.length < 8) return 'Hasło musi mieć co najmniej 8 znaków';
+  if (!password) return "Hasło jest wymagane";
+  if (password.length < 8) return "Hasło musi mieć co najmniej 8 znaków";
   return null;
 };
 
 const validatePasswordMatch = (password: string, confirm: string): string | null => {
-  if (password !== confirm) return 'Hasła nie pasują do siebie';
+  if (password !== confirm) return "Hasła nie pasują do siebie";
   return null;
 };
 
@@ -41,11 +41,9 @@ const validatePasswordMatch = (password: string, confirm: string): string | null
 // Component
 // ============================================================================
 
-export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
-  accessToken: initialAccessToken
-}) => {
-  const [newPassword, setNewPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
+export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ accessToken: initialAccessToken }) => {
+  const [newPassword, setNewPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
@@ -53,48 +51,50 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
   // Extract token from URL hash or check for active session
   React.useEffect(() => {
-    console.log('[ResetPasswordForm] Mounting component');
-    console.log('[ResetPasswordForm] initialAccessToken:', initialAccessToken);
-    console.log('[ResetPasswordForm] window.location.hash:', window.location.hash);
+    console.log("[ResetPasswordForm] Mounting component");
+    console.log("[ResetPasswordForm] initialAccessToken:", initialAccessToken);
+    console.log("[ResetPasswordForm] window.location.hash:", window.location.hash);
 
     const checkSession = async () => {
       if (!initialAccessToken) {
         // Check for hash-based token (e.g., #access_token=xxx&type=recovery)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const tokenFromHash = hashParams.get('access_token');
-        const errorFromHash = hashParams.get('error');
-        const errorDescription = hashParams.get('error_description');
+        const tokenFromHash = hashParams.get("access_token");
+        const errorFromHash = hashParams.get("error");
+        const errorDescription = hashParams.get("error_description");
 
-        console.log('[ResetPasswordForm] Token from hash:', tokenFromHash);
-        console.log('[ResetPasswordForm] Error from hash:', errorFromHash);
+        console.log("[ResetPasswordForm] Token from hash:", tokenFromHash);
+        console.log("[ResetPasswordForm] Error from hash:", errorFromHash);
 
         if (errorFromHash) {
           // Handle errors from Supabase (e.g., expired token)
           const message = errorDescription
-            ? decodeURIComponent(errorDescription.replace(/\+/g, ' '))
-            : 'Link resetujący jest nieprawidłowy lub wygasł';
+            ? decodeURIComponent(errorDescription.replace(/\+/g, " "))
+            : "Link resetujący jest nieprawidłowy lub wygasł";
           setError(message);
-          console.log('[ResetPasswordForm] Error in hash:', message);
+          console.log("[ResetPasswordForm] Error in hash:", message);
         } else if (tokenFromHash) {
           setAccessToken(tokenFromHash);
-          console.log('[ResetPasswordForm] Token set from hash');
+          console.log("[ResetPasswordForm] Token set from hash");
         } else {
           // Hash might be empty because Supabase already processed it (detectSessionInUrl: true)
           // Check if we have an active recovery session
-          const { data: { session } } = await supabaseBrowser.auth.getSession();
-          console.log('[ResetPasswordForm] Checked session:', session);
+          const {
+            data: { session },
+          } = await supabaseBrowser.auth.getSession();
+          console.log("[ResetPasswordForm] Checked session:", session);
 
           if (session?.user) {
             // We have a session! Supabase already processed the token from hash
             // We don't need the token - we can just update the password directly
-            console.log('[ResetPasswordForm] Found active recovery session');
-            setAccessToken('session_active'); // Dummy value to indicate we can proceed
+            console.log("[ResetPasswordForm] Found active recovery session");
+            setAccessToken("session_active"); // Dummy value to indicate we can proceed
           } else {
-            console.log('[ResetPasswordForm] No token and no session found');
+            console.log("[ResetPasswordForm] No token and no session found");
           }
         }
       } else {
-        console.log('[ResetPasswordForm] Using token from props');
+        console.log("[ResetPasswordForm] Using token from props");
       }
     };
 
@@ -108,7 +108,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
     // Check if we have a token
     if (!accessToken) {
-      setError('Brak tokenu resetującego. Link może być nieprawidłowy.');
+      setError("Brak tokenu resetującego. Link może być nieprawidłowy.");
       return;
     }
 
@@ -125,11 +125,11 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
     try {
       // Check if we need to set the session or if it's already set
-      if (accessToken !== 'session_active') {
+      if (accessToken !== "session_active") {
         // We have a token from hash - set the session
         const { error: sessionError } = await supabaseBrowser.auth.setSession({
           access_token: accessToken,
-          refresh_token: '', // Not needed for recovery
+          refresh_token: "", // Not needed for recovery
         });
 
         if (sessionError) throw sessionError;
@@ -143,15 +143,15 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
       if (error) throw error;
 
-      setSuccessMessage('Hasło zostało zmienione! Przekierowujemy do logowania...');
+      setSuccessMessage("Hasło zostało zmienione! Przekierowujemy do logowania...");
       setTimeout(() => {
-        window.location.href = '/auth/login?success=password_reset';
+        window.location.href = "/auth/login?success=password_reset";
       }, 2000);
     } catch (error: any) {
-      if (error.message?.includes('expired')) {
-        setError('Link wygasł. Wygeneruj nowy link resetujący.');
+      if (error.message?.includes("expired")) {
+        setError("Link wygasł. Wygeneruj nowy link resetujący.");
       } else {
-        setError(error.message || 'Wystąpił błąd podczas zmiany hasła');
+        setError(error.message || "Wystąpił błąd podczas zmiany hasła");
       }
       setIsLoading(false);
     }
@@ -160,14 +160,10 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
       {/* Error Alert */}
-      {error && (
-        <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />
-      )}
+      {error && <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />}
 
       {/* Success Alert */}
-      {successMessage && (
-        <ErrorAlert type="success" message={successMessage} />
-      )}
+      {successMessage && <ErrorAlert type="success" message={successMessage} />}
 
       {/* New Password Field */}
       <div className="flex flex-col gap-[var(--spacingVerticalXS)]">
@@ -175,7 +171,10 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
           htmlFor="newPassword"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Nowe hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+          Nowe hasło{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="password"
@@ -200,7 +199,10 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
           htmlFor="confirmPassword"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Potwierdź hasło <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">*</span>
+          Potwierdź hasło{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
+            *
+          </span>
         </label>
         <input
           type="password"
@@ -228,20 +230,8 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
         >
           {isLoading ? (
             <>
-              <svg
-                className="h-4 w-4 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path
                   className="opacity-75"
                   fill="currentColor"
@@ -251,7 +241,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               Zmiana hasła...
             </>
           ) : (
-            'Zmień hasło'
+            "Zmień hasło"
           )}
         </button>
       </div>
