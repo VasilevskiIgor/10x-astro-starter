@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Example E2E Test', () => {
-  test('should load the homepage', async ({ page }) => {
+test.describe('Example-E2E-Test', () => {
+  test('should-load-the-homepage', async ({ page }) => {
     // Navigate to homepage
     await page.goto('/');
 
@@ -9,7 +9,7 @@ test.describe('Example E2E Test', () => {
     await expect(page).toHaveTitle(/Magic Travel App/i);
   });
 
-  test('should have access to environment variables from .env.test', async ({ page }) => {
+  test('should-have-access-to-environment-variables-from-.env.test', async ({ page }) => {
     // Environment variables from .env.test are available in Node.js context
     const supabaseUrl = process.env.SUPABASE_URL;
     const e2eUsername = process.env.E2E_USERNAME;
