@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.astro/
+
+# Test reports and coverage
+playwright-report/
+coverage/
+test-results/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Generated files
+*.log
+.DS_Store
