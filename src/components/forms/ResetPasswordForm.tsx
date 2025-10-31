@@ -147,7 +147,8 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ accessToke
       setTimeout(() => {
         window.location.href = "/auth/login?success=password_reset";
       }, 2000);
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       if (error.message?.includes("expired")) {
         setError("Link wygasł. Wygeneruj nowy link resetujący.");
       } else {

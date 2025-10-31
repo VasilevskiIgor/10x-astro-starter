@@ -42,8 +42,9 @@ export const LoginFormSimple: React.FC = () => {
 
       // Redirect to trips page
       window.location.href = "/trips/new";
-    } catch (err: any) {
-      setError(err.message || "Login failed");
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Login failed");
       setIsLoading(false);
     }
   };
@@ -53,10 +54,11 @@ export const LoginFormSimple: React.FC = () => {
       {error && <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-red-800">{error}</div>}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="login-simple-email" className="block text-sm font-medium text-gray-700 mb-1">
           Email <span className="text-red-500">*</span>
         </label>
         <input
+          id="login-simple-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -68,10 +70,11 @@ export const LoginFormSimple: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="login-simple-password" className="block text-sm font-medium text-gray-700 mb-1">
           Password <span className="text-red-500">*</span>
         </label>
         <input
+          id="login-simple-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

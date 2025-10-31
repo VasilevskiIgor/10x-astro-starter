@@ -32,6 +32,7 @@
   </div>
 </nav>
 
+<!-- prettier-ignore -->
 <script>
   import { supabaseBrowser } from "@/lib/supabase-browser";
 
@@ -41,7 +42,8 @@
   supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
       // Logged in navigation
-      navLinks!.innerHTML = `
+      if (navLinks) {
+        navLinks.innerHTML = `
         <a
           href="/trips"
           class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
@@ -103,30 +105,32 @@
         </div>
       `;
 
-      // Add menu toggle functionality
-      const menuButton = document.getElementById("userMenuButton");
-      const menu = document.getElementById("userMenu");
+        // Add menu toggle functionality
+        const menuButton = document.getElementById("userMenuButton");
+        const menu = document.getElementById("userMenu");
 
-      menuButton?.addEventListener("click", () => {
-        menu?.classList.toggle("hidden");
-      });
+        menuButton?.addEventListener("click", () => {
+          menu?.classList.toggle("hidden");
+        });
 
-      // Close menu when clicking outside
-      document.addEventListener("click", (e) => {
-        const container = document.getElementById("userMenuContainer");
-        if (container && !container.contains(e.target as Node)) {
-          menu?.classList.add("hidden");
-        }
-      });
+        // Close menu when clicking outside
+        document.addEventListener("click", (e) => {
+          const container = document.getElementById("userMenuContainer");
+          if (container && !container.contains(e.target as Node)) {
+            menu?.classList.add("hidden");
+          }
+        });
 
-      // Handle logout
-      document.getElementById("logoutButton")?.addEventListener("click", async () => {
-        await supabaseBrowser.auth.signOut();
-        window.location.href = "/auth/login";
-      });
+        // Handle logout
+        document.getElementById("logoutButton")?.addEventListener("click", async () => {
+          await supabaseBrowser.auth.signOut();
+          window.location.href = "/auth/login";
+        });
+      }
     } else {
       // Logged out navigation
-      navLinks!.innerHTML = `
+      if (navLinks) {
+        navLinks.innerHTML = `
         <a
           href="/auth/login"
           class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
@@ -140,6 +144,7 @@
           Zarejestruj się
         </a>
       `;
+      }
     }
   });
 </script>

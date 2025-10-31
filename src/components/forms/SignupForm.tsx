@@ -104,7 +104,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
         // But handle gracefully just in case
         setError("Konto utworzone, ale nie udało się zalogować automatycznie. Spróbuj zalogować się ręcznie.");
       }
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       // Handle Supabase errors
       if (error.message?.includes("already registered")) {
         setError("Ten adres email jest już zarejestrowany");

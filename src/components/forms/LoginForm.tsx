@@ -89,7 +89,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
 
       // Success - redirect (session is now in cookies automatically via createBrowserClient)
       window.location.href = redirectTo;
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("[LoginForm] Login failed:", error);
 
       // Handle Supabase errors

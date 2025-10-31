@@ -62,7 +62,8 @@ export const ForgotPasswordForm: React.FC = () => {
 
       setSuccessMessage("Link do resetowania hasła został wysłany na Twój email");
       setEmail(""); // Clear the form
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       setError(error.message || "Wystąpił błąd podczas wysyłania emaila");
     } finally {
       setIsLoading(false);

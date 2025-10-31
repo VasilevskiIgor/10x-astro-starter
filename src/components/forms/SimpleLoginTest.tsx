@@ -24,8 +24,11 @@ export const SimpleLoginTest: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Email:</label>
+          <label htmlFor="simple-test-email" className="block text-sm font-medium mb-1">
+            Email:
+          </label>
           <input
+            id="simple-test-email"
             type="email"
             value={email}
             onChange={(e) => {
@@ -38,8 +41,11 @@ export const SimpleLoginTest: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Password:</label>
+          <label htmlFor="simple-test-password" className="block text-sm font-medium mb-1">
+            Password:
+          </label>
           <input
+            id="simple-test-password"
             type="password"
             value={password}
             onChange={(e) => {

@@ -76,5 +76,8 @@ export default tseslint.config(
   reactConfig,
   nodeScriptsConfig,
   eslintPluginAstro.configs["flat/recommended"],
-  eslintPluginPrettier
+  eslintPluginPrettier,
+  {
+    ignores: ["src/components/navigation/Navigation.astro"],
+  }
 );
