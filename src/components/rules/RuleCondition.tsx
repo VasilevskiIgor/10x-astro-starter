@@ -8,7 +8,7 @@ import * as React from "react";
 
 export interface RuleConditionData {
   expression: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
 
 export interface RuleConditionProps {

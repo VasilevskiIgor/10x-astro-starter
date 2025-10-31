@@ -8,7 +8,7 @@ import * as React from "react";
 
 export interface RuleActionData {
   type: "validate" | "transform" | "notify" | "reject";
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   message?: string;
 }
 

@@ -15,7 +15,7 @@ export interface RulesListProps {
   error?: string | null;
   onEdit?: (ruleId: string) => void;
   onDelete?: (ruleId: string) => void;
-  onToggleStatus?: (ruleId: string, newStatus: any) => void;
+  onToggleStatus?: (ruleId: string, newStatus: "active" | "inactive" | "draft") => void;
 }
 
 export const RulesList: React.FC<RulesListProps> = ({

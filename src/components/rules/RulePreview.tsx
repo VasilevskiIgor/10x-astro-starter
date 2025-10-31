@@ -13,7 +13,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
-import { RuleEditor } from "@/components/rules/RuleEditor";
 import { RuleCondition } from "@/components/rules/RuleCondition";
 import { RuleAction } from "@/components/rules/RuleAction";
 
@@ -39,12 +38,12 @@ export interface Rule {
 
 export interface RuleConditionData {
   expression: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
 
 export interface RuleActionData {
   type: "validate" | "transform" | "notify" | "reject";
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   message?: string;
 }
 
@@ -123,8 +122,9 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
     try {
       await onDelete(rule.id);
       setShowDeleteConfirm(false);
-    } catch (err: any) {
-      setError(err.message || "Failed to delete rule");
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Failed to delete rule");
       setIsDeleting(false);
     }
   };
@@ -219,7 +219,7 @@ export const RulePreview: React.FC<RulePreviewProps> = ({
           <div className="mx-4 max-w-md rounded-lg bg-white p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-gray-900">Delete Rule?</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to delete "{rule.name}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{rule.name}&quot;? This action cannot be undone.
             </p>
             <div className="mt-6 flex gap-3">
               <Button
