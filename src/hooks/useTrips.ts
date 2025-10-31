@@ -113,11 +113,12 @@ export function useTrips(initialParams?: TripsQueryParams): UseTripsReturn {
 
         // Update query params
         setQueryParams(finalParams);
-      } catch (err: any) {
+      } catch (err) {
+        const error = err as Error;
         setState((prev) => ({
           ...prev,
           isLoading: false,
-          error: err.message || "An error occurred while fetching trips",
+          error: error.message || "An error occurred while fetching trips",
         }));
       }
     },

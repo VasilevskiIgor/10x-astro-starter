@@ -25,13 +25,16 @@ import type { ErrorResponse, ErrorCode } from "../types/dto";
  * );
  */
 export function createErrorResponse(code: ErrorCode, message: string, details?: unknown): ErrorResponse {
-  return {
-    error: {
-      code,
-      message,
-      ...(details && { details: details as ErrorResponse["error"]["details"] }),
-    },
+  const errorObj: ErrorResponse["error"] = {
+    code,
+    message,
   };
+
+  if (details) {
+    errorObj.details = details as ErrorResponse["error"]["details"];
+  }
+
+  return { error: errorObj };
 }
 
 /**
@@ -133,7 +136,8 @@ export function noContentResponse(): Response {
  *   return errorResponse('UNAUTHORIZED', 'Authentication required');
  * }
  */
-export async function getUserIdFromRequest(request: Request): Promise<string | null> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function getUserIdFromRequest(_request: Request): Promise<string | null> {
   // This is a placeholder - actual implementation depends on your auth setup
   // In Astro with Supabase, you would typically:
   // 1. Get session from cookies or headers
@@ -168,7 +172,7 @@ export async function parseRequestBody(request: Request): Promise<unknown | Resp
   try {
     const body = await request.json();
     return body;
-  } catch (error) {
+  } catch {
     return errorResponse("VALIDATION_ERROR", "Invalid JSON in request body", {
       details: "Request body must be valid JSON",
     });

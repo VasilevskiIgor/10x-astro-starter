@@ -87,8 +87,9 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
           description: trip.description || "",
           generateAI: false, // Not editable
         });
-      } catch (err: any) {
-        setError(err.message || "Wystąpił błąd podczas pobierania podróży");
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message || "Wystąpił błąd podczas pobierania podróży");
       } finally {
         setIsLoadingTrip(false);
       }
@@ -211,8 +212,9 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
 
       // Redirect to trip detail page to see the updated content
       window.location.href = `/trips/${tripId}`;
-    } catch (err: any) {
-      setError(err.message || "Wystąpił błąd podczas regenerowania treści AI");
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Wystąpił błąd podczas regenerowania treści AI");
       setIsRegenerating(false);
     }
   };
@@ -268,8 +270,9 @@ export const TripEditForm: React.FC<TripEditFormProps> = ({ tripId }) => {
 
       // Redirect to trip detail page
       window.location.href = `/trips/${tripId}`;
-    } catch (err: any) {
-      setError(err.message || "Wystąpił błąd podczas aktualizacji podróży");
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Wystąpił błąd podczas aktualizacji podróży");
       setIsSaving(false);
     }
   };

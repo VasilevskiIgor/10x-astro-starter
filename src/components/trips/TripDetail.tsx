@@ -85,8 +85,9 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
         const data: TripDetailDTO = await response.json();
         setTrip(data);
-      } catch (err: any) {
-        setError(err.message || "Wystąpił błąd podczas pobierania szczegółów podróży");
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message || "Wystąpił błąd podczas pobierania szczegółów podróży");
       } finally {
         setIsLoading(false);
       }
@@ -122,8 +123,9 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
       // Redirect to trips list after successful deletion
       window.location.href = "/trips";
-    } catch (err: any) {
-      setError(err.message || "Wystąpił błąd podczas usuwania podróży");
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Wystąpił błąd podczas usuwania podróży");
       setIsDeleting(false);
     }
   };
@@ -179,9 +181,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       );
 
       console.log("[TripDetail] AI generation successful");
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("[TripDetail] AI generation error:", err);
-      setAiError(err.message || "Wystąpił błąd podczas generowania planu AI");
+      setAiError(error.message || "Wystąpił błąd podczas generowania planu AI");
     } finally {
       setIsGeneratingAI(false);
     }
@@ -451,7 +454,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           <div className="mx-4 max-w-md rounded-lg bg-white p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-gray-900">Usunąć podróż?</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Czy na pewno chcesz usunąć "{trip.destination}"? Tej operacji nie można cofnąć.
+              Czy na pewno chcesz usunąć &quot;{trip.destination}&quot;? Tej operacji nie można cofnąć.
             </p>
             <div className="mt-6 flex gap-3">
               <button
