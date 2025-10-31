@@ -10,41 +10,27 @@
  * - Authentication required (enforced by middleware)
  */
 
-import Layout from '@/layouts/Layout.astro';
-import { TripsList } from '@/components/trips/TripsList';
+import Layout from "@/layouts/Layout.astro";
+import { TripsList } from "@/components/trips/TripsList";
 
 // Authentication is enforced by middleware - no need for client-side check
 // User will be redirected to /auth/login if not authenticated
 ---
 
 <Layout title="Moje plany - Magic Travel App">
-
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     {/* Header */}
     <div class="mb-8 flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Moje plany</h1>
-        <p class="mt-2 text-sm text-gray-600">
-          Zarządzaj i przeglądaj wszystkie swoje plany podróży
-        </p>
+        <p class="mt-2 text-sm text-gray-600">Zarządzaj i przeglądaj wszystkie swoje plany podróży</p>
       </div>
       <a
         href="/trips/new"
         class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <svg
-          class="mr-2 h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width={2}
-            d="M12 4v16m8-8H4"
-          />
+        <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 4v16m8-8H4"></path>
         </svg>
         Nowa podróż
       </a>

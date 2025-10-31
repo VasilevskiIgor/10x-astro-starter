@@ -24,8 +24,11 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Dodaj te linie do pliku .gitignore
+# test reports and coverage
+playwright-report/
+coverage/
+test-results/
+
+# temp files
 jwt_token.txt
-nul
 *.tmp
-.DS_Store

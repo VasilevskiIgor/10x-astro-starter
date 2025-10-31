@@ -8,8 +8,8 @@
  * @see database.types.ts for database schema
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, TablesInsert } from '../db/database.types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database, TablesInsert } from "../db/database.types";
 import type {
   CreateTripCommand,
   TripResponseDTO,
@@ -18,25 +18,18 @@ import type {
   TripsQueryParams,
   PaginatedTripsResponse,
   UpdateTripCommand,
-} from '../types/dto';
+} from "../types/dto";
 
 /**
  * Service result type for error handling
  */
-export type ServiceResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: ServiceError };
+export type ServiceResult<T> = { success: true; data: T } | { success: false; error: ServiceError };
 
 /**
  * Service error with code for specific handling
  */
 export interface ServiceError {
-  code:
-    | 'TRIP_LIMIT_EXCEEDED'
-    | 'DATABASE_ERROR'
-    | 'INTERNAL_ERROR'
-    | 'NOT_FOUND'
-    | 'FORBIDDEN';
+  code: "TRIP_LIMIT_EXCEEDED" | "DATABASE_ERROR" | "INTERNAL_ERROR" | "NOT_FOUND" | "FORBIDDEN";
   message: string;
   details?: unknown;
 }
@@ -64,22 +57,17 @@ export class TripService {
    *   description: 'Romantic getaway'
    * });
    */
-  async createTrip(
-    userId: string,
-    command: CreateTripCommand
-  ): Promise<ServiceResult<TripResponseDTO>> {
+  async createTrip(userId: string, command: CreateTripCommand): Promise<ServiceResult<TripResponseDTO>> {
     try {
       // 1. Sanitize input data
       const sanitizedDestination = this.sanitizeString(command.destination);
-      const sanitizedDescription = command.description
-        ? this.sanitizeString(command.description)
-        : null;
+      const sanitizedDescription = command.description ? this.sanitizeString(command.description) : null;
 
       // 2. Determine trip status based on AI generation flag
-      const status = command.generate_ai ? 'generating' : 'draft';
+      const status = command.generate_ai ? "generating" : "draft";
 
       // 3. Prepare data for database insert
-      const tripData: TablesInsert<'trips'> = {
+      const tripData: TablesInsert<"trips"> = {
         user_id: userId,
         destination: sanitizedDestination,
         start_date: command.start_date,
@@ -87,35 +75,31 @@ export class TripService {
         description: sanitizedDescription,
         status: status,
         // Set AI model if generation is requested
-        ai_model: command.generate_ai ? 'gpt-3.5-turbo' : null,
+        ai_model: command.generate_ai ? "gpt-3.5-turbo" : null,
       };
 
       // 4. Insert trip into database
-      const { data, error } = await this.supabase
-        .from('trips')
-        .insert(tripData)
-        .select()
-        .single();
+      const { data, error } = await this.supabase.from("trips").insert(tripData).select().single();
 
       // 5. Handle database errors
       if (error) {
         // Check for specific errors
-        if (error.message.includes('maximum limit of 100 trips')) {
+        if (error.message.includes("maximum limit of 100 trips")) {
           return {
             success: false,
             error: {
-              code: 'TRIP_LIMIT_EXCEEDED',
-              message: 'You have reached the maximum limit of 100 trips',
+              code: "TRIP_LIMIT_EXCEEDED",
+              message: "You have reached the maximum limit of 100 trips",
             },
           };
         }
 
-        console.error('Database error creating trip:', error);
+        console.error("Database error creating trip:", error);
         return {
           success: false,
           error: {
-            code: 'DATABASE_ERROR',
-            message: 'Failed to create trip',
+            code: "DATABASE_ERROR",
+            message: "Failed to create trip",
             details: error,
           },
         };
@@ -129,7 +113,7 @@ export class TripService {
         start_date: data.start_date,
         end_date: data.end_date,
         description: data.description,
-        status: data.status as 'draft' | 'generating' | 'completed' | 'failed',
+        status: data.status as "draft" | "generating" | "completed" | "failed",
         ai_generated_content: data.ai_generated_content as any,
         ai_model: data.ai_model,
         ai_tokens_used: data.ai_tokens_used,
@@ -148,18 +132,18 @@ export class TripService {
       if (command.generate_ai) {
         console.log(
           `AI generation requested for trip ${tripResponse.id}. ` +
-          `Client should call POST /api/trips/${tripResponse.id}/generate-ai`
+            `Client should call POST /api/trips/${tripResponse.id}/generate-ai`
         );
       }
 
       return { success: true, data: tripResponse };
     } catch (error) {
-      console.error('Unexpected error in createTrip:', error);
+      console.error("Unexpected error in createTrip:", error);
       return {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred while creating the trip',
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred while creating the trip",
           details: error,
         },
       };
@@ -173,33 +157,30 @@ export class TripService {
    * @param params - Query parameters for filtering and pagination
    * @returns ServiceResult with paginated trips list or error
    */
-  async listTrips(
-    userId: string,
-    params: TripsQueryParams
-  ): Promise<ServiceResult<PaginatedTripsResponse>> {
+  async listTrips(userId: string, params: TripsQueryParams): Promise<ServiceResult<PaginatedTripsResponse>> {
     try {
       const limit = params.limit || 20;
       const offset = params.offset || 0;
 
       // Build query
       let query = this.supabase
-        .from('trips')
-        .select('*', { count: 'exact' })
-        .eq('user_id', userId)
-        .is('deleted_at', null);
+        .from("trips")
+        .select("*", { count: "exact" })
+        .eq("user_id", userId)
+        .is("deleted_at", null);
 
       // Apply status filter if provided
       if (params.status) {
-        query = query.eq('status', params.status);
+        query = query.eq("status", params.status);
       }
 
       // Apply sorting
       if (params.sort) {
-        const [field, direction] = params.sort.split(':');
-        query = query.order(field, { ascending: direction === 'asc' });
+        const [field, direction] = params.sort.split(":");
+        query = query.order(field, { ascending: direction === "asc" });
       } else {
         // Default sort: newest first
-        query = query.order('created_at', { ascending: false });
+        query = query.order("created_at", { ascending: false });
       }
 
       // Apply pagination
@@ -208,12 +189,12 @@ export class TripService {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error('Database error listing trips:', error);
+        console.error("Database error listing trips:", error);
         return {
           success: false,
           error: {
-            code: 'DATABASE_ERROR',
-            message: 'Failed to retrieve trips',
+            code: "DATABASE_ERROR",
+            message: "Failed to retrieve trips",
             details: error,
           },
         };
@@ -227,7 +208,7 @@ export class TripService {
         start_date: row.start_date,
         end_date: row.end_date,
         description: row.description,
-        status: row.status as 'draft' | 'generating' | 'completed' | 'failed',
+        status: row.status as "draft" | "generating" | "completed" | "failed",
         ai_model: row.ai_model,
         ai_tokens_used: row.ai_tokens_used,
         ai_generation_time_ms: row.ai_generation_time_ms,
@@ -251,12 +232,12 @@ export class TripService {
 
       return { success: true, data: response };
     } catch (error) {
-      console.error('Unexpected error in listTrips:', error);
+      console.error("Unexpected error in listTrips:", error);
       return {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred while retrieving trips',
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred while retrieving trips",
           details: error,
         },
       };
@@ -271,38 +252,35 @@ export class TripService {
    * @param tripId - Trip ID
    * @returns ServiceResult with trip details or error
    */
-  async getTripById(
-    userId: string,
-    tripId: string
-  ): Promise<ServiceResult<TripDetailDTO>> {
+  async getTripById(userId: string, tripId: string): Promise<ServiceResult<TripDetailDTO>> {
     try {
       // Fetch trip
       const { data, error } = await this.supabase
-        .from('trips')
-        .select('*')
-        .eq('id', tripId)
-        .eq('user_id', userId)
-        .is('deleted_at', null)
+        .from("trips")
+        .select("*")
+        .eq("id", tripId)
+        .eq("user_id", userId)
+        .is("deleted_at", null)
         .single();
 
       if (error) {
         // Check if not found
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           return {
             success: false,
             error: {
-              code: 'NOT_FOUND',
-              message: 'Trip not found',
+              code: "NOT_FOUND",
+              message: "Trip not found",
             },
           };
         }
 
-        console.error('Database error getting trip:', error);
+        console.error("Database error getting trip:", error);
         return {
           success: false,
           error: {
-            code: 'DATABASE_ERROR',
-            message: 'Failed to retrieve trip',
+            code: "DATABASE_ERROR",
+            message: "Failed to retrieve trip",
             details: error,
           },
         };
@@ -310,12 +288,12 @@ export class TripService {
 
       // Update view metrics
       await this.supabase
-        .from('trips')
+        .from("trips")
         .update({
           view_count: (data.view_count ?? 0) + 1,
           last_viewed_at: new Date().toISOString(),
         })
-        .eq('id', tripId);
+        .eq("id", tripId);
 
       // Transform to TripDetailDTO
       const trip: TripDetailDTO = {
@@ -325,7 +303,7 @@ export class TripService {
         start_date: data.start_date,
         end_date: data.end_date,
         description: data.description,
-        status: data.status as 'draft' | 'generating' | 'completed' | 'failed',
+        status: data.status as "draft" | "generating" | "completed" | "failed",
         ai_generated_content: data.ai_generated_content as any,
         ai_model: data.ai_model,
         ai_tokens_used: data.ai_tokens_used,
@@ -340,12 +318,12 @@ export class TripService {
 
       return { success: true, data: trip };
     } catch (error) {
-      console.error('Unexpected error in getTripById:', error);
+      console.error("Unexpected error in getTripById:", error);
       return {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred while retrieving the trip',
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred while retrieving the trip",
           details: error,
         },
       };
@@ -368,7 +346,7 @@ export class TripService {
   ): Promise<ServiceResult<TripResponseDTO>> {
     try {
       // Prepare update data
-      const updateData: Partial<TablesInsert<'trips'>> = {};
+      const updateData: Partial<TablesInsert<"trips">> = {};
 
       if (command.destination !== undefined) {
         updateData.destination = this.sanitizeString(command.destination);
@@ -380,39 +358,37 @@ export class TripService {
         updateData.end_date = command.end_date;
       }
       if (command.description !== undefined) {
-        updateData.description = command.description
-          ? this.sanitizeString(command.description)
-          : null;
+        updateData.description = command.description ? this.sanitizeString(command.description) : null;
       }
 
       // Update trip
       const { data, error } = await this.supabase
-        .from('trips')
+        .from("trips")
         .update(updateData)
-        .eq('id', tripId)
-        .eq('user_id', userId)
-        .is('deleted_at', null)
+        .eq("id", tripId)
+        .eq("user_id", userId)
+        .is("deleted_at", null)
         .select()
         .single();
 
       if (error) {
         // Check if not found
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           return {
             success: false,
             error: {
-              code: 'NOT_FOUND',
-              message: 'Trip not found',
+              code: "NOT_FOUND",
+              message: "Trip not found",
             },
           };
         }
 
-        console.error('Database error updating trip:', error);
+        console.error("Database error updating trip:", error);
         return {
           success: false,
           error: {
-            code: 'DATABASE_ERROR',
-            message: 'Failed to update trip',
+            code: "DATABASE_ERROR",
+            message: "Failed to update trip",
             details: error,
           },
         };
@@ -426,7 +402,7 @@ export class TripService {
         start_date: data.start_date,
         end_date: data.end_date,
         description: data.description,
-        status: data.status as 'draft' | 'generating' | 'completed' | 'failed',
+        status: data.status as "draft" | "generating" | "completed" | "failed",
         ai_generated_content: data.ai_generated_content as any,
         ai_model: data.ai_model,
         ai_tokens_used: data.ai_tokens_used,
@@ -441,12 +417,12 @@ export class TripService {
 
       return { success: true, data: trip };
     } catch (error) {
-      console.error('Unexpected error in updateTrip:', error);
+      console.error("Unexpected error in updateTrip:", error);
       return {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred while updating the trip',
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred while updating the trip",
           details: error,
         },
       };
@@ -461,26 +437,22 @@ export class TripService {
    * @param tripId - Trip ID
    * @returns ServiceResult with success or error
    */
-  async deleteTrip(
-    userId: string,
-    tripId: string
-  ): Promise<ServiceResult<void>> {
+  async deleteTrip(userId: string, tripId: string): Promise<ServiceResult<void>> {
     try {
       // Call PostgreSQL function to perform soft delete
       // This function uses SECURITY DEFINER to bypass RLS while maintaining security
-      const { data, error } = await this.supabase
-        .rpc('soft_delete_trip', {
-          p_trip_id: tripId,
-          p_user_id: userId,
-        });
+      const { data, error } = await this.supabase.rpc("soft_delete_trip", {
+        p_trip_id: tripId,
+        p_user_id: userId,
+      });
 
       if (error) {
-        console.error('Database error deleting trip:', error);
+        console.error("Database error deleting trip:", error);
         return {
           success: false,
           error: {
-            code: 'DATABASE_ERROR',
-            message: 'Failed to delete trip',
+            code: "DATABASE_ERROR",
+            message: "Failed to delete trip",
             details: error,
           },
         };
@@ -491,20 +463,20 @@ export class TripService {
         return {
           success: false,
           error: {
-            code: 'NOT_FOUND',
-            message: 'Trip not found',
+            code: "NOT_FOUND",
+            message: "Trip not found",
           },
         };
       }
 
       return { success: true, data: undefined };
     } catch (error) {
-      console.error('Unexpected error in deleteTrip:', error);
+      console.error("Unexpected error in deleteTrip:", error);
       return {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred while deleting the trip',
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred while deleting the trip",
           details: error,
         },
       };
@@ -520,10 +492,10 @@ export class TripService {
   private sanitizeString(input: string): string {
     return input
       .trim()
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-      .replace(/\//g, '&#x2F;');
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;")
+      .replace(/\//g, "&#x2F;");
   }
 }

@@ -6,23 +6,23 @@
  * @see api-plan.md for API specifications
  */
 
-import type { APIRoute } from 'astro';
-import type { UpdateTripCommand } from '../../../types/dto';
-import { validateUpdateTripCommand, isValidUUID } from '../../../lib/validation';
-import { errorResponse, successResponse, noContentResponse } from '../../../lib/api-helpers';
-import { TripService } from '../../../services/trip.service';
-import { createSupabaseClientWithAuth } from '../../../db/supabase.client';
+import type { APIRoute } from "astro";
+import type { UpdateTripCommand } from "../../../types/dto";
+import { validateUpdateTripCommand, isValidUUID } from "../../../lib/validation";
+import { errorResponse, successResponse, noContentResponse } from "../../../lib/api-helpers";
+import { TripService } from "../../../services/trip.service";
+import { createSupabaseClientWithAuth } from "../../../db/supabase.client";
 
 /**
  * Helper function to extract and validate JWT token
  */
 async function authenticateRequest(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { error: errorResponse('UNAUTHORIZED', 'Authentication required') };
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return { error: errorResponse("UNAUTHORIZED", "Authentication required") };
   }
 
-  const token = authHeader.replace('Bearer ', '');
+  const token = authHeader.replace("Bearer ", "");
   const supabase = createSupabaseClientWithAuth(token);
 
   const {
@@ -32,10 +32,7 @@ async function authenticateRequest(request: Request) {
 
   if (authError || !user) {
     return {
-      error: errorResponse(
-        'INVALID_TOKEN',
-        'Invalid or expired authentication token'
-      ),
+      error: errorResponse("INVALID_TOKEN", "Invalid or expired authentication token"),
     };
   }
 
@@ -59,12 +56,12 @@ export const GET: APIRoute = async ({ params, request }) => {
     // 1. Validate trip ID
     const tripId = params.id;
     if (!tripId || !isValidUUID(tripId)) {
-      return errorResponse('INVALID_PARAMS', 'Invalid trip ID');
+      return errorResponse("INVALID_PARAMS", "Invalid trip ID");
     }
 
     // 2. Authenticate request
     const auth = await authenticateRequest(request);
-    if ('error' in auth) {
+    if ("error" in auth) {
       return auth.error;
     }
     const { supabase, userId } = auth;
@@ -75,24 +72,24 @@ export const GET: APIRoute = async ({ params, request }) => {
 
     // 4. Handle service errors
     if (!result.success) {
-      const error = 'error' in result ? result.error : null;
+      const error = "error" in result ? result.error : null;
 
-      if (error?.code === 'NOT_FOUND') {
-        return errorResponse('NOT_FOUND', 'Trip not found');
+      if (error?.code === "NOT_FOUND") {
+        return errorResponse("NOT_FOUND", "Trip not found");
       }
 
-      return errorResponse('INTERNAL_ERROR', 'Failed to retrieve trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to retrieve trip");
     }
 
     // 5. Return success response
-    const trip = 'data' in result ? result.data : null;
+    const trip = "data" in result ? result.data : null;
     if (!trip) {
-      return errorResponse('INTERNAL_ERROR', 'Failed to retrieve trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to retrieve trip");
     }
     return successResponse(trip);
   } catch (error) {
-    console.error('Unexpected error in GET /api/trips/:id:', error);
-    return errorResponse('INTERNAL_ERROR', 'An unexpected error occurred');
+    console.error("Unexpected error in GET /api/trips/:id:", error);
+    return errorResponse("INTERNAL_ERROR", "An unexpected error occurred");
   }
 };
 
@@ -118,21 +115,18 @@ export const PATCH: APIRoute = async ({ params, request }) => {
     // 1. Validate trip ID
     const tripId = params.id;
     if (!tripId || !isValidUUID(tripId)) {
-      return errorResponse('INVALID_PARAMS', 'Invalid trip ID');
+      return errorResponse("INVALID_PARAMS", "Invalid trip ID");
     }
 
     // 2. Verify Content-Type header
-    const contentType = request.headers.get('Content-Type');
-    if (!contentType || !contentType.includes('application/json')) {
-      return errorResponse(
-        'INVALID_PARAMS',
-        'Content-Type must be application/json'
-      );
+    const contentType = request.headers.get("Content-Type");
+    if (!contentType || !contentType.includes("application/json")) {
+      return errorResponse("INVALID_PARAMS", "Content-Type must be application/json");
     }
 
     // 3. Authenticate request
     const auth = await authenticateRequest(request);
-    if ('error' in auth) {
+    if ("error" in auth) {
       return auth.error;
     }
     const { supabase, userId } = auth;
@@ -142,23 +136,20 @@ export const PATCH: APIRoute = async ({ params, request }) => {
     try {
       requestBody = await request.json();
     } catch (error) {
-      return errorResponse('INVALID_PARAMS', 'Invalid JSON format');
+      return errorResponse("INVALID_PARAMS", "Invalid JSON format");
     }
 
     // 5. Validate request data
     const validationResult = validateUpdateTripCommand(requestBody);
     if (!validationResult.success) {
       return errorResponse(
-        'VALIDATION_ERROR',
-        'Invalid request data',
-        'errors' in validationResult ? validationResult.errors : undefined
+        "VALIDATION_ERROR",
+        "Invalid request data",
+        "errors" in validationResult ? validationResult.errors : undefined
       );
     }
 
-    const command =
-      'data' in validationResult
-        ? (validationResult.data as UpdateTripCommand)
-        : {};
+    const command = "data" in validationResult ? (validationResult.data as UpdateTripCommand) : {};
 
     // 6. Update trip using TripService
     const tripService = new TripService(supabase);
@@ -166,24 +157,24 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
     // 7. Handle service errors
     if (!result.success) {
-      const error = 'error' in result ? result.error : null;
+      const error = "error" in result ? result.error : null;
 
-      if (error?.code === 'NOT_FOUND') {
-        return errorResponse('NOT_FOUND', 'Trip not found');
+      if (error?.code === "NOT_FOUND") {
+        return errorResponse("NOT_FOUND", "Trip not found");
       }
 
-      return errorResponse('INTERNAL_ERROR', 'Failed to update trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to update trip");
     }
 
     // 8. Return success response
-    const trip = 'data' in result ? result.data : null;
+    const trip = "data" in result ? result.data : null;
     if (!trip) {
-      return errorResponse('INTERNAL_ERROR', 'Failed to update trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to update trip");
     }
     return successResponse(trip);
   } catch (error) {
-    console.error('Unexpected error in PATCH /api/trips/:id:', error);
-    return errorResponse('INTERNAL_ERROR', 'An unexpected error occurred');
+    console.error("Unexpected error in PATCH /api/trips/:id:", error);
+    return errorResponse("INTERNAL_ERROR", "An unexpected error occurred");
   }
 };
 
@@ -203,12 +194,12 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     // 1. Validate trip ID
     const tripId = params.id;
     if (!tripId || !isValidUUID(tripId)) {
-      return errorResponse('INVALID_PARAMS', 'Invalid trip ID');
+      return errorResponse("INVALID_PARAMS", "Invalid trip ID");
     }
 
     // 2. Authenticate request
     const auth = await authenticateRequest(request);
-    if ('error' in auth) {
+    if ("error" in auth) {
       return auth.error;
     }
     const { supabase, userId } = auth;
@@ -219,19 +210,19 @@ export const DELETE: APIRoute = async ({ params, request }) => {
 
     // 4. Handle service errors
     if (!result.success) {
-      const error = 'error' in result ? result.error : null;
+      const error = "error" in result ? result.error : null;
 
-      if (error?.code === 'NOT_FOUND') {
-        return errorResponse('NOT_FOUND', 'Trip not found');
+      if (error?.code === "NOT_FOUND") {
+        return errorResponse("NOT_FOUND", "Trip not found");
       }
 
-      return errorResponse('INTERNAL_ERROR', 'Failed to delete trip');
+      return errorResponse("INTERNAL_ERROR", "Failed to delete trip");
     }
 
     // 5. Return 204 No Content
     return noContentResponse();
   } catch (error) {
-    console.error('Unexpected error in DELETE /api/trips/:id:', error);
-    return errorResponse('INTERNAL_ERROR', 'An unexpected error occurred');
+    console.error("Unexpected error in DELETE /api/trips/:id:", error);
+    return errorResponse("INTERNAL_ERROR", "An unexpected error occurred");
   }
 };

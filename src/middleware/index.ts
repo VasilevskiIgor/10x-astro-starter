@@ -9,8 +9,8 @@
  * - Automatic token refresh via Supabase
  */
 
-import { defineMiddleware } from 'astro:middleware';
-import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { defineMiddleware } from "astro:middleware";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 // ============================================================================
 // Route Configuration
@@ -21,19 +21,16 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
  * User must be logged in to access these routes
  */
 const PROTECTED_ROUTES = [
-  '/trips',
-  '/trips/', // With trailing slash
-  '/api/trips',
+  "/trips",
+  "/trips/", // With trailing slash
+  "/api/trips",
 ];
 
 /**
  * Auth pages (login, signup, etc.)
  * Logged-in users will be redirected away from these
  */
-const AUTH_ROUTES = [
-  '/auth/login',
-  '/auth/signup',
-];
+const AUTH_ROUTES = ["/auth/login", "/auth/signup"];
 
 // ============================================================================
 // Helper Functions
@@ -48,7 +45,7 @@ function isRouteMatch(pathname: string, routes: string[]): boolean {
     // Exact match
     if (pathname === route) return true;
     // Prefix match for routes with children (e.g., /trips/123)
-    if (pathname.startsWith(route + '/')) return true;
+    if (pathname.startsWith(route + "/")) return true;
     return false;
   });
 }
@@ -73,15 +70,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Get user session from Supabase (with access to cookies)
   // Note: Supabase automatically handles token refresh if autoRefreshToken is enabled
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   // DEBUG: Log auth state
-  console.log('[Middleware]', {
+  console.log("[Middleware]", {
     pathname,
     isProtected,
     isAuthPage,
     hasSession: !!session,
-    cookies: Array.from(context.cookies).map(c => c.name)
+    cookies: Array.from(context.cookies).map((c) => c.name),
   });
 
   // CASE 1: Protected route + no session → Redirect to login
@@ -94,7 +93,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // CASE 2: Auth page + has session → redirect to trips (already logged in)
   if (isAuthPage && session) {
-    return context.redirect('/trips');
+    return context.redirect("/trips");
   }
 
   // CASE 3: User is authenticated → Add to context.locals for use in pages

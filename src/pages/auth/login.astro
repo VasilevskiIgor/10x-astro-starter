@@ -9,23 +9,23 @@
  * - Link to password reset and registration
  */
 
-import Layout from '@/layouts/Layout.astro';
-import { LoginForm } from '@/components/forms/LoginForm';
+import Layout from "@/layouts/Layout.astro";
+import { LoginForm } from "@/components/forms/LoginForm";
 
 // Get redirect URL from query params
 const url = new URL(Astro.request.url);
-const redirectTo = url.searchParams.get('redirect') || '/trips';
+const redirectTo = url.searchParams.get("redirect") || "/trips";
 ---
 
 <Layout title="Zaloguj się - Magic Travel App">
-  <main class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+  <main
+    class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8"
+  >
     <div class="w-full max-w-md">
       {/* Header */}
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Witaj ponownie</h1>
-        <p class="mt-2 text-sm text-gray-600">
-          Zaloguj się do swojego konta
-        </p>
+        <p class="mt-2 text-sm text-gray-600">Zaloguj się do swojego konta</p>
       </div>
 
       {/* Login Form Card */}
@@ -67,7 +67,7 @@ const redirectTo = url.searchParams.get('redirect') || '/trips';
       {/* Footer Links */}
       <div class="mt-6 space-y-3 text-center">
         <p class="text-sm text-gray-600">
-          Nie masz konta?{' '}
+          Nie masz konta?{" "}
           <a href="/auth/signup" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
             Zarejestruj się
           </a>
@@ -81,24 +81,22 @@ const redirectTo = url.searchParams.get('redirect') || '/trips';
       </div>
 
       <div class="mt-4 text-center">
-        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
-          ← Wróć do strony głównej
-        </a>
+        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 transition-colors"> ← Wróć do strony głównej </a>
       </div>
     </div>
   </main>
 
   <script>
-    import { supabaseBrowser } from '@/lib/supabase-browser';
+    import { supabaseBrowser } from "@/lib/supabase-browser";
 
-    const form = document.getElementById('loginFormWorking') as HTMLFormElement;
-    const errorDiv = document.getElementById('error') as HTMLDivElement;
+    const form = document.getElementById("loginFormWorking") as HTMLFormElement;
+    const errorDiv = document.getElementById("error") as HTMLDivElement;
 
-    form?.addEventListener('submit', async (e) => {
+    form?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const email = (document.getElementById('email') as HTMLInputElement).value;
-      const password = (document.getElementById('password') as HTMLInputElement).value;
+      const email = (document.getElementById("email") as HTMLInputElement).value;
+      const password = (document.getElementById("password") as HTMLInputElement).value;
 
       try {
         const { data, error } = await supabaseBrowser.auth.signInWithPassword({
@@ -108,30 +106,29 @@ const redirectTo = url.searchParams.get('redirect') || '/trips';
 
         if (error) {
           errorDiv.textContent = error.message;
-          errorDiv.classList.remove('hidden');
+          errorDiv.classList.remove("hidden");
           return;
         }
 
         // Get redirect from URL params
         const urlParams = new URLSearchParams(window.location.search);
-        const redirectTo = urlParams.get('redirect') || '/trips';
+        const redirectTo = urlParams.get("redirect") || "/trips";
 
         // Show success message
-        errorDiv.classList.add('hidden');
-        errorDiv.textContent = '✅ Logowanie udane! Przekierowywanie...';
-        errorDiv.classList.remove('hidden');
-        errorDiv.style.background = '#d4edda';
-        errorDiv.style.color = '#155724';
-        errorDiv.style.borderColor = '#c3e6cb';
+        errorDiv.classList.add("hidden");
+        errorDiv.textContent = "✅ Logowanie udane! Przekierowywanie...";
+        errorDiv.classList.remove("hidden");
+        errorDiv.style.background = "#d4edda";
+        errorDiv.style.color = "#155724";
+        errorDiv.style.borderColor = "#c3e6cb";
 
         // Redirect after brief delay
         setTimeout(() => {
           window.location.href = redirectTo;
         }, 500);
-
       } catch (error: any) {
-        errorDiv.textContent = error.message || 'Wystąpił błąd';
-        errorDiv.classList.remove('hidden');
+        errorDiv.textContent = error.message || "Wystąpił błąd";
+        errorDiv.classList.remove("hidden");
       }
     });
   </script>

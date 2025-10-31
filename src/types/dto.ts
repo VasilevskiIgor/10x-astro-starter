@@ -8,7 +8,7 @@
  * @see api-plan.md for API endpoint specifications
  */
 
-import type { Tables, TablesInsert, TablesUpdate } from '../db/database.types';
+import type { Tables, TablesInsert, TablesUpdate } from "../db/database.types";
 
 // ============================================================================
 // AI Generated Content Structure
@@ -69,7 +69,7 @@ export interface AIGeneratedContent {
  * Trip entity from database with typed AI content
  * Base type for all trip-related DTOs
  */
-type TripEntity = Omit<Tables<'trips'>, 'ai_generated_content' | 'deleted_at'> & {
+type TripEntity = Omit<Tables<"trips">, "ai_generated_content" | "deleted_at"> & {
   ai_generated_content: AIGeneratedContent | null;
 };
 
@@ -78,7 +78,7 @@ type TripEntity = Omit<Tables<'trips'>, 'ai_generated_content' | 'deleted_at'> &
  * Used in GET /api/trips response
  * Excludes AI-generated content for performance (large JSONB field)
  */
-export type TripListItemDTO = Omit<TripEntity, 'ai_generated_content'>;
+export type TripListItemDTO = Omit<TripEntity, "ai_generated_content">;
 
 /**
  * Trip Detail DTO
@@ -179,8 +179,8 @@ export interface RateLimitsDTO {
  * Excludes input_data and response_data for privacy/size reasons
  */
 export type AIGenerationLogDTO = Omit<
-  Tables<'ai_generation_logs'>,
-  'input_data' | 'response_data' | 'error_message'
+  Tables<"ai_generation_logs">,
+  "input_data" | "response_data" | "error_message"
 > & {
   // Include error_message but make it optional in response
   error_message?: string | null;
@@ -232,7 +232,7 @@ export type PaginatedAILogsResponse = PaginatedResponse<AIGenerationLogDTO>;
 export interface TripsQueryParams {
   limit?: number; // 1-100, default 20
   offset?: number; // default 0
-  status?: 'draft' | 'generating' | 'completed' | 'failed';
+  status?: "draft" | "generating" | "completed" | "failed";
   sort?: string; // Format: "field:direction" e.g., "created_at:desc"
 }
 
@@ -273,18 +273,18 @@ export interface ErrorResponse {
  * Standard error codes
  */
 export type ErrorCode =
-  | 'UNAUTHORIZED'
-  | 'INVALID_TOKEN'
-  | 'FORBIDDEN'
-  | 'NOT_FOUND'
-  | 'VALIDATION_ERROR'
-  | 'INVALID_PARAMS'
-  | 'TRIP_LIMIT_EXCEEDED'
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'GENERATION_IN_PROGRESS'
-  | 'AI_GENERATION_FAILED'
-  | 'AI_GENERATION_TIMEOUT'
-  | 'INTERNAL_ERROR';
+  | "UNAUTHORIZED"
+  | "INVALID_TOKEN"
+  | "FORBIDDEN"
+  | "NOT_FOUND"
+  | "VALIDATION_ERROR"
+  | "INVALID_PARAMS"
+  | "TRIP_LIMIT_EXCEEDED"
+  | "RATE_LIMIT_EXCEEDED"
+  | "GENERATION_IN_PROGRESS"
+  | "AI_GENERATION_FAILED"
+  | "AI_GENERATION_TIMEOUT"
+  | "INTERNAL_ERROR";
 
 // ============================================================================
 // Special Response DTOs
@@ -295,13 +295,13 @@ export type ErrorCode =
  * Used in GET /api/health response
  */
 export interface HealthCheckResponse {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   version: string;
   timestamp: string;
   services: {
-    database: 'healthy' | 'unhealthy';
-    auth: 'healthy' | 'unhealthy';
-    ai: 'healthy' | 'unhealthy';
+    database: "healthy" | "unhealthy";
+    auth: "healthy" | "unhealthy";
+    ai: "healthy" | "unhealthy";
   };
 }
 
@@ -311,7 +311,7 @@ export interface HealthCheckResponse {
  */
 export interface AIGenerationStartedResponse {
   id: string;
-  status: 'generating';
+  status: "generating";
   message: string;
   estimated_completion: string; // ISO 8601 timestamp
 }
@@ -322,7 +322,7 @@ export interface AIGenerationStartedResponse {
  */
 export interface AIGenerationCompletedResponse {
   id: string;
-  status: 'completed';
+  status: "completed";
   ai_generated_content: AIGeneratedContent;
   ai_model: string;
   ai_tokens_used: number | null;
@@ -332,9 +332,7 @@ export interface AIGenerationCompletedResponse {
 /**
  * Union type for AI generation responses
  */
-export type AIGenerationResponse =
-  | AIGenerationStartedResponse
-  | AIGenerationCompletedResponse;
+export type AIGenerationResponse = AIGenerationStartedResponse | AIGenerationCompletedResponse;
 
 // ============================================================================
 // Type Guards
@@ -343,19 +341,15 @@ export type AIGenerationResponse =
 /**
  * Type guard to check if AI generation response is completed
  */
-export function isAIGenerationCompleted(
-  response: AIGenerationResponse
-): response is AIGenerationCompletedResponse {
-  return response.status === 'completed';
+export function isAIGenerationCompleted(response: AIGenerationResponse): response is AIGenerationCompletedResponse {
+  return response.status === "completed";
 }
 
 /**
  * Type guard to check if AI generation response is started (async)
  */
-export function isAIGenerationStarted(
-  response: AIGenerationResponse
-): response is AIGenerationStartedResponse {
-  return response.status === 'generating';
+export function isAIGenerationStarted(response: AIGenerationResponse): response is AIGenerationStartedResponse {
+  return response.status === "generating";
 }
 
 // ============================================================================
@@ -365,25 +359,19 @@ export function isAIGenerationStarted(
 /**
  * Extract trip status type from database enum
  */
-export type TripStatus = NonNullable<Tables<'trips'>['status']>;
+export type TripStatus = NonNullable<Tables<"trips">["status"]>;
 
 /**
  * Extract AI generation log status type from database
  */
-export type AIGenerationStatus = Tables<'ai_generation_logs'>['status'];
+export type AIGenerationStatus = Tables<"ai_generation_logs">["status"];
 
 /**
  * Sorting direction
  */
-export type SortDirection = 'asc' | 'desc';
+export type SortDirection = "asc" | "desc";
 
 /**
  * Sort field options for trips
  */
-export type TripSortField =
-  | 'created_at'
-  | 'updated_at'
-  | 'start_date'
-  | 'end_date'
-  | 'destination'
-  | 'status';
+export type TripSortField = "created_at" | "updated_at" | "start_date" | "end_date" | "destination" | "status";

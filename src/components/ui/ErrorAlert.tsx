@@ -5,13 +5,13 @@
  * Supports dismissible alerts with appropriate styling and accessibility features.
  */
 
-import * as React from 'react';
+import * as React from "react";
 
 // ============================================================================
 // Type Definitions
 // ============================================================================
 
-export type AlertType = 'error' | 'warning' | 'info' | 'success';
+export type AlertType = "error" | "warning" | "info" | "success";
 
 export interface ErrorAlertProps {
   type: AlertType;
@@ -25,17 +25,20 @@ export interface ErrorAlertProps {
 // ============================================================================
 
 const alertStyles: Record<AlertType, string> = {
-  error: 'bg-[var(--colorStatusDangerBackground1)] border-[var(--colorStatusDangerBorder1)] text-[var(--colorStatusDangerForeground1)]',
-  warning: 'bg-[var(--colorStatusWarningBackground1)] border-[var(--colorStatusWarningBorder1)] text-[var(--colorStatusWarningForeground1)]',
-  info: 'bg-[var(--colorStatusInfoBackground1)] border-[var(--colorStatusInfoBorder1)] text-[var(--colorStatusInfoForeground1)]',
-  success: 'bg-[var(--colorStatusSuccessBackground1)] border-[var(--colorStatusSuccessBorder1)] text-[var(--colorStatusSuccessForeground1)]',
+  error:
+    "bg-[var(--colorStatusDangerBackground1)] border-[var(--colorStatusDangerBorder1)] text-[var(--colorStatusDangerForeground1)]",
+  warning:
+    "bg-[var(--colorStatusWarningBackground1)] border-[var(--colorStatusWarningBorder1)] text-[var(--colorStatusWarningForeground1)]",
+  info: "bg-[var(--colorStatusInfoBackground1)] border-[var(--colorStatusInfoBorder1)] text-[var(--colorStatusInfoForeground1)]",
+  success:
+    "bg-[var(--colorStatusSuccessBackground1)] border-[var(--colorStatusSuccessBorder1)] text-[var(--colorStatusSuccessForeground1)]",
 };
 
 const iconColors: Record<AlertType, string> = {
-  error: 'text-[var(--colorStatusDangerForeground2)]',
-  warning: 'text-[var(--colorStatusWarningForeground2)]',
-  info: 'text-[var(--colorStatusInfoForeground2)]',
-  success: 'text-[var(--colorStatusSuccessForeground2)]',
+  error: "text-[var(--colorStatusDangerForeground2)]",
+  warning: "text-[var(--colorStatusWarningForeground2)]",
+  info: "text-[var(--colorStatusInfoForeground2)]",
+  success: "text-[var(--colorStatusSuccessForeground2)]",
 };
 
 // ============================================================================
@@ -43,14 +46,7 @@ const iconColors: Record<AlertType, string> = {
 // ============================================================================
 
 const ErrorIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    aria-hidden="true"
-  >
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -60,14 +56,7 @@ const ErrorIcon = ({ className }: { className?: string }) => (
 );
 
 const WarningIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    aria-hidden="true"
-  >
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -77,14 +66,7 @@ const WarningIcon = ({ className }: { className?: string }) => (
 );
 
 const InfoIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    aria-hidden="true"
-  >
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -94,14 +76,7 @@ const InfoIcon = ({ className }: { className?: string }) => (
 );
 
 const SuccessIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    aria-hidden="true"
-  >
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -111,19 +86,8 @@ const SuccessIcon = ({ className }: { className?: string }) => (
 );
 
 const CloseIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    aria-hidden="true"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6 18L18 6M6 6l12 12"
-    />
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
   </svg>
 );
 
@@ -131,12 +95,7 @@ const CloseIcon = ({ className }: { className?: string }) => (
 // Component
 // ============================================================================
 
-export const ErrorAlert: React.FC<ErrorAlertProps> = ({
-  type,
-  message,
-  dismissible = false,
-  onDismiss,
-}) => {
+export const ErrorAlert: React.FC<ErrorAlertProps> = ({ type, message, dismissible = false, onDismiss }) => {
   const [isVisible, setIsVisible] = React.useState(true);
 
   const handleDismiss = () => {
@@ -155,14 +114,14 @@ export const ErrorAlert: React.FC<ErrorAlertProps> = ({
     success: SuccessIcon,
   }[type];
 
-  const role = type === 'error' ? 'alert' : 'status';
-  const ariaLive = type === 'error' ? 'assertive' : 'polite';
+  const role = type === "error" ? "alert" : "status";
+  const ariaLive = type === "error" ? "assertive" : "polite";
 
   const dismissButtonStyles = {
-    error: 'hover:bg-[var(--colorStatusDangerBackground2)] focus-visible:outline-[var(--colorStatusDangerBorder2)]',
-    warning: 'hover:bg-[var(--colorStatusWarningBackground2)] focus-visible:outline-[var(--colorStatusWarningBorder2)]',
-    info: 'hover:bg-[var(--colorStatusInfoBackground2)] focus-visible:outline-[var(--colorStatusInfoBorder2)]',
-    success: 'hover:bg-[var(--colorStatusSuccessBackground2)] focus-visible:outline-[var(--colorStatusSuccessBorder2)]',
+    error: "hover:bg-[var(--colorStatusDangerBackground2)] focus-visible:outline-[var(--colorStatusDangerBorder2)]",
+    warning: "hover:bg-[var(--colorStatusWarningBackground2)] focus-visible:outline-[var(--colorStatusWarningBorder2)]",
+    info: "hover:bg-[var(--colorStatusInfoBackground2)] focus-visible:outline-[var(--colorStatusInfoBorder2)]",
+    success: "hover:bg-[var(--colorStatusSuccessBackground2)] focus-visible:outline-[var(--colorStatusSuccessBorder2)]",
   }[type];
 
   return (
@@ -176,7 +135,9 @@ export const ErrorAlert: React.FC<ErrorAlertProps> = ({
           <Icon className={`h-5 w-5 ${iconColors[type]}`} />
         </div>
         <div className="flex-1">
-          <p className="text-[var(--fontSizeBase300)] font-[var(--fontWeightMedium)] leading-[var(--lineHeightBase300)]">{message}</p>
+          <p className="text-[var(--fontSizeBase300)] font-[var(--fontWeightMedium)] leading-[var(--lineHeightBase300)]">
+            {message}
+          </p>
         </div>
         {dismissible && (
           <div className="ml-auto">

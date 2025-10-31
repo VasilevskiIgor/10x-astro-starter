@@ -9,12 +9,14 @@
  * - Server client: Uses cookies for session
  */
 
-import { createServerClient } from '@supabase/ssr';
-import type { AstroCookies } from 'astro';
-import type { Database } from '@/db/database.types';
+import { createServerClient } from "@supabase/ssr";
+import type { AstroCookies } from "astro";
+import type { Database } from "@/db/database.types";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL || 'http://127.0.0.1:54321';
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+const supabaseUrl = import.meta.env.SUPABASE_URL || "http://127.0.0.1:54321";
+const supabaseAnonKey =
+  import.meta.env.SUPABASE_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
 
 /**
  * Create a Supabase client for server-side use (middleware, API routes)
@@ -25,8 +27,8 @@ const supabaseAnonKey = import.meta.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR
  */
 export function createSupabaseServerClient(cookies: AstroCookies) {
   // Try to get tokens from our custom cookies
-  const accessToken = cookies.get('sb-access-token')?.value;
-  const refreshToken = cookies.get('sb-refresh-token')?.value;
+  const accessToken = cookies.get("sb-access-token")?.value;
+  const refreshToken = cookies.get("sb-refresh-token")?.value;
 
   // If we have custom cookies, create client with those tokens
   if (accessToken && refreshToken) {

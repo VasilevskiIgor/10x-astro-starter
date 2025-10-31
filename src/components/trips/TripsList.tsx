@@ -10,10 +10,10 @@
  * - Pagination
  */
 
-import * as React from 'react';
-import { useTrips } from '@/hooks/useTrips';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { TripCard } from './TripCard';
+import * as React from "react";
+import { useTrips } from "@/hooks/useTrips";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { TripCard } from "./TripCard";
 
 // ============================================================================
 // Component
@@ -27,10 +27,7 @@ export const TripsList: React.FC = () => {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="animate-pulse rounded-lg border border-gray-200 bg-white p-6"
-          >
+          <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
             <div className="h-4 w-1/4 rounded bg-gray-200"></div>
             <div className="mt-2 h-3 w-1/2 rounded bg-gray-200"></div>
             <div className="mt-4 h-3 w-3/4 rounded bg-gray-200"></div>
@@ -42,12 +39,7 @@ export const TripsList: React.FC = () => {
 
   // Error state
   if (error) {
-    return (
-      <ErrorAlert
-        type="error"
-        message={error}
-      />
-    );
+    return <ErrorAlert type="error" message={error} />;
   }
 
   // Empty state
@@ -69,27 +61,14 @@ export const TripsList: React.FC = () => {
           />
         </svg>
         <h3 className="mt-2 text-sm font-semibold text-gray-900">Brak podróży</h3>
-        <p className="mt-1 text-sm text-gray-500">
-          Zacznij od stworzenia swojej pierwszej podróży.
-        </p>
+        <p className="mt-1 text-sm text-gray-500">Zacznij od stworzenia swojej pierwszej podróży.</p>
         <div className="mt-6">
           <a
             href="/trips/new"
             className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
-            <svg
-              className="mr-1.5 h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
+            <svg className="mr-1.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Utwórz nową podróż
           </a>
@@ -130,11 +109,8 @@ export const TripsList: React.FC = () => {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Pokazuję{' '}
-                <span className="font-medium">{pagination.offset + 1}</span> do{' '}
-                <span className="font-medium">
-                  {Math.min(pagination.offset + pagination.limit, pagination.total)}
-                </span>{' '}
+                Pokazuję <span className="font-medium">{pagination.offset + 1}</span> do{" "}
+                <span className="font-medium">{Math.min(pagination.offset + pagination.limit, pagination.total)}</span>{" "}
                 z <span className="font-medium">{pagination.total}</span> podróży
               </p>
             </div>

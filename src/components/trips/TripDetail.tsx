@@ -9,10 +9,10 @@
  * - Loading and error states
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
-import type { TripDetailDTO } from '@/types/dto';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import type { TripDetailDTO } from "@/types/dto";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
 
 // ============================================================================
 // Type Definitions
@@ -28,11 +28,11 @@ export interface TripDetailProps {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('pl-PL', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
+  return date.toLocaleDateString("pl-PL", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   });
 };
 
@@ -64,27 +64,30 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       setError(null);
 
       try {
-        const { data: { session } } = await supabaseBrowser.auth.getSession();
+        const {
+          data: { session },
+        } = await supabaseBrowser.auth.getSession();
 
         if (!session) {
-          throw new Error('Not authenticated. Please log in.');
+          throw new Error("Not authenticated. Please log in.");
         }
 
         const response = await fetch(`/api/trips/${tripId}`, {
           headers: {
-            'Authorization': `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error?.message || 'Nie udało się pobrać podróży');
+          throw new Error(errorData.error?.message || "Nie udało się pobrać podróży");
         }
 
         const data: TripDetailDTO = await response.json();
         setTrip(data);
-      } catch (err: any) {
-        setError(err.message || 'Wystąpił błąd podczas pobierania szczegółów podróży');
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message || "Wystąpił błąd podczas pobierania szczegółów podróży");
       } finally {
         setIsLoading(false);
       }
@@ -98,28 +101,31 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
     setIsDeleting(true);
 
     try {
-      const { data: { session } } = await supabaseBrowser.auth.getSession();
+      const {
+        data: { session },
+      } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error('Nie jesteś zalogowany. Zaloguj się.');
+        throw new Error("Nie jesteś zalogowany. Zaloguj się.");
       }
 
       const response = await fetch(`/api/trips/${tripId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Nie udało się usunąć podróży');
+        throw new Error(errorData.error?.message || "Nie udało się usunąć podróży");
       }
 
       // Redirect to trips list after successful deletion
-      window.location.href = '/trips';
-    } catch (err: any) {
-      setError(err.message || 'Wystąpił błąd podczas usuwania podróży');
+      window.location.href = "/trips";
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Wystąpił błąd podczas usuwania podróży");
       setIsDeleting(false);
     }
   };
@@ -130,48 +136,55 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
     setAiError(null);
 
     try {
-      const { data: { session } } = await supabaseBrowser.auth.getSession();
+      const {
+        data: { session },
+      } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error('Nie jesteś zalogowany. Zaloguj się.');
+        throw new Error("Nie jesteś zalogowany. Zaloguj się.");
       }
 
-      console.log('[TripDetail] Starting AI generation for trip:', tripId);
+      console.log("[TripDetail] Starting AI generation for trip:", tripId);
 
       const response = await fetch(`/api/trips/${tripId}/generate-ai`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: 'openai/gpt-4o-mini',
+          model: "openai/gpt-4o-mini",
           temperature: 0.7,
           force_regenerate: false,
         }),
       });
 
       const responseData = await response.json();
-      console.log('[TripDetail] AI generation response:', response.status, responseData);
+      console.log("[TripDetail] AI generation response:", response.status, responseData);
 
       if (!response.ok) {
-        throw new Error(responseData.error?.message || 'Nie udało się wygenerować planu AI');
+        throw new Error(responseData.error?.message || "Nie udało się wygenerować planu AI");
       }
 
       // Update trip with AI content
-      setTrip((prev) => prev ? {
-        ...prev,
-        status: 'completed',
-        ai_generated_content: responseData.ai_generated_content,
-        ai_model: responseData.ai_model,
-        ai_tokens_used: responseData.ai_tokens_used,
-        ai_generation_time_ms: responseData.ai_generation_time_ms,
-      } : null);
+      setTrip((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: "completed",
+              ai_generated_content: responseData.ai_generated_content,
+              ai_model: responseData.ai_model,
+              ai_tokens_used: responseData.ai_tokens_used,
+              ai_generation_time_ms: responseData.ai_generation_time_ms,
+            }
+          : null
+      );
 
-      console.log('[TripDetail] AI generation successful');
-    } catch (err: any) {
-      console.error('[TripDetail] AI generation error:', err);
-      setAiError(err.message || 'Wystąpił błąd podczas generowania planu AI');
+      console.log("[TripDetail] AI generation successful");
+    } catch (err) {
+      const error = err as Error;
+      console.error("[TripDetail] AI generation error:", err);
+      setAiError(error.message || "Wystąpił błąd podczas generowania planu AI");
     } finally {
       setIsGeneratingAI(false);
     }
@@ -210,12 +223,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           <h1 className="text-3xl font-bold text-gray-900">{trip.destination}</h1>
           <div className="mt-2 flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center">
-              <svg
-                className="mr-1.5 h-5 w-5 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -229,7 +237,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             </div>
             <span className="text-gray-400">•</span>
             <span>
-              {duration} {duration === 1 ? 'dzień' : duration < 5 ? 'dni' : 'dni'}
+              {duration} {duration === 1 ? "dzień" : duration < 5 ? "dni" : "dni"}
             </span>
           </div>
         </div>
@@ -240,12 +248,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             href={`/trips/${trip.id}/edit`}
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            <svg
-              className="mr-2 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -259,12 +262,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             onClick={() => setShowDeleteConfirm(true)}
             className="inline-flex items-center rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           >
-            <svg
-              className="mr-2 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -289,12 +287,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {trip.ai_generated_content && (
         <div className="rounded-lg border border-purple-200 bg-purple-50 p-6">
           <div className="flex items-center mb-4">
-            <svg
-              className="mr-2 h-6 w-6 text-purple-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="mr-2 h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -327,12 +320,8 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-purple-600">
-                              {activity.time}
-                            </span>
-                            <span className="text-sm font-semibold text-gray-900">
-                              {activity.title}
-                            </span>
+                            <span className="text-sm font-medium text-purple-600">{activity.time}</span>
+                            <span className="text-sm font-semibold text-gray-900">{activity.title}</span>
                           </div>
                           <p className="mt-1 text-sm text-gray-600">{activity.description}</p>
                           <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
@@ -340,9 +329,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                             <span>⏱️ {activity.duration_minutes} min</span>
                             <span>💰 {activity.cost_estimate}</span>
                           </div>
-                          {activity.tips && (
-                            <p className="mt-2 text-xs text-gray-600">💡 {activity.tips}</p>
-                          )}
+                          {activity.tips && <p className="mt-2 text-xs text-gray-600">💡 {activity.tips}</p>}
                         </div>
                       </div>
                     </div>
@@ -359,27 +346,19 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <span className="text-sm font-medium text-gray-700">Transport:</span>
-                  <p className="text-sm text-gray-600">
-                    {trip.ai_generated_content.recommendations.transportation}
-                  </p>
+                  <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.transportation}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-gray-700">Zakwaterowanie:</span>
-                  <p className="text-sm text-gray-600">
-                    {trip.ai_generated_content.recommendations.accommodation}
-                  </p>
+                  <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.accommodation}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-gray-700">Budżet:</span>
-                  <p className="text-sm text-gray-600">
-                    {trip.ai_generated_content.recommendations.budget}
-                  </p>
+                  <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.budget}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-gray-700">Najlepszy czas:</span>
-                  <p className="text-sm text-gray-600">
-                    {trip.ai_generated_content.recommendations.best_time}
-                  </p>
+                  <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.best_time}</p>
                 </div>
               </div>
             </div>
@@ -388,14 +367,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       )}
 
       {/* No AI content message */}
-      {!trip.ai_generated_content && trip.status === 'draft' && (
+      {!trip.ai_generated_content && trip.status === "draft" && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
-          {aiError && (
-            <ErrorAlert type="error" message={aiError} />
-          )}
-          <p className="text-gray-600">
-            Ta podróż nie ma jeszcze wygenerowanego planu AI.
-          </p>
+          {aiError && <ErrorAlert type="error" message={aiError} />}
+          <p className="text-gray-600">Ta podróż nie ma jeszcze wygenerowanego planu AI.</p>
           <button
             onClick={handleGenerateAI}
             disabled={isGeneratingAI}
@@ -403,20 +378,8 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           >
             {isGeneratingAI ? (
               <>
-                <svg
-                  className="mr-2 h-4 w-4 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
+                <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -426,14 +389,14 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 Generowanie...
               </>
             ) : (
-              'Generuj plan podróży AI'
+              "Generuj plan podróży AI"
             )}
           </button>
         </div>
       )}
 
       {/* Generating status */}
-      {trip.status === 'generating' && (
+      {trip.status === "generating" && (
         <div className="rounded-lg border border-purple-200 bg-purple-50 p-6 text-center">
           <div className="flex items-center justify-center">
             <svg
@@ -442,14 +405,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path
                 className="opacity-75"
                 fill="currentColor"
@@ -465,7 +421,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       )}
 
       {/* Failed status */}
-      {trip.status === 'failed' && !trip.ai_generated_content && (
+      {trip.status === "failed" && !trip.ai_generated_content && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
           <ErrorAlert type="error" message="Generowanie AI nie powiodło się. Spróbuj ponownie." />
           <button
@@ -475,20 +431,8 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           >
             {isGeneratingAI ? (
               <>
-                <svg
-                  className="mr-2 h-4 w-4 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
+                <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -498,7 +442,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 Ponowna próba...
               </>
             ) : (
-              'Spróbuj ponownie'
+              "Spróbuj ponownie"
             )}
           </button>
         </div>
@@ -510,7 +454,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           <div className="mx-4 max-w-md rounded-lg bg-white p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-gray-900">Usunąć podróż?</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Czy na pewno chcesz usunąć "{trip.destination}"? Tej operacji nie można cofnąć.
+              Czy na pewno chcesz usunąć &quot;{trip.destination}&quot;? Tej operacji nie można cofnąć.
             </p>
             <div className="mt-6 flex gap-3">
               <button
@@ -525,7 +469,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 disabled={isDeleting}
                 className="flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
               >
-                {isDeleting ? 'Usuwanie...' : 'Usuń'}
+                {isDeleting ? "Usuwanie..." : "Usuń"}
               </button>
             </div>
           </div>

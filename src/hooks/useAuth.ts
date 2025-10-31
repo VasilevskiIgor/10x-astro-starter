@@ -5,9 +5,9 @@
  * Uses Supabase Auth.
  */
 
-import * as React from 'react';
-import { supabaseBrowser } from '@/lib/supabase-browser';
-import type { User, Session } from '@supabase/supabase-js';
+import * as React from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import type { User, Session } from "@supabase/supabase-js";
 
 // ============================================================================
 // Type Definitions
@@ -37,15 +37,15 @@ export function useAuth(): UseAuthReturn {
   });
 
   React.useEffect(() => {
-    console.log('[useAuth] Checking authentication status...');
+    console.log("[useAuth] Checking authentication status...");
 
     // Get initial session
     supabaseBrowser.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
-        console.error('[useAuth] Error getting session:', error);
+        console.error("[useAuth] Error getting session:", error);
       }
 
-      console.log('[useAuth] Session:', session ? 'AUTHENTICATED' : 'NOT AUTHENTICATED');
+      console.log("[useAuth] Session:", session ? "AUTHENTICATED" : "NOT AUTHENTICATED");
 
       setState({
         user: session?.user ?? null,
@@ -59,7 +59,7 @@ export function useAuth(): UseAuthReturn {
     const {
       data: { subscription },
     } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
-      console.log('[useAuth] Auth state changed:', _event, session ? 'AUTHENTICATED' : 'NOT AUTHENTICATED');
+      console.log("[useAuth] Auth state changed:", _event, session ? "AUTHENTICATED" : "NOT AUTHENTICATED");
 
       setState({
         user: session?.user ?? null,
@@ -76,7 +76,7 @@ export function useAuth(): UseAuthReturn {
   }, []);
 
   const signOut = React.useCallback(async () => {
-    console.log('[useAuth] Signing out...');
+    console.log("[useAuth] Signing out...");
     await supabaseBrowser.auth.signOut();
   }, []);
 
@@ -90,12 +90,12 @@ export function useAuth(): UseAuthReturn {
 // Helper Hook: Redirect if not authenticated
 // ============================================================================
 
-export function useRequireAuth(redirectTo: string = '/auth/login') {
+export function useRequireAuth(redirectTo = "/auth/login") {
   const { isAuthenticated, isLoading } = useAuth();
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      console.log('[useRequireAuth] Not authenticated, redirecting to:', redirectTo);
+      console.log("[useRequireAuth] Not authenticated, redirecting to:", redirectTo);
       const currentPath = window.location.pathname;
       window.location.href = `${redirectTo}?redirect=${encodeURIComponent(currentPath)}`;
     }
