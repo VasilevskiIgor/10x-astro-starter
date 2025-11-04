@@ -17,7 +17,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { RulesBuilderService, CostLevel, type RulesConfig } from "@/services/rules-builder.service";
+import { RulesBuilderService, CostLevel } from "@/services/rules-builder.service";
 
 describe("RulesBuilderService.generateRulesContent() - Enhanced Tests", () => {
   let service: RulesBuilderService;

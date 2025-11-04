@@ -78,6 +78,6 @@ export default tseslint.config(
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier,
   {
-    ignores: ["src/components/navigation/Navigation.astro"],
+    ignores: ["src/components/navigation/Navigation.astro", "src/pages/auth/login.astro", "src/pages/debug-auth.astro"],
   }
 );

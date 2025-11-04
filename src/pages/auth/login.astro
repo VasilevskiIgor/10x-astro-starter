@@ -10,11 +10,6 @@
  */
 
 import Layout from "@/layouts/Layout.astro";
-import { LoginForm } from "@/components/forms/LoginForm";
-
-// Get redirect URL from query params
-const url = new URL(Astro.request.url);
-const redirectTo = url.searchParams.get("redirect") || "/trips";
 ---
 
 <Layout title="Zaloguj się - Magic Travel App">

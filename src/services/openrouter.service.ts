@@ -452,7 +452,7 @@ Provide:
    * Build response format with full JSON Schema
    * This is the core of structured outputs - ensures AI returns valid JSON
    */
-  private buildResponseFormat(): any {
+  private buildResponseFormat(): Record<string, unknown> {
     return {
       type: "json_schema",
       json_schema: {

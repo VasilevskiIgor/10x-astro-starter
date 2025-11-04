@@ -18,6 +18,7 @@ import type {
   TripsQueryParams,
   PaginatedTripsResponse,
   UpdateTripCommand,
+  AIGeneratedContent,
 } from "../types/dto";
 
 /**
@@ -114,7 +115,7 @@ export class TripService {
         end_date: data.end_date,
         description: data.description,
         status: data.status as "draft" | "generating" | "completed" | "failed",
-        ai_generated_content: data.ai_generated_content as any,
+        ai_generated_content: data.ai_generated_content as AIGeneratedContent | null,
         ai_model: data.ai_model,
         ai_tokens_used: data.ai_tokens_used,
         ai_generation_time_ms: data.ai_generation_time_ms,
@@ -304,7 +305,7 @@ export class TripService {
         end_date: data.end_date,
         description: data.description,
         status: data.status as "draft" | "generating" | "completed" | "failed",
-        ai_generated_content: data.ai_generated_content as any,
+        ai_generated_content: data.ai_generated_content as AIGeneratedContent | null,
         ai_model: data.ai_model,
         ai_tokens_used: data.ai_tokens_used,
         ai_generation_time_ms: data.ai_generation_time_ms,
@@ -403,7 +404,7 @@ export class TripService {
         end_date: data.end_date,
         description: data.description,
         status: data.status as "draft" | "generating" | "completed" | "failed",
-        ai_generated_content: data.ai_generated_content as any,
+        ai_generated_content: data.ai_generated_content as AIGeneratedContent | null,
         ai_model: data.ai_model,
         ai_tokens_used: data.ai_tokens_used,
         ai_generation_time_ms: data.ai_generation_time_ms,

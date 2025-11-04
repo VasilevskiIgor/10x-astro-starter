@@ -8,7 +8,7 @@
  * @see api-plan.md for API endpoint specifications
  */
 
-import type { Tables, TablesInsert, TablesUpdate } from "../db/database.types";
+import type { Tables } from "../db/database.types";
 
 // ============================================================================
 // AI Generated Content Structure

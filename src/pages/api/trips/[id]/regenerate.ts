@@ -93,7 +93,7 @@ export const POST: APIRoute = async ({ params, request }) => {
       }
 
       command = "data" in validationResult ? (validationResult.data as UpdateTripCommand) : {};
-    } catch (error) {
+    } catch {
       return errorResponse("INVALID_PARAMS", "Invalid JSON format");
     }
 
@@ -164,7 +164,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     }
 
     // 7. Update trip with new parameters AND set status to 'generating'
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       status: "generating",
     };
 
@@ -302,7 +302,7 @@ export const POST: APIRoute = async ({ params, request }) => {
       .from("trips")
       .update({
         status: "completed",
-        ai_generated_content: aiResult.content as any,
+        ai_generated_content: JSON.parse(JSON.stringify(aiResult.content)),
         ai_model: aiResult.model,
         ai_tokens_used: aiResult.tokensUsed,
         ai_generation_time_ms: aiResult.generationTimeMs,

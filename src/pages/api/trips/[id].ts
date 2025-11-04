@@ -135,7 +135,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
     let requestBody: unknown;
     try {
       requestBody = await request.json();
-    } catch (error) {
+    } catch {
       return errorResponse("INVALID_PARAMS", "Invalid JSON format");
     }
 
