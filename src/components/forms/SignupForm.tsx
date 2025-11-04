@@ -243,7 +243,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
         <p>
           Masz już konto?{" "}
           <a
-            href="/auth/login"
+            href={redirectTo !== "/trips" ? `/auth/login?redirect=${encodeURIComponent(redirectTo)}` : "/auth/login"}
             className="text-[var(--colorBrandForegroundLink)] hover:text-[var(--colorBrandBackgroundHover)] hover:underline font-[var(--fontWeightSemibold)] transition-colors duration-100"
           >
             Zaloguj się
