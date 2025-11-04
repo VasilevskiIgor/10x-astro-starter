@@ -26,7 +26,19 @@
 
       {/* Navigation Links */}
       <div id="navLinks" class="flex items-center space-x-4">
-        {/* Will be populated by JavaScript based on auth state */}
+        {/* Default: Show login/signup buttons (will be updated by JS if user is logged in) */}
+        <a
+          href="/auth/login"
+          class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+        >
+          Zaloguj się
+        </a>
+        <a
+          href="/auth/signup"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+        >
+          Zarejestruj się
+        </a>
       </div>
     </div>
   </div>
