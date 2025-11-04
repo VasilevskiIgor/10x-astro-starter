@@ -6,7 +6,6 @@
   "outputDirectory": "dist",
   "regions": ["iad1"],
   "env": {
-    "OPENAI_API_KEY": "@openai-api-key",
     "OPENROUTER_API_KEY": "@openrouter-api-key",
     "SUPABASE_URL": "@supabase-url",
     "SUPABASE_KEY": "@supabase-key",
