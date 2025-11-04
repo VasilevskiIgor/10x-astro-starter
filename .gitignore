@@ -32,3 +32,4 @@ test-results/
 # temp files
 jwt_token.txt
 *.tmp
+.vercel

@@ -152,3 +152,24 @@ The project uses a flat config with:
 - Node.js v22.14.0 (see `.nvmrc`)
 - TypeScript path alias: `@/*` maps to `./src/*`
 - Dev server port: 3000
+
+## Deployment
+
+### Vercel (Configured)
+
+The project is configured for deployment on Vercel with GitHub Actions CI/CD.
+
+**Quick Start:** See [VERCEL_QUICKSTART.md](./VERCEL_QUICKSTART.md)
+
+**Full Documentation:** See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
+**Key files:**
+- [astro.config.mjs](./astro.config.mjs) - Uses `@astrojs/vercel/serverless` adapter
+- [vercel.json](./vercel.json) - Vercel configuration
+- [.vercelignore](./.vercelignore) - Files to ignore during deployment
+- [.github/workflows/master.yml](./.github/workflows/master.yml) - Production deployment workflow
+
+**Required GitHub Secrets:**
+- `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+- `OPENAI_API_KEY`, `OPENROUTER_API_KEY`
+- `SUPABASE_URL`, `SUPABASE_KEY`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`

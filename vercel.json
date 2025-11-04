@@ -1,0 +1,21 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci",
+  "framework": "astro",
+  "outputDirectory": "dist",
+  "regions": ["iad1"],
+  "env": {
+    "OPENAI_API_KEY": "@openai-api-key",
+    "OPENROUTER_API_KEY": "@openrouter-api-key",
+    "SUPABASE_URL": "@supabase-url",
+    "SUPABASE_KEY": "@supabase-key",
+    "PUBLIC_SUPABASE_URL": "@public-supabase-url",
+    "PUBLIC_SUPABASE_ANON_KEY": "@public-supabase-anon-key"
+  },
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 60
+    }
+  }
+}
