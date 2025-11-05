@@ -55,53 +55,59 @@ function isRouteMatch(pathname: string, routes: string[]): boolean {
 // ============================================================================
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Create server-side Supabase client with access to request cookies
-  const supabase = createSupabaseServerClient(context.cookies);
+  try {
+    // Create server-side Supabase client with access to request cookies
+    const supabase = createSupabaseServerClient(context.cookies);
 
-  // Add Supabase client to context.locals for use in pages
-  context.locals.supabase = supabase;
+    // Add Supabase client to context.locals for use in pages
+    context.locals.supabase = supabase;
 
-  // Get current pathname
-  const pathname = new URL(context.request.url).pathname;
+    // Get current pathname
+    const pathname = new URL(context.request.url).pathname;
 
-  // Check if this is a protected route
-  const isProtected = isRouteMatch(pathname, PROTECTED_ROUTES);
-  const isAuthPage = isRouteMatch(pathname, AUTH_ROUTES);
+    // Check if this is a protected route
+    const isProtected = isRouteMatch(pathname, PROTECTED_ROUTES);
+    const isAuthPage = isRouteMatch(pathname, AUTH_ROUTES);
 
-  // Get user session from Supabase (with access to cookies)
-  // Note: Supabase automatically handles token refresh if autoRefreshToken is enabled
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    // Get user session from Supabase (with access to cookies)
+    // Note: Supabase automatically handles token refresh if autoRefreshToken is enabled
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  // DEBUG: Log auth state
-  console.log("[Middleware]", {
-    pathname,
-    isProtected,
-    isAuthPage,
-    hasSession: !!session,
-    cookies: Array.from(context.cookies).map((c) => c.name),
-  });
+    // DEBUG: Log auth state
+    console.log("[Middleware]", {
+      pathname,
+      isProtected,
+      isAuthPage,
+      hasSession: !!session,
+    });
 
-  // CASE 1: Protected route + no session → Redirect to login
-  // Server-side protection: uniwersalny mechanizm dla wszystkich protected routes
-  if (isProtected && !session) {
-    // Zakoduj aktualną ścieżkę do parametru redirect dla powrotu po logowaniu
-    const redirectUrl = encodeURIComponent(pathname);
-    return context.redirect(`/auth/login?redirect=${redirectUrl}`);
+    // CASE 1: Protected route + no session → Redirect to login
+    // Server-side protection: uniwersalny mechanizm dla wszystkich protected routes
+    if (isProtected && !session) {
+      // Zakoduj aktualną ścieżkę do parametru redirect dla powrotu po logowaniu
+      const redirectUrl = encodeURIComponent(pathname);
+      return context.redirect(`/auth/login?redirect=${redirectUrl}`);
+    }
+
+    // CASE 2: Auth page + has session → redirect to trips (already logged in)
+    if (isAuthPage && session) {
+      return context.redirect("/trips");
+    }
+
+    // CASE 3: User is authenticated → Add to context.locals for use in pages
+    if (session) {
+      context.locals.user = session.user;
+      context.locals.session = session;
+    }
+
+    // CASE 4: Public route or authorized access → continue
+    return next();
+  } catch (error) {
+    // If middleware fails, log error and continue to page
+    console.error("[Middleware] Error:", error);
+    // Don't block the request, just continue without auth
+    return next();
   }
-
-  // CASE 2: Auth page + has session → redirect to trips (already logged in)
-  if (isAuthPage && session) {
-    return context.redirect("/trips");
-  }
-
-  // CASE 3: User is authenticated → Add to context.locals for use in pages
-  if (session) {
-    context.locals.user = session.user;
-    context.locals.session = session;
-  }
-
-  // CASE 4: Public route or authorized access → continue
-  return next();
 });
