@@ -13,9 +13,10 @@ import { createServerClient } from "@supabase/ssr";
 import type { AstroCookies } from "astro";
 import type { Database } from "@/db/database.types";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL || "http://127.0.0.1:54321";
+// Use process.env for server-side environment variables (works on Vercel)
+const supabaseUrl = process.env.SUPABASE_URL || import.meta.env.SUPABASE_URL || "http://127.0.0.1:54321";
 const supabaseAnonKey =
-  import.meta.env.SUPABASE_KEY ||
+  process.env.SUPABASE_KEY || import.meta.env.SUPABASE_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
 
 /**
