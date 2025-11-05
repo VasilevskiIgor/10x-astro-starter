@@ -17,8 +17,13 @@ import { SignupForm } from "@/components/forms/SignupForm";
 // For now, we'll handle this client-side in the component
 
 // Get redirect URL from query params
-const url = new URL(Astro.request.url);
-const redirectTo = url.searchParams.get("redirect") || "/trips";
+let redirectTo = "/trips";
+try {
+  const url = new URL(Astro.request.url);
+  redirectTo = url.searchParams.get("redirect") || "/trips";
+} catch (error) {
+  console.error("[signup.astro] Error parsing URL:", error);
+}
 ---
 
 <Layout title="Utwórz konto - Magic Travel App">
@@ -42,7 +47,7 @@ const redirectTo = url.searchParams.get("redirect") || "/trips";
         <p class="text-sm text-gray-600">
           Masz już konto?{" "}
           <a
-            href={redirectTo !== "/trips" ? `/auth/login?redirect=${encodeURIComponent(redirectTo)}` : "/auth/login"}
+            href={redirectTo !== "/trips" ? `/auth/login?redirect=${redirectTo}` : "/auth/login"}
             class="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
           >
             Zaloguj się
