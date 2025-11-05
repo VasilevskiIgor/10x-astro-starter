@@ -120,7 +120,7 @@ Dodaj te same zmienne co w GitHub Secrets:
 
 ```bash
 git add .
-git commit -m "Configure Vercel deployment"
+git commit -m "Configure Vercel deployment_1"
 git push origin main
 ```
 
