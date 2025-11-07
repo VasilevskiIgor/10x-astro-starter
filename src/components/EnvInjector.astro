@@ -8,9 +8,14 @@
  */
 
 // Get all PUBLIC_* environment variables
+// Use process.env on server (Vercel), import.meta.env as fallback
 const publicEnvVars = {
-  PUBLIC_SUPABASE_URL: import.meta.env.PUBLIC_SUPABASE_URL,
-  PUBLIC_SUPABASE_ANON_KEY: import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+  PUBLIC_SUPABASE_URL:
+    (typeof process !== "undefined" ? process.env.PUBLIC_SUPABASE_URL : undefined) ||
+    import.meta.env.PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY:
+    (typeof process !== "undefined" ? process.env.PUBLIC_SUPABASE_ANON_KEY : undefined) ||
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
 };
 
 // Serialize for injection
