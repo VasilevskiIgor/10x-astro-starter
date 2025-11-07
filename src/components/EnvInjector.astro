@@ -17,4 +17,4 @@ const publicEnvVars = {
 const envScript = `window.__ENV__ = ${JSON.stringify(publicEnvVars)};`;
 ---
 
-<script is:inline set:html={envScript}></script>
+<script is:inline set:html={envScript} />

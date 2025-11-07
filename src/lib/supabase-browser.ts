@@ -15,11 +15,18 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/db/database.types";
 
+// Extend Window interface to include __ENV__
+declare global {
+  interface Window {
+    __ENV__?: Record<string, string>;
+  }
+}
+
 // Get env vars - support both import.meta.env (build time) and window (runtime)
 function getEnvVar(name: string, defaultValue: string): string {
   // For browser: Check runtime window env first (injected by server), then build-time import.meta.env
-  if (typeof window !== "undefined" && (window as any).__ENV__?.[name]) {
-    return (window as any).__ENV__[name];
+  if (typeof window !== "undefined" && window.__ENV__?.[name]) {
+    return window.__ENV__[name];
   }
   // Fallback to import.meta.env (build time) or default
   return (import.meta.env[name] as string) || defaultValue;
