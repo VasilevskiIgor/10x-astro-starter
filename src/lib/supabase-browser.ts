@@ -12,7 +12,7 @@
  * 4. Middleware reads cookies → session available server-side
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/db/database.types";
 
 // Astro automatically exposes PUBLIC_* env vars to import.meta.env
@@ -21,15 +21,42 @@ const supabaseAnonKey =
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
 
+// Lazy initialization to avoid SSR issues
+let _supabaseBrowser: SupabaseClient<Database> | null = null;
+
+function getSupabaseBrowser(): SupabaseClient<Database> {
+  if (typeof window === "undefined") {
+    // During SSR, throw an error to catch misuse
+    throw new Error("supabaseBrowser should only be used in browser context, not during SSR");
+  }
+
+  if (!_supabaseBrowser) {
+    _supabaseBrowser = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage,
+      },
+    });
+
+    // Set up auth state change listener
+    _supabaseBrowser.auth.onAuthStateChange((event, session) => {
+      console.log("[supabase-browser] Auth state changed:", event, !!session);
+      syncSessionToCookies();
+    });
+  }
+
+  return _supabaseBrowser;
+}
+
 /**
  * Standard Supabase client using localStorage
+ * Only available in browser context
  */
-export const supabaseBrowser = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storage: typeof window !== "undefined" ? window.localStorage : undefined,
+export const supabaseBrowser = new Proxy({} as SupabaseClient<Database>, {
+  get(_target, prop) {
+    return getSupabaseBrowser()[prop as keyof SupabaseClient<Database>];
   },
 });
 
@@ -61,10 +88,4 @@ export async function syncSessionToCookies() {
   }
 }
 
-// Auto-sync on auth state change
-if (typeof window !== "undefined") {
-  supabaseBrowser.auth.onAuthStateChange((event, session) => {
-    console.log("[supabase-browser] Auth state changed:", event, !!session);
-    syncSessionToCookies();
-  });
-}
+// Auto-sync is now handled in getSupabaseBrowser() during initialization
