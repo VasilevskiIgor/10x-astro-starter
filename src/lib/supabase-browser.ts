@@ -15,13 +15,9 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/db/database.types";
 
-// Use process.env during SSR/build on Vercel, import.meta.env in browser
-const supabaseUrl =
-  (typeof process !== "undefined" && process.env.PUBLIC_SUPABASE_URL) ||
-  import.meta.env.PUBLIC_SUPABASE_URL ||
-  "http://127.0.0.1:54321";
+// Astro automatically exposes PUBLIC_* env vars to import.meta.env
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || "http://127.0.0.1:54321";
 const supabaseAnonKey =
-  (typeof process !== "undefined" && process.env.PUBLIC_SUPABASE_ANON_KEY) ||
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
 
