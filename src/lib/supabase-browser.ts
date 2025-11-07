@@ -15,11 +15,21 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/db/database.types";
 
-// Astro automatically exposes PUBLIC_* env vars to import.meta.env
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || "http://127.0.0.1:54321";
-const supabaseAnonKey =
-  import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+// Get env vars - support both import.meta.env (build time) and window (runtime)
+function getEnvVar(name: string, defaultValue: string): string {
+  // For browser: Check runtime window env first (injected by server), then build-time import.meta.env
+  if (typeof window !== "undefined" && (window as any).__ENV__?.[name]) {
+    return (window as any).__ENV__[name];
+  }
+  // Fallback to import.meta.env (build time) or default
+  return (import.meta.env[name] as string) || defaultValue;
+}
+
+const supabaseUrl = getEnvVar("PUBLIC_SUPABASE_URL", "http://127.0.0.1:54321");
+const supabaseAnonKey = getEnvVar(
+  "PUBLIC_SUPABASE_ANON_KEY",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
+);
 
 // Lazy initialization to avoid SSR issues
 let _supabaseBrowser: SupabaseClient<Database> | null = null;

@@ -11,6 +11,7 @@
 
 import "../styles/global.css";
 import Navigation from "@/components/navigation/Navigation.astro";
+import EnvInjector from "@/components/EnvInjector.astro";
 
 interface Props {
   title?: string;
@@ -29,6 +30,9 @@ const { title = "Magic Travel App", showNavigation = true } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content="Planuj swoje wymarzone podróże z pomocą AI" />
     <title>{title}</title>
+
+    {/* Inject environment variables for client-side use */}
+    <EnvInjector />
   </head>
   <body>
     {/* Navigation - shown on all pages by default */}

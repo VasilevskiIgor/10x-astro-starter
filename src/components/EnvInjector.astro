@@ -1,0 +1,20 @@
+---
+/**
+ * EnvInjector Component
+ *
+ * Injects PUBLIC_* environment variables into the browser window.__ENV__ object
+ * This allows client-side code to access environment variables that are only
+ * available during SSR (server-side rendering).
+ */
+
+// Get all PUBLIC_* environment variables
+const publicEnvVars = {
+  PUBLIC_SUPABASE_URL: import.meta.env.PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY: import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+};
+
+// Serialize for injection
+const envScript = `window.__ENV__ = ${JSON.stringify(publicEnvVars)};`;
+---
+
+<script is:inline set:html={envScript}></script>
