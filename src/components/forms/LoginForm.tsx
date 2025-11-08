@@ -114,16 +114,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
     }
   };
 
-  // Debug: Log when button state changes
-  React.useEffect(() => {
-    console.log("[LoginForm] Form state:", {
-      email: formData.email,
-      hasPassword: !!formData.password,
-      isLoading,
-      buttonDisabled: isLoading || !formData.email || !formData.password,
-    });
-  }, [formData, isLoading]);
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
       {/* Error Alert */}
