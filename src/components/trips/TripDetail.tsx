@@ -414,7 +414,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             </svg>
             <div>
               <p className="font-medium text-purple-900">Generowanie planu podróży AI...</p>
-              <p className="text-sm text-purple-700">To może potrwać do 90 sekund</p>
+              <p className="text-sm text-purple-700">To może potrwać do 60 sekund</p>
             </div>
           </div>
         </div>
