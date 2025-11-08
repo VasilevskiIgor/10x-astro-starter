@@ -259,7 +259,7 @@ export const POST: APIRoute = async ({ params, request }) => {
         return errorResponse(
           "AI_GENERATION_TIMEOUT",
           "AI generation timed out. Please try again.",
-          { timeout_ms: 90000 },
+          { timeout_ms: 55000 },
           500
         );
       }
