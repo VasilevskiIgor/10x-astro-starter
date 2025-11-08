@@ -1,9 +1,9 @@
 <div
-  class="relative w-full mx-auto min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 sm:p-8"
+  class="relative w-full mx-auto min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
 >
-  <div class="relative max-w-6xl mx-auto">
+  <div class="relative max-w-7xl mx-auto">
     <!-- Hero Section -->
-    <div class="text-center pt-12 pb-16 px-4">
+    <div class="text-center pt-16 pb-20 px-4 sm:px-6 lg:px-8">
       <div
         class="inline-flex items-center justify-center mb-6 px-4 py-2 bg-purple-500/20 border border-purple-300/30 rounded-full"
       >
@@ -12,21 +12,21 @@
             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
           ></path>
         </svg>
-        <span class="text-sm font-medium text-purple-200">AI-Powered Travel Planning</span>
+        <span class="text-sm font-medium text-purple-200">Planowanie podróży z AI</span>
       </div>
 
       <h1
         class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 text-transparent bg-clip-text drop-shadow-2xl leading-tight"
       >
-        Magic Travel App
+        Twoja wymarzona podróż<br />w 5 minut
       </h1>
 
       <p class="text-xl sm:text-2xl text-blue-100/90 mb-4 max-w-3xl mx-auto leading-relaxed">
-        Zaplanuj wymarzoną podróż w kilka minut
+        Od pomysłu do gotowego planu podróży z mapą i PDF – wszystko dzięki AI
       </p>
 
       <p class="text-lg text-blue-200/80 mb-12 max-w-2xl mx-auto">
-        Sztuczna inteligencja pomoże Ci stworzyć idealny plan podróży dopasowany do Twoich preferencji, budżetu i czasu
+        Zapomnij o godzinach researchu. AI stworzy dla Ciebie kompletny plan podróży, wizualizuje go na mapie i przygotuje profesjonalny PDF gotowy do druku
       </p>
 
       <!-- CTA Buttons -->
@@ -38,147 +38,403 @@
           <svg class="w-6 h-6 mr-2 group-hover:animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
-          Zacznij Planować
+          Stwórz Plan Podróży za Darmo
         </a>
         <a
           href="/auth/login?redirect=/trips/new"
           class="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-white/10 hover:bg-white/20 backdrop-blur-lg rounded-xl shadow-lg transition-all duration-200 border border-white/20 hover:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-purple-900"
         >
-          <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width={2}
-              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-          </svg>
           Zaloguj się
         </a>
       </div>
+
+      <!-- Value Proposition Banner -->
+      <div class="max-w-4xl mx-auto">
+        <div
+          class="backdrop-blur-xl bg-gradient-to-r from-white/10 to-white/5 rounded-2xl p-6 border border-white/20"
+        >
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            <div class="flex flex-col items-center">
+              <div class="w-12 h-12 bg-purple-500/30 rounded-full flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <p class="text-white font-semibold">5 minut</p>
+              <p class="text-blue-200/70 text-sm">zamiast 5 godzin</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-12 h-12 bg-blue-500/30 rounded-full flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                </svg>
+              </div>
+              <p class="text-white font-semibold">Plan na mapie</p>
+              <p class="text-blue-200/70 text-sm">wizualizacja trasy</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-12 h-12 bg-pink-500/30 rounded-full flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-pink-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <p class="text-white font-semibold">Piękny PDF</p>
+              <p class="text-blue-200/70 text-sm">gotowy do druku</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Features Section -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-16">
-      <!-- Feature 1 -->
-      <div
-        class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-purple-300/30 transition-all duration-300 hover:transform hover:scale-105"
-      >
-        <div
-          class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-        >
-          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width={2}
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-            ></path>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold text-white mb-4">Inteligentne Sugestie</h3>
-        <p class="text-blue-100/80 leading-relaxed">
-          AI analizuje Twoje preferencje i proponuje najlepsze destynacje, atrakcje i aktywności dopasowane do Twoich
-          zainteresowań
-        </p>
-      </div>
+    <!-- Problem/Solution Section -->
+    <div class="py-20 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-white mb-16">
+          Planowanie podróży nie musi być męczące
+        </h2>
 
-      <!-- Feature 2 -->
-      <div
-        class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-blue-300/30 transition-all duration-300 hover:transform hover:scale-105"
-      >
-        <div
-          class="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-        >
-          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width={2}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold text-white mb-4">Oszczędność Czasu</h3>
-        <p class="text-blue-100/80 leading-relaxed">
-          Zamiast godzin researchu, otrzymasz kompletny plan podróży w kilka minut. AI zrobi za Ciebie całą pracę
-        </p>
-      </div>
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Old Way -->
+          <div class="backdrop-blur-xl bg-red-500/10 rounded-2xl p-8 border border-red-300/20">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white">Tradycyjnie</h3>
+            </div>
+            <ul class="space-y-4">
+              <li class="flex items-start text-red-100/80">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Godziny researchu w Google i na blogach</span>
+              </li>
+              <li class="flex items-start text-red-100/80">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Dziesiątki zakładek w przeglądarce</span>
+              </li>
+              <li class="flex items-start text-red-100/80">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Notatki rozrzucone w różnych miejscach</span>
+              </li>
+              <li class="flex items-start text-red-100/80">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Brak wizualizacji całej podróży</span>
+              </li>
+              <li class="flex items-start text-red-100/80">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Chaotyczne Excel'e i dokumenty</span>
+              </li>
+            </ul>
+          </div>
 
-      <!-- Feature 3 -->
-      <div
-        class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-pink-300/30 transition-all duration-300 hover:transform hover:scale-105"
-      >
-        <div
-          class="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-        >
-          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width={2}
-              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
+          <!-- New Way -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-2xl p-8 border border-green-300/30 ring-2 ring-green-400/20">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 bg-green-500/30 rounded-full flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white">Z Magic Travel App</h3>
+            </div>
+            <ul class="space-y-4">
+              <li class="flex items-start text-green-100/90">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span><strong>5 minut</strong> – tyle trwa stworzenie kompletnego planu</span>
+              </li>
+              <li class="flex items-start text-green-100/90">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>AI dobiera najlepsze miejsca pod Twoje preferencje</span>
+              </li>
+              <li class="flex items-start text-green-100/90">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Interaktywna mapa z całą trasą podróży</span>
+              </li>
+              <li class="flex items-start text-green-100/90">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Profesjonalny PDF z mapą gotowy do druku</span>
+              </li>
+              <li class="flex items-start text-green-100/90">
+                <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Wszystko w jednym miejscu, zawsze pod ręką</span>
+              </li>
+            </ul>
+          </div>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-4">Kontrola Budżetu</h3>
-        <p class="text-blue-100/80 leading-relaxed">
-          Określ swój budżet, a AI zaplanuje podróż idealnie dopasowaną do Twoich możliwości finansowych
-        </p>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-purple-900/20 to-transparent">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+            Jak to działa?
+          </h2>
+          <p class="text-xl text-blue-100/80 max-w-2xl mx-auto">
+            Od pomysłu do gotowego planu w 3 prostych krokach
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 relative">
+          <!-- Step 1 -->
+          <div class="relative">
+            <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 h-full">
+              <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                1
+              </div>
+              <div class="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 mt-4">
+                <svg class="w-8 h-8 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-4">Opisz swoją podróż</h3>
+              <p class="text-blue-100/80 leading-relaxed">
+                Powiedz AI dokąd chcesz jechać, ile masz czasu, jaki budżet i co Cię interesuje. Możesz podać szczegóły lub pozwolić AI na kreatywność
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="relative">
+            <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 h-full">
+              <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                2
+              </div>
+              <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 mt-4">
+                <svg class="w-8 h-8 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-4">AI tworzy plan</h3>
+              <p class="text-blue-100/80 leading-relaxed">
+                Nasza sztuczna inteligencja analizuje tysiące możliwości i tworzy optymalny plan podróży dostosowany do Twoich potrzeb. Zobacz plan na interaktywnej mapie
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative">
+            <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 h-full">
+              <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                3
+              </div>
+              <div class="w-16 h-16 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6 mt-4">
+                <svg class="w-8 h-8 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-4">Pobierz i jedź!</h3>
+              <p class="text-blue-100/80 leading-relaxed">
+                Eksportuj swój plan jako piękny PDF z mapą i szczegółowym harmonogramem. Wydrukuj lub zachowaj na telefonie. Twoja przygoda może się rozpocząć!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Features with Icons -->
+    <div class="py-20 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+            Wszystko czego potrzebujesz
+          </h2>
+          <p class="text-xl text-blue-100/80 max-w-2xl mx-auto">
+            Funkcje zaprojektowane tak, aby planowanie podróży było proste i przyjemne
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Feature: AI Planning -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-purple-300/30 transition-all duration-300">
+            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Inteligentne Planowanie AI</h3>
+            <p class="text-blue-100/80 leading-relaxed">
+              Zaawansowana sztuczna inteligencja, która rozumie Twoje preferencje i tworzy spersonalizowany plan podróży
+            </p>
+          </div>
+
+          <!-- Feature: Interactive Map -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-blue-300/30 transition-all duration-300">
+            <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Wizualizacja na Mapie</h3>
+            <p class="text-blue-100/80 leading-relaxed">
+              Zobacz całą swoją trasę na interaktywnej mapie. Wszystkie miejsca, odległości i trasa w jednym widoku
+            </p>
+          </div>
+
+          <!-- Feature: PDF Export -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-pink-300/30 transition-all duration-300">
+            <div class="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Eksport do PDF</h3>
+            <p class="text-blue-100/80 leading-relaxed">
+              Pobierz profesjonalnie zaprojektowany PDF ze zrzutem mapy i pełnym planem podróży gotowy do druku
+            </p>
+          </div>
+
+          <!-- Feature: Time Saver -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-green-300/30 transition-all duration-300">
+            <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Mega Oszczędność Czasu</h3>
+            <p class="text-blue-100/80 leading-relaxed">
+              Zapomnij o godzinach spędzonych na research'u. Otrzymaj gotowy plan w 5 minut i poświęć czas na pakowanie
+            </p>
+          </div>
+
+          <!-- Feature: Budget Control -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-yellow-300/30 transition-all duration-300">
+            <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Dopasowanie do Budżetu</h3>
+            <p class="text-blue-100/80 leading-relaxed">
+              Określ swój budżet, a AI zaproponuje aktywności i miejsca idealnie dopasowane do Twoich możliwości
+            </p>
+          </div>
+
+          <!-- Feature: Personalization -->
+          <div class="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10 hover:border-indigo-300/30 transition-all duration-300">
+            <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">100% Personalizacja</h3>
+            <p class="text-blue-100/80 leading-relaxed">
+              Każdy plan jest unikalny i stworzony specjalnie dla Ciebie na podstawie Twoich zainteresowań i stylu podróżowania
+            </p>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Social Proof / Stats Section -->
-    <div
-      class="backdrop-blur-xl bg-gradient-to-r from-white/5 to-white/10 rounded-2xl p-8 sm:p-12 border border-white/10 mx-4 mb-16"
-    >
-      <div class="text-center mb-8">
-        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Dlaczego Magic Travel App?</h2>
-        <p class="text-blue-100/80 text-lg max-w-2xl mx-auto">
-          Nowoczesna technologia AI połączona z pasją do podróżowania
-        </p>
-      </div>
+    <div class="py-20 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div
+          class="backdrop-blur-xl bg-gradient-to-r from-white/5 to-white/10 rounded-2xl p-8 sm:p-12 border border-white/10"
+        >
+          <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Liczby mówią same za siebie</h2>
+            <p class="text-blue-100/80 text-lg max-w-2xl mx-auto">
+              Dołącz do tysięcy zadowolonych podróżników, którzy zaoszczędzili czas dzięki AI
+            </p>
+          </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-        <div>
-          <div
-            class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 text-transparent bg-clip-text mb-2"
-          >
-            95%
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div>
+              <div
+                class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 text-transparent bg-clip-text mb-2"
+              >
+                5 min
+              </div>
+              <div class="text-blue-100/80 font-medium">Średni czas tworzenia planu</div>
+            </div>
+            <div>
+              <div
+                class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 text-transparent bg-clip-text mb-2"
+              >
+                10+ godz
+              </div>
+              <div class="text-blue-100/80 font-medium">Zaoszczędzonego czasu researchu</div>
+            </div>
+            <div>
+              <div
+                class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-300 to-rose-300 text-transparent bg-clip-text mb-2"
+              >
+                100%
+              </div>
+              <div class="text-blue-100/80 font-medium">Spersonalizowane plany</div>
+            </div>
+            <div>
+              <div
+                class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 text-transparent bg-clip-text mb-2"
+              >
+                Za darmo
+              </div>
+              <div class="text-blue-100/80 font-medium">Rozpocznij planowanie</div>
+            </div>
           </div>
-          <div class="text-blue-100/80">Dokładność rekomendacji AI</div>
-        </div>
-        <div>
-          <div
-            class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 text-transparent bg-clip-text mb-2"
-          >
-            10 min
-          </div>
-          <div class="text-blue-100/80">Średni czas planowania podróży</div>
-        </div>
-        <div>
-          <div
-            class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-300 to-rose-300 text-transparent bg-clip-text mb-2"
-          >
-            100%
-          </div>
-          <div class="text-blue-100/80">Spersonalizowane dla Ciebie</div>
         </div>
       </div>
     </div>
 
-    <!-- Final CTA -->
-    <div class="text-center pb-16 px-4">
-      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Gotowy na przygodę?</h2>
-      <p class="text-xl text-blue-100/80 mb-8 max-w-2xl mx-auto">
-        Rozpocznij planowanie swojej wymarzonej podróży już dziś
+    <!-- CTA Section -->
+    <div class="py-20 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <div
+          class="backdrop-blur-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl p-12 border border-purple-300/30 text-center shadow-2xl"
+        >
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+            Gotowy na swoją przygodę?
+          </h2>
+          <p class="text-xl text-blue-100/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Nie trać czasu na godziny researchu. Pozwól AI stworzyć dla Ciebie idealny plan podróży w kilka minut – za darmo
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <a
+              href="/auth/signup?redirect=/trips/new"
+              class="inline-flex items-center px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl shadow-2xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-900"
+            >
+              <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              Rozpocznij za Darmo
+            </a>
+            <p class="text-sm text-blue-200/70">
+              Nie wymagamy karty kredytowej
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer CTA -->
+    <div class="text-center pb-20 px-4">
+      <p class="text-blue-200/60 text-sm">
+        Masz już konto? <a href="/auth/login" class="text-purple-300 hover:text-purple-200 underline font-medium">Zaloguj się</a>
       </p>
-      <a
-        href="/auth/signup?redirect=/trips/new"
-        class="inline-flex items-center px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl shadow-2xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-900"
-      >
-        Zaplanuj Podróż za Darmo
-        <svg class="w-6 h-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-        </svg>
-      </a>
     </div>
   </div>
 </div>
