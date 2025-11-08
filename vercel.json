@@ -4,13 +4,5 @@
   "installCommand": "npm ci",
   "framework": "astro",
   "outputDirectory": "dist",
-  "regions": ["iad1"],
-  "functions": {
-    "api/trips/*/generate-ai.func": {
-      "maxDuration": 60
-    },
-    "api/trips/*/regenerate.func": {
-      "maxDuration": 60
-    }
-  }
+  "regions": ["iad1"]
 }
