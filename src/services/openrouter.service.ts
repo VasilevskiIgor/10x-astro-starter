@@ -86,7 +86,7 @@ const DEFAULT_CONFIG: Required<OpenRouterConfig> = {
   model: "openai/gpt-4o-mini",
   temperature: 0.7,
   maxTokens: 4000,
-  timeout: 55000, // 55s - safe margin for Vercel Pro 60s limit
+  timeout: 240000, // 4 minutes (240s) - safe margin for Vercel Pro 300s limit with polling
   siteUrl: "https://vibetravels.com",
   siteName: "VibeTravels",
   topP: 1.0,

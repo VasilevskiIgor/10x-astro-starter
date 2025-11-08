@@ -56,6 +56,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [isGeneratingAI, setIsGeneratingAI] = React.useState(false);
   const [aiError, setAiError] = React.useState<string | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 
   // Fetch trip details
   React.useEffect(() => {
@@ -130,7 +131,85 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
     }
   };
 
-  // Handle AI generation
+  // Timer for elapsed time during generation
+  React.useEffect(() => {
+    if (!trip || trip.status !== "generating") {
+      setElapsedSeconds(0);
+      return;
+    }
+
+    console.log("[TripDetail] Starting timer");
+    setElapsedSeconds(0);
+
+    const timerInterval = setInterval(() => {
+      setElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(timerInterval);
+    };
+  }, [trip?.status]);
+
+  // Poll for trip status updates when generating
+  React.useEffect(() => {
+    if (!trip || trip.status !== "generating") {
+      return;
+    }
+
+    console.log("[TripDetail] Starting polling for trip status");
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabaseBrowser.auth.getSession();
+
+        if (!session) {
+          console.error("[TripDetail] Session expired during polling");
+          clearInterval(pollInterval);
+          setAiError("Sesja wygasła. Odśwież stronę i spróbuj ponownie.");
+          return;
+        }
+
+        const response = await fetch(`/api/trips/${tripId}`, {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (!response.ok) {
+          console.error("[TripDetail] Failed to poll trip status");
+          return;
+        }
+
+        const data: TripDetailDTO = await response.json();
+        console.log("[TripDetail] Polled trip status:", data.status);
+
+        // Update trip state
+        setTrip(data);
+
+        // Stop polling if generation completed or failed
+        if (data.status === "completed" || data.status === "failed") {
+          console.log("[TripDetail] Generation finished with status:", data.status);
+          clearInterval(pollInterval);
+          setIsGeneratingAI(false);
+
+          if (data.status === "failed") {
+            setAiError("Generowanie AI nie powiodło się. Spróbuj ponownie.");
+          }
+        }
+      } catch (err) {
+        console.error("[TripDetail] Error polling trip status:", err);
+      }
+    }, 3000); // Poll every 3 seconds
+
+    return () => {
+      console.log("[TripDetail] Cleaning up polling interval");
+      clearInterval(pollInterval);
+    };
+  }, [trip?.status, tripId]);
+
+  // Handle AI generation - now just triggers generation without waiting
   const handleGenerateAI = async () => {
     setIsGeneratingAI(true);
     setAiError(null);
@@ -144,9 +223,11 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
         throw new Error("Nie jesteś zalogowany. Zaloguj się.");
       }
 
-      console.log("[TripDetail] Starting AI generation for trip:", tripId);
+      console.log("[TripDetail] Triggering AI generation for trip:", tripId);
 
-      const response = await fetch(`/api/trips/${tripId}/generate-ai`, {
+      // Fire and forget - don't wait for response
+      // The polling effect above will track the status
+      fetch(`/api/trips/${tripId}/generate-ai`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -157,35 +238,26 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           temperature: 0.7,
           force_regenerate: false,
         }),
-      });
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            const responseData = await response.json();
+            throw new Error(responseData.error?.message || "Nie udało się wygenerować planu AI");
+          }
+          console.log("[TripDetail] AI generation request accepted");
+        })
+        .catch((err) => {
+          console.error("[TripDetail] AI generation request failed:", err);
+          setAiError(err.message || "Wystąpił błąd podczas wysyłania żądania generowania");
+          setIsGeneratingAI(false);
+        });
 
-      const responseData = await response.json();
-      console.log("[TripDetail] AI generation response:", response.status, responseData);
-
-      if (!response.ok) {
-        throw new Error(responseData.error?.message || "Nie udało się wygenerować planu AI");
-      }
-
-      // Update trip with AI content
-      setTrip((prev) =>
-        prev
-          ? {
-              ...prev,
-              status: "completed",
-              ai_generated_content: responseData.ai_generated_content,
-              ai_model: responseData.ai_model,
-              ai_tokens_used: responseData.ai_tokens_used,
-              ai_generation_time_ms: responseData.ai_generation_time_ms,
-            }
-          : null
-      );
-
-      console.log("[TripDetail] AI generation successful");
+      // Immediately update status to 'generating' for UI feedback
+      setTrip((prev) => (prev ? { ...prev, status: "generating" } : null));
     } catch (err) {
       const error = err as Error;
       console.error("[TripDetail] AI generation error:", err);
       setAiError(error.message || "Wystąpił błąd podczas generowania planu AI");
-    } finally {
       setIsGeneratingAI(false);
     }
   };
@@ -414,7 +486,12 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             </svg>
             <div>
               <p className="font-medium text-purple-900">Generowanie planu podróży AI...</p>
-              <p className="text-sm text-purple-700">To może potrwać do 60 sekund</p>
+              <p className="text-sm text-purple-700">
+                Czas generowania: {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, "0")}
+              </p>
+              <p className="text-xs text-purple-600 mt-1">
+                AI tworzy spersonalizowany plan - może to potrwać kilka minut
+              </p>
             </div>
           </div>
         </div>

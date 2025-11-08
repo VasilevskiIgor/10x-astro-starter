@@ -22,6 +22,6 @@ export default defineConfig({
       enabled: true,
     },
     edgeMiddleware: false,
-    maxDuration: 60, // 60s for AI generation endpoints (Vercel Pro limit)
+    maxDuration: 300, // 5 minutes (300s) - Vercel Pro limit for background processing
   }),
 });
