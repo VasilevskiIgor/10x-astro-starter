@@ -83,7 +83,7 @@ export interface ModelInfo {
 // ============================================================================
 
 const DEFAULT_CONFIG: Required<OpenRouterConfig> = {
-  model: "openai/gpt-4o-mini",
+  model: "openai/gpt-3.5-turbo",
   temperature: 0.7,
   maxTokens: 4000,
   timeout: 240000, // 4 minutes (240s) - safe margin for Vercel Pro 300s limit with polling
