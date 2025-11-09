@@ -13,10 +13,19 @@ import type { GenerateAICommand } from "@/types/dto";
 // Type Definitions
 // ============================================================================
 
+interface GeneratedContent {
+  id: string;
+  status: string;
+  ai_generated_content: unknown;
+  ai_model: string | null;
+  ai_tokens_used: number | null;
+  ai_generation_time_ms: number | null;
+}
+
 interface UseGenerateAIState {
   isGenerating: boolean;
   error: string | null;
-  generatedContent: any | null;
+  generatedContent: GeneratedContent | null;
 }
 
 interface UseGenerateAIReturn extends UseGenerateAIState {
@@ -82,7 +91,7 @@ async function makeGenerateAIRequest(
   command: GenerateAICommand | undefined,
   accessToken: string,
   retryCount = 0
-): Promise<any> {
+): Promise<GeneratedContent> {
   try {
     const endpoint = `/api/trips/${tripId}/generate-ai`;
 
