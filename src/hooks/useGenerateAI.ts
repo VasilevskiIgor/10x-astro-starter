@@ -196,116 +196,113 @@ export function useGenerateAI(): UseGenerateAIReturn {
     generatedContent: null,
   });
 
-  const generateAI = React.useCallback(
-    async (tripId: string, command?: GenerateAICommand): Promise<boolean> => {
-      console.log("[useGenerateAI] Starting AI generation for trip:", tripId);
+  const generateAI = React.useCallback(async (tripId: string, command?: GenerateAICommand): Promise<boolean> => {
+    console.log("[useGenerateAI] Starting AI generation for trip:", tripId);
 
-      // Reset state
+    // Reset state
+    setState({
+      isGenerating: true,
+      error: null,
+      generatedContent: null,
+    });
+
+    try {
+      // Get access token
+      console.log("[useGenerateAI] Getting access token...");
+      const accessToken = await getAccessToken();
+      console.log("[useGenerateAI] Access token retrieved:", accessToken ? "YES" : "NO");
+
+      if (!accessToken) {
+        throw new AuthenticationError("You must be logged in to generate AI content");
+      }
+
+      // Make API request
+      console.log("[useGenerateAI] Making API request...");
+      const result = await makeGenerateAIRequest(tripId, command, accessToken);
+      console.log("[useGenerateAI] API request successful:", result);
+
+      // Update state with success
       setState({
-        isGenerating: true,
+        isGenerating: false,
         error: null,
-        generatedContent: null,
+        generatedContent: result,
       });
 
-      try {
-        // Get access token
-        console.log("[useGenerateAI] Getting access token...");
-        const accessToken = await getAccessToken();
-        console.log("[useGenerateAI] Access token retrieved:", accessToken ? "YES" : "NO");
+      return true;
+    } catch (error) {
+      console.log("[useGenerateAI] Error caught:", error);
 
-        if (!accessToken) {
-          throw new AuthenticationError("You must be logged in to generate AI content");
-        }
-
-        // Make API request
-        console.log("[useGenerateAI] Making API request...");
-        const result = await makeGenerateAIRequest(tripId, command, accessToken);
-        console.log("[useGenerateAI] API request successful:", result);
-
-        // Update state with success
+      // Handle authentication errors
+      if (error instanceof AuthenticationError) {
+        console.log("[useGenerateAI] Authentication error");
         setState({
           isGenerating: false,
-          error: null,
-          generatedContent: result,
-        });
-
-        return true;
-      } catch (error) {
-        console.log("[useGenerateAI] Error caught:", error);
-
-        // Handle authentication errors
-        if (error instanceof AuthenticationError) {
-          console.log("[useGenerateAI] Authentication error");
-          setState({
-            isGenerating: false,
-            error: error.message,
-            generatedContent: null,
-          });
-          return false;
-        }
-
-        // Handle not found errors
-        if (error instanceof NotFoundError) {
-          setState({
-            isGenerating: false,
-            error: error.message,
-            generatedContent: null,
-          });
-          return false;
-        }
-
-        // Handle conflict errors (already generating)
-        if (error instanceof ConflictError) {
-          setState({
-            isGenerating: false,
-            error: error.message,
-            generatedContent: null,
-          });
-          return false;
-        }
-
-        // Handle rate limit errors
-        if (error instanceof RateLimitError) {
-          setState({
-            isGenerating: false,
-            error: error.message,
-            generatedContent: null,
-          });
-          return false;
-        }
-
-        // Handle API errors
-        if (error instanceof APIError) {
-          setState({
-            isGenerating: false,
-            error: error.message,
-            generatedContent: null,
-          });
-          return false;
-        }
-
-        // Handle network errors
-        if (isRetriableError(error)) {
-          setState({
-            isGenerating: false,
-            error: "Network error. Please check your connection and try again.",
-            generatedContent: null,
-          });
-          return false;
-        }
-
-        // Handle unknown errors
-        console.error("Unexpected error generating AI content:", error);
-        setState({
-          isGenerating: false,
-          error: "An unexpected error occurred. Please try again.",
+          error: error.message,
           generatedContent: null,
         });
         return false;
       }
-    },
-    []
-  );
+
+      // Handle not found errors
+      if (error instanceof NotFoundError) {
+        setState({
+          isGenerating: false,
+          error: error.message,
+          generatedContent: null,
+        });
+        return false;
+      }
+
+      // Handle conflict errors (already generating)
+      if (error instanceof ConflictError) {
+        setState({
+          isGenerating: false,
+          error: error.message,
+          generatedContent: null,
+        });
+        return false;
+      }
+
+      // Handle rate limit errors
+      if (error instanceof RateLimitError) {
+        setState({
+          isGenerating: false,
+          error: error.message,
+          generatedContent: null,
+        });
+        return false;
+      }
+
+      // Handle API errors
+      if (error instanceof APIError) {
+        setState({
+          isGenerating: false,
+          error: error.message,
+          generatedContent: null,
+        });
+        return false;
+      }
+
+      // Handle network errors
+      if (isRetriableError(error)) {
+        setState({
+          isGenerating: false,
+          error: "Network error. Please check your connection and try again.",
+          generatedContent: null,
+        });
+        return false;
+      }
+
+      // Handle unknown errors
+      console.error("Unexpected error generating AI content:", error);
+      setState({
+        isGenerating: false,
+        error: "An unexpected error occurred. Please try again.",
+        generatedContent: null,
+      });
+      return false;
+    }
+  }, []);
 
   const reset = React.useCallback(() => {
     setState({
