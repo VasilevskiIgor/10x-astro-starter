@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { DateRangePicker } from "./DateRangePicker";
 import { useCreateTrip } from "@/hooks/useCreateTrip";
+import { useGenerateAI } from "@/hooks/useGenerateAI";
 import { useRequireAuth } from "@/hooks/useAuth";
 import {
   validateTripForm,
@@ -52,15 +53,22 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   const [formData, setFormData] = React.useState<TripFormData>(() => {
     // Load draft from localStorage on mount
     const draft = loadTripDraft();
-    return (
-      draft || {
-        destination: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-        generateAI: false,
-      }
-    );
+    if (draft) {
+      return {
+        destination: draft.destination || "",
+        startDate: draft.startDate || "",
+        endDate: draft.endDate || "",
+        description: draft.description || "",
+        generateAI: draft.generateAI || false,
+      };
+    }
+    return {
+      destination: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+      generateAI: false,
+    };
   });
 
   const [validationErrors, setValidationErrors] = React.useState<TripFormValidation>({});
@@ -73,6 +81,10 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   });
 
   const { isLoading, error, validationErrors: apiValidationErrors, trip, createTrip } = useCreateTrip();
+  const { isGenerating, error: generateError, generateAI } = useGenerateAI();
+
+  // Track if AI generation should be triggered
+  const shouldGenerateAI = React.useRef(false);
 
   // ============================================================================
   // Auto-save to localStorage
@@ -88,22 +100,44 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   }, [formData, debouncedSave]);
 
   // ============================================================================
-  // Success Redirect
+  // Success Redirect and AI Generation
   // ============================================================================
 
   React.useEffect(() => {
-    if (trip) {
+    if (trip && !isGenerating) {
       // Clear draft on success
       clearTripDraft();
 
-      // Redirect to trip detail page
-      if (onSuccess) {
-        onSuccess(trip.id);
+      // If AI generation was requested, trigger it now
+      if (shouldGenerateAI.current) {
+        console.log("[TripForm] Trip created, triggering AI generation...");
+        shouldGenerateAI.current = false;
+
+        // Trigger AI generation
+        generateAI(trip.id).then((success) => {
+          if (success) {
+            console.log("[TripForm] AI generation initiated successfully");
+          } else {
+            console.error("[TripForm] AI generation failed:", generateError);
+          }
+
+          // Redirect to trip detail page after attempting generation
+          if (onSuccess) {
+            onSuccess(trip.id);
+          } else {
+            window.location.href = `/trips/${trip.id}`;
+          }
+        });
       } else {
-        window.location.href = `/trips/${trip.id}`;
+        // No AI generation requested, redirect immediately
+        if (onSuccess) {
+          onSuccess(trip.id);
+        } else {
+          window.location.href = `/trips/${trip.id}`;
+        }
       }
     }
-  }, [trip, onSuccess]);
+  }, [trip, isGenerating, onSuccess, generateAI, generateError]);
 
   // ============================================================================
   // Event Handlers
@@ -181,6 +215,9 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
     if (hasValidationErrors(errors)) {
       return;
     }
+
+    // Set flag to trigger AI generation after trip creation
+    shouldGenerateAI.current = formData.generateAI;
 
     // Prepare API payload
     const payload: CreateTripCommand = {
@@ -279,6 +316,9 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       {/* API Error Alert */}
       {error && !apiValidationErrors && <ErrorAlert type="error" message={error} />}
 
+      {/* AI Generation Error Alert */}
+      {generateError && <ErrorAlert type="error" message={`AI Generation Error: ${generateError}`} />}
+
       {/* Destination Field */}
       <div>
         <label htmlFor="destination" className="block text-sm font-medium text-gray-700">
@@ -294,7 +334,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           value={formData.destination}
           onChange={(e) => handleFieldChange("destination", e.target.value)}
           onBlur={() => handleFieldBlur("destination")}
-          disabled={isLoading}
+          disabled={isLoading || isGenerating}
           placeholder="np. Paryż, Francja"
           aria-invalid={displayErrors.destination ? "true" : "false"}
           aria-describedby={displayErrors.destination ? "destination-error" : undefined}
@@ -304,7 +344,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
               : !displayErrors.destination && formData.destination && touchedFields.has("destination")
                 ? "border-green-300 focus:border-green-500 focus:ring-green-500"
                 : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-          } ${isLoading ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
         {displayErrors.destination && (
           <p id="destination-error" className="mt-1 text-sm text-red-600" role="alert">
@@ -322,7 +362,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           startDate: displayErrors.startDate,
           endDate: displayErrors.endDate,
         }}
-        disabled={isLoading}
+        disabled={isLoading || isGenerating}
       />
 
       {/* Description Field */}
@@ -336,7 +376,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           value={formData.description}
           onChange={(e) => handleFieldChange("description", e.target.value)}
           onBlur={() => handleFieldBlur("description")}
-          disabled={isLoading}
+          disabled={isLoading || isGenerating}
           placeholder="Opisz swoje preferencje podróży, zainteresowania lub specjalne wymagania..."
           rows={4}
           aria-invalid={displayErrors.description ? "true" : "false"}
@@ -345,7 +385,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
             displayErrors.description
               ? "border-red-300 focus:border-red-500 focus:ring-red-500"
               : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-          } ${isLoading ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
         {displayErrors.description ? (
           <p id="description-error" className="mt-1 text-sm text-red-600" role="alert">
@@ -368,7 +408,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
               name="generateAI"
               checked={formData.generateAI}
               onChange={(e) => handleFieldChange("generateAI", e.target.checked)}
-              disabled={isLoading}
+              disabled={isLoading || isGenerating}
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             />
           </div>
@@ -388,18 +428,18 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       <div className="flex items-center justify-between gap-4 pt-4">
         <div className="flex gap-2">
           {showDraftNotice && (
-            <Button type="button" variant="outline" onClick={handleClearDraft} disabled={isLoading}>
+            <Button type="button" variant="outline" onClick={handleClearDraft} disabled={isLoading || isGenerating}>
               Wyczyść szkic
             </Button>
           )}
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading || isGenerating}>
               Anuluj
             </Button>
           )}
         </div>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? (
+        <Button type="submit" disabled={isLoading || isGenerating}>
+          {isLoading || isGenerating ? (
             <>
               <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -409,7 +449,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              {formData.generateAI ? "Tworzenie i generowanie..." : "Tworzenie podróży..."}
+              {isGenerating ? "Generowanie AI..." : formData.generateAI ? "Tworzenie podróży..." : "Tworzenie podróży..."}
             </>
           ) : (
             "Utwórz podróż"
