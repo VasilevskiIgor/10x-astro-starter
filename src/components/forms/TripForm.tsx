@@ -85,6 +85,8 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
 
   // Track if AI generation should be triggered
   const shouldGenerateAI = React.useRef(false);
+  // Track if we've already handled the trip creation to prevent duplicate runs
+  const hasHandledTrip = React.useRef(false);
 
   // ============================================================================
   // Auto-save to localStorage
@@ -104,7 +106,10 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   // ============================================================================
 
   React.useEffect(() => {
-    if (trip && !isGenerating) {
+    if (trip && !hasHandledTrip.current) {
+      // Mark as handled immediately to prevent duplicate runs
+      hasHandledTrip.current = true;
+
       // Clear draft on success
       clearTripDraft();
 
@@ -137,7 +142,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
         }
       }
     }
-  }, [trip, isGenerating, onSuccess, generateAI, generateError]);
+  }, [trip, onSuccess, generateAI, generateError]);
 
   // ============================================================================
   // Event Handlers
