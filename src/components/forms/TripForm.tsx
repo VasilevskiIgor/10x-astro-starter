@@ -106,35 +106,63 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   // ============================================================================
 
   React.useEffect(() => {
+    console.log("[TripForm] useEffect triggered - trip:", trip?.id, "hasHandledTrip:", hasHandledTrip.current, "shouldGenerateAI:", shouldGenerateAI.current);
+
     if (trip && !hasHandledTrip.current) {
       // Mark as handled immediately to prevent duplicate runs
       hasHandledTrip.current = true;
+      console.log("[TripForm] Handling trip creation for trip ID:", trip.id);
 
       // Clear draft on success
       clearTripDraft();
 
       // If AI generation was requested, trigger it now
       if (shouldGenerateAI.current) {
-        console.log("[TripForm] Trip created, triggering AI generation...");
+        console.log("[TripForm] AI generation was requested, triggering now...");
+        console.log("[TripForm] Trip data:", {
+          id: trip.id,
+          destination: trip.destination,
+          start_date: trip.start_date,
+          end_date: trip.end_date,
+          description: trip.description,
+          status: trip.status
+        });
         shouldGenerateAI.current = false;
 
-        // Trigger AI generation
-        generateAI(trip.id).then((success) => {
-          if (success) {
-            console.log("[TripForm] AI generation initiated successfully");
-          } else {
-            console.error("[TripForm] AI generation failed:", generateError);
-          }
+        // Add a small delay to ensure database is fully committed
+        setTimeout(() => {
+          console.log("[TripForm] Calling generateAI with trip ID:", trip.id);
 
-          // Redirect to trip detail page after attempting generation
-          if (onSuccess) {
-            onSuccess(trip.id);
-          } else {
-            window.location.href = `/trips/${trip.id}`;
-          }
-        });
+          // Trigger AI generation
+          generateAI(trip.id).then((success) => {
+            console.log("[TripForm] generateAI promise resolved. Success:", success);
+
+            if (success) {
+              console.log("[TripForm] AI generation initiated successfully");
+            } else {
+              console.error("[TripForm] AI generation failed:", generateError);
+            }
+
+            // Redirect to trip detail page after attempting generation
+            console.log("[TripForm] Redirecting to trip detail page...");
+            if (onSuccess) {
+              onSuccess(trip.id);
+            } else {
+              window.location.href = `/trips/${trip.id}`;
+            }
+          }).catch((error) => {
+            console.error("[TripForm] generateAI promise rejected:", error);
+            // Still redirect even if generation fails
+            if (onSuccess) {
+              onSuccess(trip.id);
+            } else {
+              window.location.href = `/trips/${trip.id}`;
+            }
+          });
+        }, 500); // 500ms delay to ensure DB commit
       } else {
         // No AI generation requested, redirect immediately
+        console.log("[TripForm] No AI generation requested, redirecting immediately");
         if (onSuccess) {
           onSuccess(trip.id);
         } else {
