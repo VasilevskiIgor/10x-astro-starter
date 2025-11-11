@@ -125,7 +125,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
   }, [formData, isLoading]);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-[var(--spacingVerticalL)]" noValidate autoComplete="off">
+      {/* Honeypot fields - hidden from users but visible to autofill */}
+      <div style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px" }} aria-hidden="true">
+        <input type="text" name="email" tabIndex={-1} autoComplete="email" />
+        <input type="password" name="password" tabIndex={-1} autoComplete="current-password" />
+      </div>
+
       {/* Error Alert */}
       {error && <ErrorAlert type="error" message={error} dismissible onDismiss={() => setError(null)} />}
 
@@ -143,12 +149,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
         <input
           type="text"
           id="email"
-          name="email-login-field"
+          name="user-email"
           value={formData.email}
           onChange={(e) => handleFieldChange("email", e.target.value)}
+          onFocus={(e) => e.target.removeAttribute("readonly")}
           disabled={isLoading}
           required
-          autoComplete="new-password"
+          autoComplete="off"
+          readOnly
           placeholder="you@example.com"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
@@ -168,12 +176,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
         <input
           type="password"
           id="password"
-          name="password-login-field"
+          name="user-password"
           value={formData.password}
           onChange={(e) => handleFieldChange("password", e.target.value)}
+          onFocus={(e) => e.target.removeAttribute("readonly")}
           disabled={isLoading}
           required
-          autoComplete="new-password"
+          autoComplete="off"
+          readOnly
           placeholder="Wprowadź hasło"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
