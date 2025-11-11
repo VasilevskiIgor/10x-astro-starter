@@ -148,7 +148,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
           onChange={(e) => handleFieldChange("email", e.target.value)}
           disabled={isLoading}
           required
-          autoComplete="email"
+          autoComplete="off"
           placeholder="you@example.com"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
@@ -173,7 +173,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
           onChange={(e) => handleFieldChange("password", e.target.value)}
           disabled={isLoading}
           required
-          autoComplete="current-password"
+          autoComplete="off"
           placeholder="Wprowadź hasło"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
