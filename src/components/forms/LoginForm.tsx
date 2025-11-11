@@ -141,14 +141,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
           </span>
         </label>
         <input
-          type="email"
+          type="text"
           id="email"
-          name="email"
+          name="email-login-field"
           value={formData.email}
           onChange={(e) => handleFieldChange("email", e.target.value)}
           disabled={isLoading}
           required
-          autoComplete="off"
+          autoComplete="new-password"
           placeholder="you@example.com"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
@@ -168,12 +168,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ redirectTo = "/trips" }) =
         <input
           type="password"
           id="password"
-          name="password"
+          name="password-login-field"
           value={formData.password}
           onChange={(e) => handleFieldChange("password", e.target.value)}
           disabled={isLoading}
           required
-          autoComplete="off"
+          autoComplete="new-password"
           placeholder="Wprowadź hasło"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
