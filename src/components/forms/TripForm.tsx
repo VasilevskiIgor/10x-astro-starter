@@ -151,32 +151,42 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
                 console.error("[TripForm] AI generation failed:", generateError);
               }
 
+              // TEMPORARY: Comment out redirect to see logs
+              console.log("[TripForm] Would redirect to trip detail page, but disabled for debugging");
+              console.log("[TripForm] Trip ID:", trip.id);
+              console.log("[TripForm] You can manually go to:", `/trips/${trip.id}`);
+
               // Redirect to trip detail page after attempting generation
-              console.log("[TripForm] Redirecting to trip detail page...");
-              if (onSuccess) {
-                onSuccess(trip.id);
-              } else {
-                window.location.href = `/trips/${trip.id}`;
-              }
+              // console.log("[TripForm] Redirecting to trip detail page...");
+              // if (onSuccess) {
+              //   onSuccess(trip.id);
+              // } else {
+              //   window.location.href = `/trips/${trip.id}`;
+              // }
             })
             .catch((error) => {
               console.error("[TripForm] generateAI promise rejected:", error);
+              console.log("[TripForm] Error details:", error);
               // Still redirect even if generation fails
-              if (onSuccess) {
-                onSuccess(trip.id);
-              } else {
-                window.location.href = `/trips/${trip.id}`;
-              }
+              // TEMPORARY: Disabled for debugging
+              console.log("[TripForm] Would redirect to trip detail page");
+              // if (onSuccess) {
+              //   onSuccess(trip.id);
+              // } else {
+              //   window.location.href = `/trips/${trip.id}`;
+              // }
             });
         }, 500); // 500ms delay to ensure DB commit
       } else {
         // No AI generation requested, redirect immediately
         console.log("[TripForm] No AI generation requested, redirecting immediately");
-        if (onSuccess) {
-          onSuccess(trip.id);
-        } else {
-          window.location.href = `/trips/${trip.id}`;
-        }
+        // TEMPORARY: Disabled for debugging
+        console.log("[TripForm] Would redirect to:", `/trips/${trip.id}`);
+        // if (onSuccess) {
+        //   onSuccess(trip.id);
+        // } else {
+        //   window.location.href = `/trips/${trip.id}`;
+        // }
       }
     }
   }, [trip, onSuccess, generateAI, generateError]);
