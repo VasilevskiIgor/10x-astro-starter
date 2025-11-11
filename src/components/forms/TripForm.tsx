@@ -247,6 +247,9 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("[TripForm] handleSubmit called");
+    console.log("[TripForm] formData.generateAI:", formData.generateAI);
+
     // Mark all fields as touched
     setTouchedFields(new Set(["destination", "startDate", "endDate", "description"]));
 
@@ -255,11 +258,13 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
     setValidationErrors(errors);
 
     if (hasValidationErrors(errors)) {
+      console.log("[TripForm] Validation errors, aborting submit");
       return;
     }
 
     // Set flag to trigger AI generation after trip creation
     shouldGenerateAI.current = formData.generateAI;
+    console.log("[TripForm] shouldGenerateAI.current set to:", shouldGenerateAI.current);
 
     // Prepare API payload
     const payload: CreateTripCommand = {
@@ -270,8 +275,12 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       generate_ai: formData.generateAI,
     };
 
+    console.log("[TripForm] Calling createTrip with payload:", payload);
+
     // Submit to API
     await createTrip(payload);
+
+    console.log("[TripForm] createTrip completed");
   };
 
   const handleDismissDraftNotice = () => {
