@@ -64,8 +64,9 @@ export class TripService {
       const sanitizedDestination = this.sanitizeString(command.destination);
       const sanitizedDescription = command.description ? this.sanitizeString(command.description) : null;
 
-      // 2. Determine trip status based on AI generation flag
-      const status = command.generate_ai ? "generating" : "draft";
+      // 2. Always create trip with "draft" status
+      // The /generate-ai endpoint will change it to "generating" when AI generation starts
+      const status = "draft";
 
       // 3. Prepare data for database insert
       const tripData: TablesInsert<"trips"> = {
@@ -75,8 +76,8 @@ export class TripService {
         end_date: command.end_date,
         description: sanitizedDescription,
         status: status,
-        // Set AI model if generation is requested
-        ai_model: command.generate_ai ? "gpt-3.5-turbo" : null,
+        // Don't set AI model yet - it will be set by /generate-ai endpoint
+        ai_model: null,
       };
 
       // 4. Insert trip into database
