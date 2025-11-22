@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Helper script to get a test JWT token from local Supabase
  *

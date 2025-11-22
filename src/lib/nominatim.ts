@@ -286,7 +286,10 @@ export function getPopularDestinations(language = "pl"): LocationSuggestion[] {
 /**
  * Debounce helper for search input
  */
-export function debounce<T extends (...args: never[]) => unknown>(func: T, wait: number): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: never[]) => unknown>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
 
   return function executedFunction(...args: Parameters<T>) {
