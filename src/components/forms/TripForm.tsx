@@ -13,6 +13,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { DateRangePicker } from "./DateRangePicker";
+import { LocationAutocomplete } from "./LocationAutocomplete";
 import { useCreateTrip } from "@/hooks/useCreateTrip";
 import { useGenerateAI } from "@/hooks/useGenerateAI";
 import { useRequireAuth } from "@/hooks/useAuth";
@@ -60,6 +61,12 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
         endDate: draft.endDate || "",
         description: draft.description || "",
         generateAI: draft.generateAI || false,
+        groupSize: draft.groupSize,
+        interests: draft.interests || [],
+        budget: draft.budget,
+        travelStyle: draft.travelStyle,
+        accommodation: draft.accommodation,
+        email: draft.email,
       };
     }
     return {
@@ -68,6 +75,12 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       endDate: "",
       description: "",
       generateAI: false,
+      groupSize: undefined,
+      interests: [],
+      budget: undefined,
+      travelStyle: undefined,
+      accommodation: undefined,
+      email: undefined,
     };
   });
 
@@ -185,11 +198,11 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
   // Event Handlers
   // ============================================================================
 
-  const handleFieldChange = (field: keyof TripFormData, value: string | boolean) => {
+  const handleFieldChange = (field: keyof TripFormData, value: string | boolean | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Real-time validation for touched fields
-    if (touchedFields.has(field) && typeof value === "string") {
+    if (touchedFields.has(field)) {
       const error = validateField(field, value, {
         ...formData,
         [field]: value,
@@ -206,13 +219,11 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
 
     // Validate field on blur
     const value = formData[field];
-    if (typeof value === "string") {
-      const error = validateField(field, value, formData);
-      setValidationErrors((prev) => ({
-        ...prev,
-        [field]: error,
-      }));
-    }
+    const error = validateField(field, value, formData);
+    setValidationErrors((prev) => ({
+      ...prev,
+      [field]: error,
+    }));
   };
 
   const handleDateChange = (startDate: string, endDate: string) => {
@@ -295,10 +306,25 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       endDate: "",
       description: "",
       generateAI: false,
+      groupSize: undefined,
+      interests: [],
+      budget: undefined,
+      travelStyle: undefined,
+      accommodation: undefined,
+      email: undefined,
     });
     setValidationErrors({});
     setTouchedFields(new Set());
     setShowDraftNotice(false);
+  };
+
+  const handleInterestToggle = (interest: string) => {
+    const currentInterests = formData.interests || [];
+    const newInterests = currentInterests.includes(interest)
+      ? currentInterests.filter((i) => i !== interest)
+      : [...currentInterests, interest];
+
+    handleFieldChange('interests', newInterests);
   };
 
   // ============================================================================
@@ -370,7 +396,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       {/* AI Generation Error Alert */}
       {generateError && <ErrorAlert type="error" message={`AI Generation Error: ${generateError}`} />}
 
-      {/* Destination Field */}
+      {/* Destination Field with Autocomplete */}
       <div>
         <label htmlFor="destination" className="block text-sm font-medium text-gray-700">
           Miejsce docelowe{" "}
@@ -378,24 +404,14 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
             *
           </span>
         </label>
-        <input
-          type="text"
-          id="destination"
-          name="destination"
+        <LocationAutocomplete
           value={formData.destination}
-          onChange={(e) => handleFieldChange("destination", e.target.value)}
+          onChange={(value) => handleFieldChange("destination", value)}
           onBlur={() => handleFieldBlur("destination")}
           disabled={isLoading || isGenerating}
+          error={displayErrors.destination}
           placeholder="np. Paryż, Francja"
-          aria-invalid={displayErrors.destination ? "true" : "false"}
-          aria-describedby={displayErrors.destination ? "destination-error" : undefined}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
-            displayErrors.destination
-              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-              : !displayErrors.destination && formData.destination && touchedFields.has("destination")
-                ? "border-green-300 focus:border-green-500 focus:ring-green-500"
-                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-          } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          language="pl"
         />
         {displayErrors.destination && (
           <p id="destination-error" className="mt-1 text-sm text-red-600" role="alert">
@@ -416,10 +432,188 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
         disabled={isLoading || isGenerating}
       />
 
+      {/* Group Size Field */}
+      <div>
+        <label htmlFor="groupSize" className="block text-sm font-medium text-gray-700">
+          Wielkość grupy <span className="text-gray-500 text-xs">(opcjonalny)</span>
+        </label>
+        <select
+          id="groupSize"
+          name="groupSize"
+          value={formData.groupSize || ""}
+          onChange={(e) => handleFieldChange("groupSize", e.target.value)}
+          onBlur={() => handleFieldBlur("groupSize")}
+          disabled={isLoading || isGenerating}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+            displayErrors.groupSize
+              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
+        >
+          <option value="">Wybierz wielkość grupy</option>
+          <option value="solo">Podróżnik solo</option>
+          <option value="couple">Para (2 osoby)</option>
+          <option value="small">Mała grupa (3-5 osób)</option>
+          <option value="large">Duża grupa (6+ osób)</option>
+        </select>
+        {displayErrors.groupSize && (
+          <p className="mt-1 text-sm text-red-600" role="alert">
+            {displayErrors.groupSize}
+          </p>
+        )}
+      </div>
+
+      {/* Interests Field */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Zainteresowania <span className="text-gray-500 text-xs">(opcjonalny, 3-10 elementów)</span>
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          {[
+            { key: 'history', label: '🏛️ Historia', color: 'purple' },
+            { key: 'food', label: '🍽️ Jedzenie', color: 'red' },
+            { key: 'nature', label: '🌲 Natura', color: 'green' },
+            { key: 'museums', label: '🏛️ Muzea', color: 'blue' },
+            { key: 'shopping', label: '🛍️ Zakupy', color: 'orange' },
+            { key: 'nightlife', label: '🌙 Życie nocne', color: 'indigo' },
+            { key: 'architecture', label: '🏗️ Architektura', color: 'gray' },
+            { key: 'art', label: '🎨 Sztuka', color: 'pink' },
+            { key: 'music', label: '🎵 Muzyka', color: 'cyan' },
+            { key: 'sports', label: '⚽ Sport', color: 'emerald' },
+            { key: 'beaches', label: '🏖️ Plaże', color: 'yellow' },
+            { key: 'photography', label: '📷 Fotografia', color: 'violet' },
+          ].map((interest) => {
+            const isSelected = formData.interests?.includes(interest.key);
+            return (
+              <button
+                key={interest.key}
+                type="button"
+                onClick={() => handleInterestToggle(interest.key)}
+                disabled={isLoading || isGenerating}
+                className={`px-3 py-2 text-xs font-medium rounded-lg border-2 transition-all ${
+                  isSelected
+                    ? 'bg-blue-50 border-blue-500 text-blue-700'
+                    : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
+                } ${isLoading || isGenerating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                {interest.label}
+              </button>
+            );
+          })}
+        </div>
+        {displayErrors.interests && (
+          <p className="mt-1 text-sm text-red-600" role="alert">
+            {displayErrors.interests}
+          </p>
+        )}
+        {formData.interests && formData.interests.length > 0 && (
+          <p className="mt-1 text-xs text-gray-500">
+            Wybrano: {formData.interests.length}/10
+          </p>
+        )}
+      </div>
+
+      {/* Budget and Travel Style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="budget" className="block text-sm font-medium text-gray-700">
+            Budżet dzienny <span className="text-gray-500 text-xs">(opcjonalny)</span>
+          </label>
+          <select
+            id="budget"
+            name="budget"
+            value={formData.budget || ""}
+            onChange={(e) => handleFieldChange("budget", e.target.value)}
+            onBlur={() => handleFieldBlur("budget")}
+            disabled={isLoading || isGenerating}
+            className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+              displayErrors.budget
+                ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          >
+            <option value="">Wybierz zakres budżetu</option>
+            <option value="budget">Oszczędny (30-80€/dzień)</option>
+            <option value="low">Niski (80-150€/dzień)</option>
+            <option value="medium">Średni (150-300€/dzień)</option>
+            <option value="high">Wysoki (300-500€/dzień)</option>
+            <option value="luxury">Luksusowy (500€+/dzień)</option>
+          </select>
+          {displayErrors.budget && (
+            <p className="mt-1 text-sm text-red-600" role="alert">
+              {displayErrors.budget}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="travelStyle" className="block text-sm font-medium text-gray-700">
+            Styl podróży <span className="text-gray-500 text-xs">(opcjonalny)</span>
+          </label>
+          <select
+            id="travelStyle"
+            name="travelStyle"
+            value={formData.travelStyle || ""}
+            onChange={(e) => handleFieldChange("travelStyle", e.target.value)}
+            onBlur={() => handleFieldBlur("travelStyle")}
+            disabled={isLoading || isGenerating}
+            className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+              displayErrors.travelStyle
+                ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          >
+            <option value="">Wybierz styl podróży</option>
+            <option value="relaxed">Spokojny i powolny</option>
+            <option value="balanced">Zrównoważony</option>
+            <option value="active">Aktywny i intensywny</option>
+            <option value="cultural">Skupiony na kulturze</option>
+            <option value="adventure">Poszukiwanie przygód</option>
+          </select>
+          {displayErrors.travelStyle && (
+            <p className="mt-1 text-sm text-red-600" role="alert">
+              {displayErrors.travelStyle}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Accommodation Field */}
+      <div>
+        <label htmlFor="accommodation" className="block text-sm font-medium text-gray-700">
+          Preferencje noclegowe <span className="text-gray-500 text-xs">(opcjonalny)</span>
+        </label>
+        <select
+          id="accommodation"
+          name="accommodation"
+          value={formData.accommodation || ""}
+          onChange={(e) => handleFieldChange("accommodation", e.target.value)}
+          onBlur={() => handleFieldBlur("accommodation")}
+          disabled={isLoading || isGenerating}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+            displayErrors.accommodation
+              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
+        >
+          <option value="">Bez preferencji</option>
+          <option value="hotel">Hotele</option>
+          <option value="hostel">Hostele</option>
+          <option value="apartment">Apartamenty/Airbnb</option>
+          <option value="boutique">Hotele butikowe</option>
+          <option value="luxury">Luksusowe kurorty</option>
+        </select>
+        {displayErrors.accommodation && (
+          <p className="mt-1 text-sm text-red-600" role="alert">
+            {displayErrors.accommodation}
+          </p>
+        )}
+      </div>
+
       {/* Description Field */}
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-          Opis <span className="text-gray-500 text-xs">(opcjonalny)</span>
+          Dodatkowe informacje <span className="text-gray-500 text-xs">(opcjonalny)</span>
         </label>
         <textarea
           id="description"
@@ -448,6 +642,35 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           </p>
         )}
       </div>
+
+      {/* Email Field (for AI generation notifications) */}
+      {formData.generateAI && (
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Adres e-mail <span className="text-gray-500 text-xs">(opcjonalny - do powiadomień AI)</span>
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email || ""}
+            onChange={(e) => handleFieldChange("email", e.target.value)}
+            onBlur={() => handleFieldBlur("email")}
+            disabled={isLoading || isGenerating}
+            placeholder="twoj@email.com"
+            className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+              displayErrors.email
+                ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            } ${isLoading || isGenerating ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          />
+          {displayErrors.email && (
+            <p className="mt-1 text-sm text-red-600" role="alert">
+              {displayErrors.email}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* AI Generation Toggle */}
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
