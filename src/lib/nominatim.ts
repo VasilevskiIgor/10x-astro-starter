@@ -161,25 +161,124 @@ export async function searchLocations(query: string, language = "pl"): Promise<L
  * Used when user hasn't typed anything or as suggestions
  */
 export function getPopularDestinations(language = "pl"): LocationSuggestion[] {
-  const destinations = language === "pl" ? [
-    { id: 1, label: "Kraków, Polska", city: "Kraków", country: "Polska", coordinates: { lat: "50.0647", lon: "19.9450" } },
-    { id: 2, label: "Warszawa, Polska", city: "Warszawa", country: "Polska", coordinates: { lat: "52.2297", lon: "21.0122" } },
-    { id: 3, label: "Gdańsk, Polska", city: "Gdańsk", country: "Polska", coordinates: { lat: "54.3520", lon: "18.6466" } },
-    { id: 4, label: "Wrocław, Polska", city: "Wrocław", country: "Polska", coordinates: { lat: "51.1079", lon: "17.0385" } },
-    { id: 5, label: "Paryż, Francja", city: "Paryż", country: "Francja", coordinates: { lat: "48.8566", lon: "2.3522" } },
-    { id: 6, label: "Rzym, Włochy", city: "Rzym", country: "Włochy", coordinates: { lat: "41.9028", lon: "12.4964" } },
-    { id: 7, label: "Barcelona, Hiszpania", city: "Barcelona", country: "Hiszpania", coordinates: { lat: "41.3851", lon: "2.1734" } },
-    { id: 8, label: "Londyn, Wielka Brytania", city: "Londyn", country: "Wielka Brytania", coordinates: { lat: "51.5074", lon: "-0.1278" } },
-  ] : [
-    { id: 1, label: "Krakow, Poland", city: "Krakow", country: "Poland", coordinates: { lat: "50.0647", lon: "19.9450" } },
-    { id: 2, label: "Warsaw, Poland", city: "Warsaw", country: "Poland", coordinates: { lat: "52.2297", lon: "21.0122" } },
-    { id: 3, label: "Gdansk, Poland", city: "Gdansk", country: "Poland", coordinates: { lat: "54.3520", lon: "18.6466" } },
-    { id: 4, label: "Wroclaw, Poland", city: "Wroclaw", country: "Poland", coordinates: { lat: "51.1079", lon: "17.0385" } },
-    { id: 5, label: "Paris, France", city: "Paris", country: "France", coordinates: { lat: "48.8566", lon: "2.3522" } },
-    { id: 6, label: "Rome, Italy", city: "Rome", country: "Italy", coordinates: { lat: "41.9028", lon: "12.4964" } },
-    { id: 7, label: "Barcelona, Spain", city: "Barcelona", country: "Spain", coordinates: { lat: "41.3851", lon: "2.1734" } },
-    { id: 8, label: "London, United Kingdom", city: "London", country: "United Kingdom", coordinates: { lat: "51.5074", lon: "-0.1278" } },
-  ];
+  const destinations =
+    language === "pl"
+      ? [
+          {
+            id: 1,
+            label: "Kraków, Polska",
+            city: "Kraków",
+            country: "Polska",
+            coordinates: { lat: "50.0647", lon: "19.9450" },
+          },
+          {
+            id: 2,
+            label: "Warszawa, Polska",
+            city: "Warszawa",
+            country: "Polska",
+            coordinates: { lat: "52.2297", lon: "21.0122" },
+          },
+          {
+            id: 3,
+            label: "Gdańsk, Polska",
+            city: "Gdańsk",
+            country: "Polska",
+            coordinates: { lat: "54.3520", lon: "18.6466" },
+          },
+          {
+            id: 4,
+            label: "Wrocław, Polska",
+            city: "Wrocław",
+            country: "Polska",
+            coordinates: { lat: "51.1079", lon: "17.0385" },
+          },
+          {
+            id: 5,
+            label: "Paryż, Francja",
+            city: "Paryż",
+            country: "Francja",
+            coordinates: { lat: "48.8566", lon: "2.3522" },
+          },
+          {
+            id: 6,
+            label: "Rzym, Włochy",
+            city: "Rzym",
+            country: "Włochy",
+            coordinates: { lat: "41.9028", lon: "12.4964" },
+          },
+          {
+            id: 7,
+            label: "Barcelona, Hiszpania",
+            city: "Barcelona",
+            country: "Hiszpania",
+            coordinates: { lat: "41.3851", lon: "2.1734" },
+          },
+          {
+            id: 8,
+            label: "Londyn, Wielka Brytania",
+            city: "Londyn",
+            country: "Wielka Brytania",
+            coordinates: { lat: "51.5074", lon: "-0.1278" },
+          },
+        ]
+      : [
+          {
+            id: 1,
+            label: "Krakow, Poland",
+            city: "Krakow",
+            country: "Poland",
+            coordinates: { lat: "50.0647", lon: "19.9450" },
+          },
+          {
+            id: 2,
+            label: "Warsaw, Poland",
+            city: "Warsaw",
+            country: "Poland",
+            coordinates: { lat: "52.2297", lon: "21.0122" },
+          },
+          {
+            id: 3,
+            label: "Gdansk, Poland",
+            city: "Gdansk",
+            country: "Poland",
+            coordinates: { lat: "54.3520", lon: "18.6466" },
+          },
+          {
+            id: 4,
+            label: "Wroclaw, Poland",
+            city: "Wroclaw",
+            country: "Poland",
+            coordinates: { lat: "51.1079", lon: "17.0385" },
+          },
+          {
+            id: 5,
+            label: "Paris, France",
+            city: "Paris",
+            country: "France",
+            coordinates: { lat: "48.8566", lon: "2.3522" },
+          },
+          {
+            id: 6,
+            label: "Rome, Italy",
+            city: "Rome",
+            country: "Italy",
+            coordinates: { lat: "41.9028", lon: "12.4964" },
+          },
+          {
+            id: 7,
+            label: "Barcelona, Spain",
+            city: "Barcelona",
+            country: "Spain",
+            coordinates: { lat: "41.3851", lon: "2.1734" },
+          },
+          {
+            id: 8,
+            label: "London, United Kingdom",
+            city: "London",
+            country: "United Kingdom",
+            coordinates: { lat: "51.5074", lon: "-0.1278" },
+          },
+        ];
 
   return destinations;
 }
