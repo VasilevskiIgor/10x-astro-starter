@@ -324,7 +324,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
       ? currentInterests.filter((i) => i !== interest)
       : [...currentInterests, interest];
 
-    handleFieldChange('interests', newInterests);
+    handleFieldChange("interests", newInterests);
   };
 
   // ============================================================================
@@ -465,23 +465,23 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
 
       {/* Interests Field */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="block text-sm font-medium text-gray-700 mb-2">
           Zainteresowania <span className="text-gray-500 text-xs">(opcjonalny, 3-10 elementów)</span>
-        </label>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {[
-            { key: 'history', label: '🏛️ Historia', color: 'purple' },
-            { key: 'food', label: '🍽️ Jedzenie', color: 'red' },
-            { key: 'nature', label: '🌲 Natura', color: 'green' },
-            { key: 'museums', label: '🏛️ Muzea', color: 'blue' },
-            { key: 'shopping', label: '🛍️ Zakupy', color: 'orange' },
-            { key: 'nightlife', label: '🌙 Życie nocne', color: 'indigo' },
-            { key: 'architecture', label: '🏗️ Architektura', color: 'gray' },
-            { key: 'art', label: '🎨 Sztuka', color: 'pink' },
-            { key: 'music', label: '🎵 Muzyka', color: 'cyan' },
-            { key: 'sports', label: '⚽ Sport', color: 'emerald' },
-            { key: 'beaches', label: '🏖️ Plaże', color: 'yellow' },
-            { key: 'photography', label: '📷 Fotografia', color: 'violet' },
+            { key: "history", label: "🏛️ Historia", color: "purple" },
+            { key: "food", label: "🍽️ Jedzenie", color: "red" },
+            { key: "nature", label: "🌲 Natura", color: "green" },
+            { key: "museums", label: "🏛️ Muzea", color: "blue" },
+            { key: "shopping", label: "🛍️ Zakupy", color: "orange" },
+            { key: "nightlife", label: "🌙 Życie nocne", color: "indigo" },
+            { key: "architecture", label: "🏗️ Architektura", color: "gray" },
+            { key: "art", label: "🎨 Sztuka", color: "pink" },
+            { key: "music", label: "🎵 Muzyka", color: "cyan" },
+            { key: "sports", label: "⚽ Sport", color: "emerald" },
+            { key: "beaches", label: "🏖️ Plaże", color: "yellow" },
+            { key: "photography", label: "📷 Fotografia", color: "violet" },
           ].map((interest) => {
             const isSelected = formData.interests?.includes(interest.key);
             return (
@@ -492,9 +492,9 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
                 disabled={isLoading || isGenerating}
                 className={`px-3 py-2 text-xs font-medium rounded-lg border-2 transition-all ${
                   isSelected
-                    ? 'bg-blue-50 border-blue-500 text-blue-700'
-                    : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                } ${isLoading || isGenerating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    ? "bg-blue-50 border-blue-500 text-blue-700"
+                    : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+                } ${isLoading || isGenerating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
               >
                 {interest.label}
               </button>

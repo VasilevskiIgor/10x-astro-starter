@@ -208,6 +208,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           aria-describedby={error ? "destination-error" : undefined}
           aria-autocomplete="list"
           aria-controls="location-suggestions"
+          role="combobox"
           aria-expanded={isOpen}
           className={`mt-1 block w-full rounded-md border px-3 py-2 pl-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
             error
@@ -221,12 +222,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         {/* Search Icon */}
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
           {isLoading ? (
-            <svg
-              className="h-4 w-4 animate-spin text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
+            <svg className="h-4 w-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24" aria-hidden="true">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path
                 className="opacity-75"
@@ -275,6 +271,13 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
               role="option"
               aria-selected={highlightedIndex === index}
               onClick={() => handleSuggestionClick(suggestion)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleSuggestionClick(suggestion);
+                }
+              }}
+              tabIndex={0}
               className={`px-3 py-2 cursor-pointer flex items-center gap-2 ${
                 highlightedIndex === index ? "bg-blue-50 text-blue-900" : "hover:bg-gray-50"
               }`}
@@ -292,7 +295,12 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                   strokeWidth={2}
                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                 />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
               <span className="text-sm">{suggestion.label}</span>
             </div>
