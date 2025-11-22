@@ -9,8 +9,8 @@
  * - Validation feedback
  */
 
-import * as React from 'react';
-import { searchLocations, getPopularDestinations, debounce, type LocationSuggestion } from '@/lib/nominatim';
+import * as React from "react";
+import { searchLocations, getPopularDestinations, debounce, type LocationSuggestion } from "@/lib/nominatim";
 
 // ============================================================================
 // Type Definitions
@@ -36,8 +36,8 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   onBlur,
   disabled = false,
   error,
-  placeholder = 'np. Paryż, Francja',
-  language = 'pl',
+  placeholder = "np. Paryż, Francja",
+  language = "pl",
 }) => {
   // ============================================================================
   // State Management
@@ -73,7 +73,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         const results = await searchLocations(query, language);
         setSuggestions(results);
       } catch (error) {
-        console.error('Error searching locations:', error);
+        console.error("Error searching locations:", error);
         setSuggestions([]);
       } finally {
         setIsLoading(false);
@@ -129,21 +129,21 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     }
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : -1));
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
           handleSuggestionClick(suggestions[highlightedIndex]);
         }
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setIsOpen(false);
         setHighlightedIndex(-1);
@@ -167,9 +167,9 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -181,7 +181,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     if (highlightedIndex >= 0 && dropdownRef.current) {
       const highlightedElement = dropdownRef.current.querySelector(`[data-index="${highlightedIndex}"]`);
       if (highlightedElement) {
-        highlightedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        highlightedElement.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     }
   }, [highlightedIndex]);
@@ -204,18 +204,18 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={placeholder}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={error ? 'destination-error' : undefined}
+          aria-invalid={error ? "true" : "false"}
+          aria-describedby={error ? "destination-error" : undefined}
           aria-autocomplete="list"
           aria-controls="location-suggestions"
           aria-expanded={isOpen}
           className={`mt-1 block w-full rounded-md border px-3 py-2 pl-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
             error
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
               : !error && value
-                ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
-                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                ? "border-green-300 focus:border-green-500 focus:ring-green-500"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          } ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
 
         {/* Search Icon */}
@@ -276,11 +276,11 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
               aria-selected={highlightedIndex === index}
               onClick={() => handleSuggestionClick(suggestion)}
               className={`px-3 py-2 cursor-pointer flex items-center gap-2 ${
-                highlightedIndex === index ? 'bg-blue-50 text-blue-900' : 'hover:bg-gray-50'
+                highlightedIndex === index ? "bg-blue-50 text-blue-900" : "hover:bg-gray-50"
               }`}
             >
               <svg
-                className={`h-4 w-4 flex-shrink-0 ${highlightedIndex === index ? 'text-blue-500' : 'text-gray-400'}`}
+                className={`h-4 w-4 flex-shrink-0 ${highlightedIndex === index ? "text-blue-500" : "text-gray-400"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
