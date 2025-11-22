@@ -144,7 +144,7 @@ function validateGroupSize(groupSize?: string): string | undefined {
     return undefined; // Optional field
   }
 
-  const validSizes = ['solo', 'couple', 'small', 'large'];
+  const validSizes = ["solo", "couple", "small", "large"];
   if (!validSizes.includes(groupSize)) {
     return "Nieprawidłowy rozmiar grupy";
   }
@@ -179,7 +179,7 @@ function validateBudget(budget?: string): string | undefined {
     return undefined; // Optional field
   }
 
-  const validBudgets = ['budget', 'low', 'medium', 'high', 'luxury'];
+  const validBudgets = ["budget", "low", "medium", "high", "luxury"];
   if (!validBudgets.includes(budget)) {
     return "Nieprawidłowy budżet";
   }
@@ -195,7 +195,7 @@ function validateTravelStyle(travelStyle?: string): string | undefined {
     return undefined; // Optional field
   }
 
-  const validStyles = ['relaxed', 'balanced', 'active', 'cultural', 'adventure'];
+  const validStyles = ["relaxed", "balanced", "active", "cultural", "adventure"];
   if (!validStyles.includes(travelStyle)) {
     return "Nieprawidłowy styl podróży";
   }
@@ -211,7 +211,7 @@ function validateAccommodation(accommodation?: string): string | undefined {
     return undefined; // Optional field
   }
 
-  const validAccommodations = ['hotel', 'hostel', 'apartment', 'boutique', 'luxury'];
+  const validAccommodations = ["hotel", "hostel", "apartment", "boutique", "luxury"];
   if (!validAccommodations.includes(accommodation)) {
     return "Nieprawidłowy typ zakwaterowania";
   }
