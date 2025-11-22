@@ -507,9 +507,7 @@ export const TripForm: React.FC<TripFormProps> = ({ onSuccess, onCancel }) => {
           </p>
         )}
         {formData.interests && formData.interests.length > 0 && (
-          <p className="mt-1 text-xs text-gray-500">
-            Wybrano: {formData.interests.length}/10
-          </p>
+          <p className="mt-1 text-xs text-gray-500">Wybrano: {formData.interests.length}/10</p>
         )}
       </div>
 
