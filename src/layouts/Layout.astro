@@ -35,9 +35,10 @@ const { title = "Magic Travel App", showNavigation = true } = Astro.props;
     <EnvInjector />
 
     {/* Update lang attribute based on localStorage */}
+    {/* eslint-disable-next-line */}
     <script is:inline>
-      (function() {
-        const locale = localStorage.getItem('locale') || 'pl';
+      (function () {
+        const locale = localStorage.getItem("locale") || "pl";
         document.documentElement.lang = locale;
       })();
     </script>

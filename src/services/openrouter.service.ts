@@ -382,16 +382,19 @@ export class OpenRouterService {
    * Build system prompt for AI model
    */
   private buildSystemPrompt(locale: "pl" | "en" = "pl"): string {
-    const languageInstruction = locale === "en"
-      ? "IMPORTANT: All content in the JSON (summary, title, description, tips, recommendations) must be in English."
-      : "WAŻNE: Wszystkie treści w JSON (summary, title, description, tips, recommendations) muszą być w języku polskim.";
+    const languageInstruction =
+      locale === "en"
+        ? "IMPORTANT: All content in the JSON (summary, title, description, tips, recommendations) must be in English."
+        : "WAŻNE: Wszystkie treści w JSON (summary, title, description, tips, recommendations) muszą być w języku polskim.";
 
-    const expertDescription = locale === "en"
-      ? "You are a travel planning expert specializing in creating detailed, personalized trip itineraries."
-      : "Jesteś ekspertem od planowania podróży specjalizującym się w tworzeniu szczegółowych, spersonalizowanych planów wycieczek.";
+    const expertDescription =
+      locale === "en"
+        ? "You are a travel planning expert specializing in creating detailed, personalized trip itineraries."
+        : "Jesteś ekspertem od planowania podróży specjalizującym się w tworzeniu szczegółowych, spersonalizowanych planów wycieczek.";
 
-    const requirements = locale === "en"
-      ? `Your responses must:
+    const requirements =
+      locale === "en"
+        ? `Your responses must:
 1. Be practical and achievable
 2. Consider local culture and customs
 3. Include realistic times and costs
@@ -399,7 +402,7 @@ export class OpenRouterService {
 5. Strictly follow the provided JSON structure
 
 IMPORTANT: Respond ONLY with valid JSON. Do not include any text, markdown, or explanations outside the JSON structure.`
-      : `Twoje odpowiedzi muszą:
+        : `Twoje odpowiedzi muszą:
 1. Być praktyczne i możliwe do zrealizowania
 2. Uwzględniać lokalną kulturę i zwyczaje
 3. Zawierać realistyczne godziny i koszty
@@ -501,9 +504,10 @@ PAMIĘTAJ: Wszystkie treści muszą być w języku polskim!`;
    * This is the core of structured outputs - ensures AI returns valid JSON
    */
   private buildResponseFormat(locale: "pl" | "en" = "pl"): Record<string, unknown> {
-    const summaryDesc = locale === "en"
-      ? "Brief trip summary in 2-3 sentences (in English)"
-      : "Krótkie podsumowanie wycieczki w 2-3 zdaniach (po polsku)";
+    const summaryDesc =
+      locale === "en"
+        ? "Brief trip summary in 2-3 sentences (in English)"
+        : "Krótkie podsumowanie wycieczki w 2-3 zdaniach (po polsku)";
 
     return {
       type: "json_schema",

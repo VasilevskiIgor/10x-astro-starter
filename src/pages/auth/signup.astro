@@ -31,7 +31,9 @@ try {
       {/* Header */}
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900" data-i18n="auth.signup_title">Utwórz konto</h1>
-        <p class="mt-2 text-sm text-gray-600" data-i18n="auth.signup_subtitle">Zacznij planować swoje wymarzone podróże</p>
+        <p class="mt-2 text-sm text-gray-600" data-i18n="auth.signup_subtitle">
+          Zacznij planować swoje wymarzone podróże
+        </p>
       </div>
 
       {/* Signup Form Card */}
@@ -63,6 +65,7 @@ try {
 
   <script>
     import { t, getLocaleFromStorage } from "@/i18n";
+    import type { TranslationKey } from "@/i18n";
 
     const locale = getLocaleFromStorage();
 
@@ -70,7 +73,7 @@ try {
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       const key = element.getAttribute("data-i18n");
       if (key) {
-        element.textContent = t(key as any, locale);
+        element.textContent = t(key as TranslationKey, locale);
       }
     });
   </script>

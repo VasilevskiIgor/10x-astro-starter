@@ -19,6 +19,7 @@ const translations: Record<Locale, Translations> = {
 /**
  * Get nested value from object using dot notation path
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((current, key) => current?.[key], obj) || path;
 }
@@ -112,7 +113,5 @@ export function isValidLocale(locale: string): locale is Locale {
  * Used for generating AI content in user's preferred language
  */
 export function getAILanguageInstruction(locale: Locale): string {
-  return locale === "en"
-    ? "Please respond in English."
-    : "Proszę odpowiadać po polsku.";
+  return locale === "en" ? "Please respond in English." : "Proszę odpowiadać po polsku.";
 }

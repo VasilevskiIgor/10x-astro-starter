@@ -21,7 +21,9 @@ import { TripsList } from "@/components/trips/TripsList";
     <div class="mb-8 flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold text-gray-900" data-i18n="trips.title">Moje plany</h1>
-        <p class="mt-2 text-sm text-gray-600" data-i18n="navigation.my_trips">Zarządzaj i przeglądaj wszystkie swoje plany podróży</p>
+        <p class="mt-2 text-sm text-gray-600" data-i18n="navigation.my_trips">
+          Zarządzaj i przeglądaj wszystkie swoje plany podróży
+        </p>
       </div>
       <a
         href="/trips/new"
@@ -41,6 +43,7 @@ import { TripsList } from "@/components/trips/TripsList";
 
   <script>
     import { t, getLocaleFromStorage } from "@/i18n";
+    import type { TranslationKey } from "@/i18n";
 
     const locale = getLocaleFromStorage();
 
@@ -48,7 +51,7 @@ import { TripsList } from "@/components/trips/TripsList";
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       const key = element.getAttribute("data-i18n");
       if (key) {
-        element.textContent = t(key as any, locale);
+        element.textContent = t(key as TranslationKey, locale);
       }
     });
   </script>
