@@ -33,6 +33,14 @@ const { title = "Magic Travel App", showNavigation = true } = Astro.props;
 
     {/* Inject environment variables for client-side use */}
     <EnvInjector />
+
+    {/* Update lang attribute based on localStorage */}
+    <script is:inline>
+      (function() {
+        const locale = localStorage.getItem('locale') || 'pl';
+        document.documentElement.lang = locale;
+      })();
+    </script>
   </head>
   <body>
     {/* Navigation - shown on all pages by default */}

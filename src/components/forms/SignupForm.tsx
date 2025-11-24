@@ -9,11 +9,13 @@
  * - Error handling
  * - Loading state
  * - Auto-login and redirect after successful signup
+ * - i18n support
  */
 
 import * as React from "react";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { supabaseBrowser } from "@/lib/supabase-browser";
+import { useTranslation } from "@/i18n";
 
 // ============================================================================
 // Type Definitions
@@ -30,32 +32,12 @@ interface SignupFormData {
 }
 
 // ============================================================================
-// Validation Functions
-// ============================================================================
-
-const validateEmail = (email: string): string | null => {
-  if (!email) return "Email jest wymagany";
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return "Nieprawidłowy format email";
-  return null;
-};
-
-const validatePassword = (password: string): string | null => {
-  if (!password) return "Hasło jest wymagane";
-  if (password.length < 8) return "Hasło musi mieć co najmniej 8 znaków";
-  return null;
-};
-
-const validatePasswordMatch = (password: string, confirm: string): string | null => {
-  if (password !== confirm) return "Hasła nie pasują do siebie";
-  return null;
-};
-
-// ============================================================================
 // Component
 // ============================================================================
 
 export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" }) => {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = React.useState<SignupFormData>({
     email: "",
     password: "",
@@ -65,6 +47,25 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+
+  // Validation functions with i18n
+  const validateEmail = (email: string): string | null => {
+    if (!email) return t("errors.required_field");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return t("errors.invalid_email");
+    return null;
+  };
+
+  const validatePassword = (password: string): string | null => {
+    if (!password) return t("errors.required_field");
+    if (password.length < 8) return t("errors.password_too_short");
+    return null;
+  };
+
+  const validatePasswordMatch = (password: string, confirm: string): string | null => {
+    if (password !== confirm) return t("auth.passwords_must_match");
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,38 +92,25 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
 
       if (error) throw error;
 
-      // MVP: Email confirmation is DISABLED in Supabase
       // User is automatically logged in after signup
       if (data.session) {
-        setSuccessMessage("Konto utworzone! Przekierowujemy...");
+        setSuccessMessage(t("auth.signup_success"));
         // Small delay for UX (show success message)
         setTimeout(() => {
           window.location.href = redirectTo;
         }, 1000);
       } else {
-        // This should not happen with email confirmation disabled
-        // But handle gracefully just in case
-        setError("Konto utworzone, ale nie udało się zalogować automatycznie. Spróbuj zalogować się ręcznie.");
+        setError(t("common.error"));
       }
     } catch (err) {
       const error = err as Error;
-      // Handle Supabase errors
-      if (error.message?.includes("already registered")) {
-        setError("Ten adres email jest już zarejestrowany");
-      } else if (error.message?.includes("User already registered")) {
-        setError("Ten adres email jest już zarejestrowany");
-      } else if (error.message?.includes("password")) {
-        setError("Hasło jest zbyt słabe. Użyj silniejszego hasła.");
-      } else {
-        setError(error.message || "Wystąpił błąd podczas rejestracji");
-      }
+      setError(error.message || t("common.error"));
       setIsLoading(false);
     }
   };
 
   const handleFieldChange = (field: keyof SignupFormData, value: string) => {
     setFormData({ ...formData, [field]: value });
-    // Clear error when user starts typing
     if (error) {
       setError(null);
     }
@@ -142,9 +130,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
           htmlFor="email"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Email{" "}
-          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
-            *
+          {t("common.email")}{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label={t("common.required")}>
+            {t("common.required")}
           </span>
         </label>
         <input
@@ -156,7 +144,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
           disabled={isLoading}
           required
           autoComplete="email"
-          placeholder="twoj@email.com"
+          placeholder="your@email.com"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
           aria-describedby="email-error"
         />
@@ -168,9 +156,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
           htmlFor="password"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Hasło{" "}
-          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
-            *
+          {t("common.password")}{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label={t("common.required")}>
+            {t("common.required")}
           </span>
         </label>
         <input
@@ -182,7 +170,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
           disabled={isLoading}
           required
           autoComplete="new-password"
-          placeholder="Min. 8 znaków"
+          placeholder="Min. 8"
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
           aria-describedby="password-error"
         />
@@ -194,9 +182,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
           htmlFor="confirmPassword"
           className="text-[var(--fontSizeBase300)] font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
         >
-          Potwierdź hasło{" "}
-          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label="wymagane">
-            *
+          {t("auth.confirm_password")}{" "}
+          <span className="text-[var(--colorStatusDangerForeground1)]" aria-label={t("common.required")}>
+            {t("common.required")}
           </span>
         </label>
         <input
@@ -208,7 +196,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
           disabled={isLoading}
           required
           autoComplete="new-password"
-          placeholder="Powtórz hasło"
+          placeholder={t("auth.confirm_password")}
           className="block w-full rounded-[var(--borderRadiusMedium)] border border-[var(--colorNeutralStroke2)] bg-[var(--colorNeutralBackground1)] px-[var(--spacingHorizontalM)] py-[var(--spacingVerticalS)] text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground1)] placeholder:text-[var(--colorNeutralForeground3)] focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] disabled:bg-[var(--colorNeutralBackground4)] disabled:cursor-not-allowed transition-colors duration-100"
         />
       </div>
@@ -230,10 +218,10 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Rejestracja...
+              {t("common.loading")}
             </>
           ) : (
-            "Utwórz konto"
+            t("auth.signup_button")
           )}
         </button>
       </div>
@@ -241,12 +229,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({ redirectTo = "/trips" })
       {/* Help Text */}
       <div className="text-center text-[var(--fontSizeBase300)] text-[var(--colorNeutralForeground2)]">
         <p>
-          Masz już konto?{" "}
+          {t("auth.have_account")}{" "}
           <a
             href={redirectTo !== "/trips" ? `/auth/login?redirect=${encodeURIComponent(redirectTo)}` : "/auth/login"}
             className="text-[var(--colorBrandForegroundLink)] hover:text-[var(--colorBrandBackgroundHover)] hover:underline font-[var(--fontWeightSemibold)] transition-colors duration-100"
           >
-            Zaloguj się
+            {t("auth.login_link")}
           </a>
         </p>
       </div>

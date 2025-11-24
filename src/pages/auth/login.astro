@@ -7,6 +7,7 @@
  * - Server-side session check (redirect if logged in)
  * - Support for redirect parameter
  * - Link to password reset and registration
+ * - i18n support
  */
 
 import Layout from "@/layouts/Layout.astro";
@@ -19,16 +20,18 @@ import Layout from "@/layouts/Layout.astro";
     <div class="w-full max-w-md">
       {/* Header */}
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Witaj ponownie</h1>
-        <p class="mt-2 text-sm text-gray-600">Zaloguj się do swojego konta</p>
+        <h1 class="text-3xl font-bold text-gray-900" data-i18n="auth.login_title">Witaj ponownie</h1>
+        <p class="mt-2 text-sm text-gray-600" data-i18n="auth.login_subtitle">Zaloguj się do swojego konta</p>
       </div>
 
       {/* Login Form Card */}
       <div class="bg-white rounded-lg shadow-xl p-8 border border-gray-200">
-        <!-- Temporary: Use working test form -->
         <form id="loginFormWorking" class="flex flex-col gap-4">
           <div>
-            <label class="block text-sm font-semibold mb-2">Email <span class="text-red-600">*</span></label>
+            <label class="block text-sm font-semibold mb-2">
+              <span data-i18n="common.email">Email</span>
+              <span class="text-red-600" data-i18n="common.required">*</span>
+            </label>
             <input
               type="email"
               id="email"
@@ -38,7 +41,10 @@ import Layout from "@/layouts/Layout.astro";
             />
           </div>
           <div>
-            <label class="block text-sm font-semibold mb-2">Password <span class="text-red-600">*</span></label>
+            <label class="block text-sm font-semibold mb-2">
+              <span data-i18n="common.password">Password</span>
+              <span class="text-red-600" data-i18n="common.required">*</span>
+            </label>
             <input
               type="password"
               id="password"
@@ -50,6 +56,7 @@ import Layout from "@/layouts/Layout.astro";
           <button
             type="submit"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition"
+            data-i18n="auth.login_button"
           >
             Zaloguj się
           </button>
@@ -60,30 +67,44 @@ import Layout from "@/layouts/Layout.astro";
       {/* Footer Links */}
       <div class="mt-6 space-y-3 text-center">
         <p class="text-sm text-gray-600">
-          Nie masz konta?{" "}
+          <span data-i18n="auth.no_account">Nie masz konta?</span>{" "}
           <a
             href={`/auth/signup${new URL(Astro.request.url).searchParams.get("redirect") ? `?redirect=${new URL(Astro.request.url).searchParams.get("redirect")}` : ""}`}
             class="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+            data-i18n="auth.signup_link"
           >
             Zarejestruj się
           </a>
         </p>
 
         <p class="text-sm">
-          <a href="/auth/forgot-password" class="text-gray-600 hover:text-gray-900 transition-colors">
+          <a href="/auth/forgot-password" class="text-gray-600 hover:text-gray-900 transition-colors" data-i18n="auth.forgot_password">
             Nie pamiętasz hasła?
           </a>
         </p>
       </div>
 
       <div class="mt-4 text-center">
-        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 transition-colors"> ← Wróć do strony głównej </a>
+        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 transition-colors" data-i18n="auth.back_to_home">
+          ← Wróć do strony głównej
+        </a>
       </div>
     </div>
   </main>
 
   <script>
     import { supabaseBrowser } from "@/lib/supabase-browser";
+    import { t, getLocaleFromStorage } from "@/i18n";
+
+    const locale = getLocaleFromStorage();
+
+    // Translate all elements with data-i18n attribute
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      const key = element.getAttribute("data-i18n");
+      if (key) {
+        element.textContent = t(key as any, locale);
+      }
+    });
 
     const form = document.getElementById("loginFormWorking") as HTMLFormElement;
     const errorDiv = document.getElementById("error") as HTMLDivElement;
@@ -112,7 +133,7 @@ import Layout from "@/layouts/Layout.astro";
 
         // Show success message
         errorDiv.classList.add("hidden");
-        errorDiv.textContent = "✅ Logowanie udane! Przekierowywanie...";
+        errorDiv.textContent = t("auth.login_success", locale);
         errorDiv.classList.remove("hidden");
         errorDiv.style.background = "#d4edda";
         errorDiv.style.color = "#155724";
@@ -123,7 +144,7 @@ import Layout from "@/layouts/Layout.astro";
           window.location.href = redirectTo;
         }, 500);
       } catch (error: any) {
-        errorDiv.textContent = error.message || "Wystąpił błąd";
+        errorDiv.textContent = error.message || t("common.error", locale);
         errorDiv.classList.remove("hidden");
       }
     });

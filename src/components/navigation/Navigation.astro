@@ -7,8 +7,11 @@
  * - Client-side session check (using localStorage)
  * - Different UI for logged in vs logged out users
  * - UserMenu component for logged in users
+ * - Language switcher
  * - Responsive design
+ * - i18n support
  */
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 ---
 
 <nav class="bg-white shadow-sm border-b border-gray-200">
@@ -24,21 +27,29 @@
         </a>
       </div>
 
-      {/* Navigation Links */}
-      <div id="navLinks" class="flex items-center space-x-4">
-        {/* Default: Show login/signup buttons (will be updated by JS if user is logged in) */}
-        <a
-          href="/auth/login"
-          class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-        >
-          Zaloguj się
-        </a>
-        <a
-          href="/auth/signup"
-          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-        >
-          Zarejestruj się
-        </a>
+      {/* Navigation Links & Language Switcher */}
+      <div class="flex items-center gap-4">
+        {/* Language Switcher - Always visible */}
+        <LanguageSwitcher client:load />
+
+        {/* Auth Links Container */}
+        <div id="navLinks" class="flex items-center space-x-4">
+          {/* Default: Show login/signup buttons (will be updated by JS if user is logged in) */}
+          <a
+            href="/auth/login"
+            class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+            data-i18n="auth.login_button"
+          >
+            Zaloguj się
+          </a>
+          <a
+            href="/auth/signup"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            data-i18n="auth.signup_button"
+          >
+            Zarejestruj się
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -47,8 +58,10 @@
 <!-- prettier-ignore -->
 <script>
   import { supabaseBrowser } from "@/lib/supabase-browser";
+  import { t, getLocaleFromStorage } from "@/i18n";
 
   const navLinks = document.getElementById("navLinks");
+  const locale = getLocaleFromStorage();
 
   // Check auth state and render appropriate navigation
   supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
@@ -60,7 +73,7 @@
           href="/trips"
           class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
         >
-          Moje plany
+          ${t("navigation.my_trips", locale)}
         </a>
         <div class="relative" id="userMenuContainer">
           <button
@@ -91,7 +104,7 @@
             class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
           >
             <div class="px-4 py-3 border-b border-gray-200">
-              <p class="text-xs text-gray-500 mb-1">Zalogowany jako</p>
+              <p class="text-xs text-gray-500 mb-1">${locale === "en" ? "Signed in as" : "Zalogowany jako"}</p>
               <p class="text-sm font-medium text-gray-900 truncate">${session.user.email}</p>
             </div>
             <button
@@ -111,7 +124,7 @@
                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                 />
               </svg>
-              <span>Wyloguj się</span>
+              <span>${t("auth.logout", locale)}</span>
             </button>
           </div>
         </div>
@@ -147,13 +160,13 @@
           href="/auth/login"
           class="text-gray-700 hover:text-gray-900 font-medium transition-colors"
         >
-          Zaloguj się
+          ${t("auth.login_button", locale)}
         </a>
         <a
           href="/auth/signup"
           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
         >
-          Zarejestruj się
+          ${t("auth.signup_button", locale)}
         </a>
       `;
       }

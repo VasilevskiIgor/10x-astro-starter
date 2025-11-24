@@ -37,6 +37,7 @@ export interface TripContext {
   endDate: string;
   description?: string;
   durationDays: number;
+  locale?: "pl" | "en"; // User's preferred language for AI generation
 }
 
 export interface OpenRouterSuccess {
@@ -155,10 +156,11 @@ export class OpenRouterService {
 
     try {
       // 1. Prepare prompts and response format
-      const systemPrompt = this.buildSystemPrompt();
-      const userPrompt = this.buildUserPrompt(tripContext);
+      const locale = tripContext.locale || "pl";
+      const systemPrompt = this.buildSystemPrompt(locale);
+      const userPrompt = this.buildUserPrompt(tripContext, locale);
       const supportsJsonSchema = this.modelSupportsJsonSchema(effectiveConfig.model);
-      const responseFormat = supportsJsonSchema ? this.buildResponseFormat() : { type: "json_object" as const };
+      const responseFormat = supportsJsonSchema ? this.buildResponseFormat(locale) : { type: "json_object" as const };
 
       console.log("[OpenRouter] Using response format:", supportsJsonSchema ? "json_schema (strict)" : "json_object");
 
@@ -379,18 +381,37 @@ export class OpenRouterService {
   /**
    * Build system prompt for AI model
    */
-  private buildSystemPrompt(): string {
-    return `Jesteś ekspertem od planowania podróży specjalizującym się w tworzeniu szczegółowych, spersonalizowanych planów wycieczek.
+  private buildSystemPrompt(locale: "pl" | "en" = "pl"): string {
+    const languageInstruction = locale === "en"
+      ? "IMPORTANT: All content in the JSON (summary, title, description, tips, recommendations) must be in English."
+      : "WAŻNE: Wszystkie treści w JSON (summary, title, description, tips, recommendations) muszą być w języku polskim.";
 
-Twoje odpowiedzi muszą:
+    const expertDescription = locale === "en"
+      ? "You are a travel planning expert specializing in creating detailed, personalized trip itineraries."
+      : "Jesteś ekspertem od planowania podróży specjalizującym się w tworzeniu szczegółowych, spersonalizowanych planów wycieczek.";
+
+    const requirements = locale === "en"
+      ? `Your responses must:
+1. Be practical and achievable
+2. Consider local culture and customs
+3. Include realistic times and costs
+4. Provide insider tips and recommendations
+5. Strictly follow the provided JSON structure
+
+IMPORTANT: Respond ONLY with valid JSON. Do not include any text, markdown, or explanations outside the JSON structure.`
+      : `Twoje odpowiedzi muszą:
 1. Być praktyczne i możliwe do zrealizowania
 2. Uwzględniać lokalną kulturę i zwyczaje
 3. Zawierać realistyczne godziny i koszty
 4. Dostarczać wskazówki insajderskie i rekomendacje
 5. Ściśle przestrzegać podanej struktury JSON
 
-WAŻNE: Odpowiadaj WYŁĄCZNIE poprawnym JSON-em. Nie dołączaj żadnego tekstu, markdown ani wyjaśnień poza strukturą JSON.
-WAŻNE: Wszystkie treści w JSON (summary, title, description, tips, recommendations) muszą być w języku polskim.
+WAŻNE: Odpowiadaj WYŁĄCZNIE poprawnym JSON-em. Nie dołączaj żadnego tekstu, markdown ani wyjaśnień poza strukturą JSON.`;
+
+    return `${expertDescription}
+
+${requirements}
+${languageInstruction}
 
 Wymagana struktura JSON:
 {
@@ -425,8 +446,32 @@ Wymagana struktura JSON:
   /**
    * Build user prompt with trip context
    */
-  private buildUserPrompt(tripContext: TripContext): string {
+  private buildUserPrompt(tripContext: TripContext, locale: "pl" | "en" = "pl"): string {
     const safeDescription = tripContext.description ? this.sanitizeUserInput(tripContext.description) : "";
+
+    if (locale === "en") {
+      return `Create a detailed ${tripContext.durationDays}-day travel itinerary for:
+
+**Destination**: ${tripContext.destination}
+**Dates**: ${tripContext.startDate} to ${tripContext.endDate}
+${safeDescription ? `**Traveler notes**: ${safeDescription}` : ""}
+
+Requirements:
+- Generate exactly ${tripContext.durationDays} days of activities
+- Each day should include 3-5 well-spaced activities
+- Include specific times, locations, and practical details
+- Provide estimated costs: "$" (budget), "$$" (moderate), "$$$" (expensive), "$$$$" (luxury)
+- Add local tips and insider recommendations
+- Account for travel time between locations
+- Suggest activities appropriate for the destination and season
+
+Provide:
+1. Brief trip summary (2-3 sentences)
+2. Detailed day-by-day plan
+3. General recommendations for transportation, accommodation, budget, and best time to visit
+
+REMEMBER: All content must be in English!`;
+    }
 
     return `Stwórz szczegółowy ${tripContext.durationDays}-dniowy plan podróży dla:
 
@@ -455,7 +500,11 @@ PAMIĘTAJ: Wszystkie treści muszą być w języku polskim!`;
    * Build response format with full JSON Schema
    * This is the core of structured outputs - ensures AI returns valid JSON
    */
-  private buildResponseFormat(): Record<string, unknown> {
+  private buildResponseFormat(locale: "pl" | "en" = "pl"): Record<string, unknown> {
+    const summaryDesc = locale === "en"
+      ? "Brief trip summary in 2-3 sentences (in English)"
+      : "Krótkie podsumowanie wycieczki w 2-3 zdaniach (po polsku)";
+
     return {
       type: "json_schema",
       json_schema: {
@@ -466,7 +515,7 @@ PAMIĘTAJ: Wszystkie treści muszą być w języku polskim!`;
           properties: {
             summary: {
               type: "string",
-              description: "Krótkie podsumowanie wycieczki w 2-3 zdaniach (po polsku)",
+              description: summaryDesc,
             },
             days: {
               type: "array",

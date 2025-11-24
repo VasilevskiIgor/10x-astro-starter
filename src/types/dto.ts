@@ -140,6 +140,7 @@ export interface GenerateAICommand {
   model?: string; // Default: "gpt-3.5-turbo"
   temperature?: number; // Default: 0.7, range: 0.0-1.0
   force_regenerate?: boolean; // Default: false
+  locale?: "pl" | "en"; // Default: "pl"
 }
 
 // ============================================================================

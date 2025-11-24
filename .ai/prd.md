@@ -1,48 +1,67 @@
 # Dokument wymagań produktu (PRD) - VibeTravels
-## Wersja Minimalna (Scope: Zaliczenie Projektu)
+## Wersja Post-Certification (Dalszy Rozwój)
 
-Wersja: 2.0 (Minimum Viable Scope)  
-Data: 08 października 2025  
-Autor: Product Team  
-Status: Draft - Minimum Requirements
+Wersja: 3.0 (Post-Certification Growth)
+Data: 24 listopada 2025
+Autor: Product Team
+Status: Active Development
+
+**🎉 Status projektu:** Certyfikat zdobyty! Projekt przechodzi w fazę dalszego rozwoju i komercjalizacji.
 
 ---
 
 ## 1. Przegląd produktu
 
 ### 1.1 Nazwa produktu
-VibeTravels - Minimalna wersja do zaliczenia
+VibeTravels - AI-Powered Travel Planning Platform
 
 ### 1.2 Cel projektu
-Stworzenie funkcjonalnej aplikacji webowej spełniającej wszystkie wymagania zaliczeniowe:
-- Mechanizm kontroli dostępu użytkownika (logowanie/rejestracja)
-- Zarządzanie danymi CRUD (plany podróży)
-- Logika biznesowa z AI (generowanie planów)
-- Testy end-to-end
-- Pipeline CI/CD
+Rozwinięcie funkcjonalnej aplikacji webowej w pełnoprawny produkt komercyjny:
+- ✅ **Zrealizowane (Faza Certyfikacji):**
+  - Mechanizm kontroli dostępu użytkownika (logowanie/rejestracja)
+  - Zarządzanie danymi CRUD (plany podróży)
+  - Logika biznesowa z AI (generowanie planów)
+  - Testy end-to-end
+  - Pipeline CI/CD
 
-### 1.3 Zakres minimalny (TYLKO to jest wymagane)
-To jest absolutne minimum do zaliczenia. Wszystko poza tym zakresem jest OPCJONALNE.
+- 🚀 **Nowe funkcjonalności (Faza Post-Certification):**
+  - Internationalization (i18n) - wsparcie dla wielu języków
+  - Ulepszone UX/UI
+  - Zaawansowane funkcje AI
+  - System premium i monetyzacja
+  - Integracje z serwisami zewnętrznymi
 
-**MUST HAVE (Obowiązkowe):**
-1. Ekran logowania + rejestracji (kontrola dostępu)
-2. CRUD dla planów podróży:
-   - Create: Formularz tworzenia planu + generowanie przez AI
-   - Read: Lista planów użytkownika + szczegóły planu
-   - Update: Edycja podstawowych danych planu (nazwa, daty)
-   - Delete: Usuwanie planu
-3. Logika biznesowa AI: Generowanie planu podróży przez OpenAI/OpenRouter
-4. Przynajmniej 1 test E2E (np. "użytkownik loguje się i tworzy plan")
-5. GitHub Actions CI/CD (build + test)
-6. Ten PRD i dokumenty z modułów 2-3
+### 1.3 Roadmap rozwoju
 
-**NICE TO HAVE (Opcjonalne, poza zakresem minimalnym):**
-- Google OAuth (wystarczy email/hasło)
-- Premium/płatności (pominąć)
-- Email notifications (pominąć)
-- PDF export (pominąć)
-- Rating system (pominąć)
-- Landing page (prosta strona główna wystarczy)
+**Phase 1: Internationalization (Q4 2025) - IN PROGRESS**
+- Implementacja Astro i18n
+- Wsparcie dla języka polskiego i angielskiego
+- Language switcher w UI
+- Tłumaczenie AI-generated content
+
+**Phase 2: UX/UI Enhancement (Q1 2026)**
+- Responsive design dla wszystkich urządzeń
+- Animacje i transitions
+- Lepsze loading states i error handling
+- Dark mode
+
+**Phase 3: Advanced Features (Q1-Q2 2026)**
+- Google OAuth
+- Email notifications (Resend)
+- PDF export planów podróży
+- Współdzielenie planów z innymi użytkownikami
+- Rating system dla wygenerowanych planów
+
+**Phase 4: Monetization (Q2 2026)**
+- Stripe integration
+- System Premium (więcej generacji AI, zaawansowane funkcje)
+- Subscription management
+
+**Phase 5: Scale (Q3 2026)**
+- Analytics i metryki
+- A/B testing
+- Performance optimization
+- SEO improvements
 
 ---
 
@@ -137,33 +156,67 @@ Aplikacja pozwala użytkownikom wygenerować podstawowy plan podróży używają
 - System blokuje dostęp do planów innych użytkowników (403 error)
 - Próba dostępu do cudzego planu przekierowuje do dashboardu
 
+### 3.5 Internationalization (Phase 1 - POST-CERTIFICATION)
+
+**FR-013: Wybór języka interfejsu**
+- Użytkownik może wybrać język interfejsu (polski lub angielski)
+- Language switcher dostępny w nawigacji/headerze
+- Wybór języka jest zapisywany w localStorage
+- Wszystkie statyczne teksty UI są tłumaczone
+
+**FR-014: Tłumaczenie AI-generated content**
+- System wykrywa aktualnie wybrany język użytkownika
+- AI prompt zawiera informację o języku docelowym
+- Wygenerowane plany podróży są w języku wybranym przez użytkownika
+- Możliwość regeneracji planu w innym języku
+
+**FR-015: Persistencja preferencji językowych**
+- Wybór języka jest zapamiętywany między sesjami (localStorage)
+- Po ponownym zalogowaniu użytkownik widzi interfejs w swoim języku
+- (Future) Synchronizacja preferencji językowych w profilu użytkownika (Supabase)
+
+**FR-016: SEO i routing dla i18n**
+- URLs pozostają bez locale prefix dla uproszczenia (domyślnie PL)
+- HTML lang attribute jest dynamicznie ustawiany
+- Meta tags są tłumaczone dla lepszego SEO
+
 ---
 
-## 4. Granice produktu (Wersja minimalna)
+## 4. Granice produktu (Wersja Post-Certification)
 
-### 4.1 CO NIE WCHODZI w zakres minimalny
+### 4.1 Zrealizowane w fazie certyfikacji ✅
 
-**Wykluczone z MVP minimum:**
-- Google OAuth (wystarczy email/hasło)
-- System Premium i płatności
-- Email notifications
-- PDF export
+**Core MVP (Zakończone):**
+- ✅ Autentykacja (email/hasło)
+- ✅ CRUD dla planów podróży
+- ✅ Generowanie planów przez AI
+- ✅ Regeneracja AI content z nowymi parametrami
+- ✅ Row Level Security (Supabase)
+- ✅ Testy E2E (Playwright)
+- ✅ CI/CD Pipeline (GitHub Actions)
+
+### 4.2 W trakcie implementacji (Phase 1) 🚧
+
+**Internationalization:**
+- 🚧 Wsparcie dla języków: polski i angielski
+- 🚧 Language switcher w UI
+- 🚧 Tłumaczenie wszystkich tekstów interfejsu
+- 🚧 AI content w wybranym języku
+
+### 4.3 Zaplanowane funkcjonalności (Future Phases) 📋
+
+**Phase 2-5 (2026):**
+- Google OAuth
+- System Premium i płatności (Stripe)
+- Email notifications (Resend)
+- PDF export planów
 - Rating i feedback system
 - Współdzielenie planów
-- Landing page (prosta strona główna OK)
-- Fancy UI/UX (prosty design wystarczy)
+- Advanced landing page
 - Analytics i metryki
-- Preferencje użytkownika (save/load)
 - Filtry i wyszukiwanie w dashboardzie
-
-**Dodane funkcjonalności (poza oryginalny MVP):**
-- ✅ Regeneracja AI content z nowymi parametrami (umożliwia edycję + regenerację)
-
-### 4.2 Funkcjonalności opcjonalne (jeśli zostanie czas)
-- Lepszy design (Tailwind + Shadcn/ui)
-- Loading states i error handling
-- Responsive design
-- Proste walidacje formularzy
+- Dark mode
+- Mobile app (React Native / PWA)
 
 ---
 
@@ -318,7 +371,7 @@ Aby zapewnić bezpieczeństwo danych
 Kryteria akceptacji:
 - Próba dostępu do /dashboard bez logowania: przekierowanie do /login
 - Próba dostępu do /plans/:id bez logowania: przekierowanie do /login
-- Po zalogowaniu: user może uzyskać dostęp do protected routes
+- Po zalogowaniu: user może uzyskać dostępu do protected routes
 
 **US-012: Ochrona planów innych użytkowników**
 Jako zalogowany użytkownik
@@ -331,29 +384,82 @@ Kryteria akceptacji:
 - Użytkownik przekierowany do swojego dashboardu
 - W liście planów widoczne są TYLKO plany użytkownika (query z WHERE user_id)
 
+### 5.7 Internationalization (4 stories - POST-CERTIFICATION)
+
+**US-013: Wybór języka interfejsu**
+Jako użytkownik aplikacji
+Chcę wybrać język interfejsu (polski lub angielski)
+Aby korzystać z aplikacji w preferowanym języku
+
+Kryteria akceptacji:
+- Language switcher widoczny w header/navigation (ikona flagi lub dropdown)
+- Kliknięcie otwiera menu z opcjami: "Polski" i "English"
+- Wybór języka natychmiast zmienia wszystkie teksty UI
+- Wybór jest zapisywany w localStorage
+- Po odświeżeniu strony język pozostaje wybrany
+
+**US-014: Przeglądanie aplikacji w języku angielskim**
+Jako anglojęzyczny użytkownik
+Chcę używać aplikacji w pełni po angielsku
+Aby komfortowo korzystać z wszystkich funkcji
+
+Kryteria akceptacji:
+- Wszystkie strony (login, signup, dashboard, trip details, edit) są przetłumaczone
+- Wszystkie komponenty (buttony, formularze, komunikaty) są w EN
+- Error messages i success notifications są w EN
+- Validation messages są w EN
+- Meta tags i page titles są w EN
+
+**US-015: Generowanie planu AI w wybranym języku**
+Jako użytkownik tworzący plan podróży
+Chcę aby AI wygenerowało plan w moim języku
+Aby łatwiej zrozumieć proponowane itinerarium
+
+Kryteria akceptacji:
+- System wykrywa aktualnie wybrany język (PL lub EN)
+- AI prompt zawiera instrukcję generowania w odpowiednim języku
+- Wygenerowany plan jest w języku użytkownika
+- Plan wygenerowany po polsku zawiera polskie nazwy i opisy
+- Plan wygenerowany po angielsku zawiera angielskie nazwy i opisy
+
+**US-016: Regeneracja planu w innym języku**
+Jako użytkownik z istniejącym planem
+Chcę zmienić język interfejsu i zobaczyć moje plany
+Aby dostosować aplikację do moich potrzeb
+
+Kryteria akceptacji:
+- Po zmianie języka interfejsu, UI natychmiast się aktualizuje
+- Istniejące AI-generated content pozostaje w oryginalnym języku
+- Użytkownik może użyć "Regenerate AI Content" aby wygenerować plan w nowym języku
+- System informuje użytkownika że może zregenerować content w nowym języku
+
 ---
 
 ## 6. Architektura techniczna (uproszczona)
 
-### 6.1 Stack technologiczny (minimum)
+### 6.1 Stack technologiczny (Post-Certification)
 
 **Frontend:**
-- Framework: Astro 5 (lub Next.js jeśli wygodniej)
+- Framework: Astro 5 (static site generation + server-side rendering)
 - Interactive components: React 19
 - Language: TypeScript 5
-- Styling: Tailwind CSS 4 (lub zwykły CSS jeśli brak czasu)
+- Styling: Tailwind CSS 4
+- i18n: Astro i18n (native support) + custom translation utilities
 
 **Backend:**
-- BaaS: Supabase (PostgreSQL + Auth)
+- BaaS: Supabase (PostgreSQL + Auth + Storage)
 - Database: PostgreSQL (via Supabase)
-- Auth: Supabase Auth (email/password tylko)
+- Auth: Supabase Auth (email/password)
+- Row Level Security: Enabled dla wszystkich tablic
 
 **AI:**
-- OpenRouter.ai → OpenAI GPT-4 (lub GPT-3.5-turbo dla niższych kosztów)
-- Alternatywa: bezpośrednio OpenAI API
+- OpenRouter.ai → Multiple models (GPT-4, Claude, Gemini)
+- Fallback: OpenAI API direct
+- Multi-language support w prompts
 
 **Hosting:**
-- Vercel (najprostsze dla Astro/Next.js) - FREE tier
+- Vercel (production) - FREE tier
+- Preview deployments dla PR reviews
 - Alternatywa: DigitalOcean, Netlify
 
 **CI/CD:**

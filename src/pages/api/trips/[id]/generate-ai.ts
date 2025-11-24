@@ -218,6 +218,7 @@ export const POST: APIRoute = async ({ params, request }) => {
       endDate: trip.end_date,
       description: trip.description || undefined,
       durationDays,
+      locale: command.locale || "pl",
     });
 
     // 12. Handle AI generation failure

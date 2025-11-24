@@ -7,14 +7,11 @@
  * - Server-side session check (redirect if logged in)
  * - Support for redirect parameter
  * - Email/Password registration form
+ * - i18n support
  */
 
 import Layout from "@/layouts/Layout.astro";
 import { SignupForm } from "@/components/forms/SignupForm";
-
-// Server-side check: if user already logged in, redirect to dashboard
-// Note: This requires middleware setup to work properly
-// For now, we'll handle this client-side in the component
 
 // Get redirect URL from query params
 let redirectTo = "/trips";
@@ -33,8 +30,8 @@ try {
     <div class="w-full max-w-md">
       {/* Header */}
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Utwórz konto</h1>
-        <p class="mt-2 text-sm text-gray-600">Zacznij planować swoje wymarzone podróże</p>
+        <h1 class="text-3xl font-bold text-gray-900" data-i18n="auth.signup_title">Utwórz konto</h1>
+        <p class="mt-2 text-sm text-gray-600" data-i18n="auth.signup_subtitle">Zacznij planować swoje wymarzone podróże</p>
       </div>
 
       {/* Signup Form Card */}
@@ -45,10 +42,11 @@ try {
       {/* Footer Links */}
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">
-          Masz już konto?{" "}
+          <span data-i18n="auth.have_account">Masz już konto?</span>{" "}
           <a
             href={redirectTo !== "/trips" ? `/auth/login?redirect=${redirectTo}` : "/auth/login"}
             class="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+            data-i18n="auth.login_link"
           >
             Zaloguj się
           </a>
@@ -56,8 +54,24 @@ try {
       </div>
 
       <div class="mt-4 text-center">
-        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 transition-colors"> ← Wróć do strony głównej </a>
+        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 transition-colors" data-i18n="auth.back_to_home">
+          ← Wróć do strony głównej
+        </a>
       </div>
     </div>
   </main>
+
+  <script>
+    import { t, getLocaleFromStorage } from "@/i18n";
+
+    const locale = getLocaleFromStorage();
+
+    // Translate all elements with data-i18n attribute
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      const key = element.getAttribute("data-i18n");
+      if (key) {
+        element.textContent = t(key as any, locale);
+      }
+    });
+  </script>
 </Layout>

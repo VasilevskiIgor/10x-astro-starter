@@ -14,6 +14,13 @@ export default defineConfig({
   devToolbar: {
     enabled: false,
   },
+  i18n: {
+    defaultLocale: "pl",
+    locales: ["pl", "en"],
+    routing: {
+      prefixDefaultLocale: false, // URLs bez /pl/ prefix (domyślnie polski)
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
