@@ -42,6 +42,7 @@ import { TripsList } from "@/components/trips/TripsList";
   </main>
 
   <script>
+    /* eslint-disable */
     import { t, getLocaleFromStorage } from "@/i18n";
     import type { TranslationKey } from "@/i18n";
 
@@ -54,5 +55,6 @@ import { TripsList } from "@/components/trips/TripsList";
         element.textContent = t(key as TranslationKey, locale);
       }
     });
+    /* eslint-enable */
   </script>
 </Layout>

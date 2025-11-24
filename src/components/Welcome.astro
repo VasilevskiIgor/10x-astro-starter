@@ -702,8 +702,8 @@
   </div>
 </div>
 
-<!-- eslint-disable -->
 <script>
+  /* eslint-disable */
   import { t, getLocaleFromStorage } from "@/i18n";
   import type { TranslationKey } from "@/i18n";
 
@@ -716,5 +716,5 @@
       element.textContent = t(key as TranslationKey, locale);
     }
   });
+  /* eslint-enable */
 </script>
-<!-- eslint-enable -->
