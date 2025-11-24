@@ -380,18 +380,19 @@ export class OpenRouterService {
    * Build system prompt for AI model
    */
   private buildSystemPrompt(): string {
-    return `You are an expert travel planner specializing in creating detailed, personalized travel itineraries.
+    return `Jesteś ekspertem od planowania podróży specjalizującym się w tworzeniu szczegółowych, spersonalizowanych planów wycieczek.
 
-Your responses must:
-1. Be practical and actionable
-2. Consider local culture and customs
-3. Include realistic timing and costs
-4. Provide insider tips and recommendations
-5. Follow the exact JSON structure provided
+Twoje odpowiedzi muszą:
+1. Być praktyczne i możliwe do zrealizowania
+2. Uwzględniać lokalną kulturę i zwyczaje
+3. Zawierać realistyczne godziny i koszty
+4. Dostarczać wskazówki insajderskie i rekomendacje
+5. Ściśle przestrzegać podanej struktury JSON
 
-IMPORTANT: Respond ONLY with valid JSON. Do not include any text, markdown, or explanations outside the JSON structure.
+WAŻNE: Odpowiadaj WYŁĄCZNIE poprawnym JSON-em. Nie dołączaj żadnego tekstu, markdown ani wyjaśnień poza strukturą JSON.
+WAŻNE: Wszystkie treści w JSON (summary, title, description, tips, recommendations) muszą być w języku polskim.
 
-Required JSON structure:
+Wymagana struktura JSON:
 {
   "summary": "string",
   "days": [
@@ -427,25 +428,27 @@ Required JSON structure:
   private buildUserPrompt(tripContext: TripContext): string {
     const safeDescription = tripContext.description ? this.sanitizeUserInput(tripContext.description) : "";
 
-    return `Create a detailed ${tripContext.durationDays}-day travel itinerary for:
+    return `Stwórz szczegółowy ${tripContext.durationDays}-dniowy plan podróży dla:
 
-**Destination**: ${tripContext.destination}
-**Dates**: ${tripContext.startDate} to ${tripContext.endDate}
-${safeDescription ? `**Traveler Notes**: ${safeDescription}` : ""}
+**Miejsce docelowe**: ${tripContext.destination}
+**Daty**: ${tripContext.startDate} do ${tripContext.endDate}
+${safeDescription ? `**Notatki podróżnika**: ${safeDescription}` : ""}
 
-Requirements:
-- Generate exactly ${tripContext.durationDays} days of activities
-- Each day should have 3-5 well-spaced activities
-- Include specific times, locations, and practical details
-- Provide cost estimates: "$" (budget), "$$" (moderate), "$$$" (expensive), "$$$$" (luxury)
-- Add local tips and insider recommendations
-- Consider travel time between locations
-- Suggest activities suitable for the destination and season
+Wymagania:
+- Wygeneruj dokładnie ${tripContext.durationDays} dni aktywności
+- Każdy dzień powinien zawierać 3-5 dobrze rozłożonych w czasie aktywności
+- Uwzględnij konkretne godziny, lokalizacje i praktyczne szczegóły
+- Podaj szacunkowe koszty: "$" (budżetowy), "$$" (umiarkowany), "$$$" (drogi), "$$$$" (luksusowy)
+- Dodaj lokalne wskazówki i rekomendacje insajderskie
+- Uwzględnij czas podróży między lokalizacjami
+- Zaproponuj aktywności odpowiednie dla miejsca docelowego i pory roku
 
-Provide:
-1. Brief trip summary (2-3 sentences)
-2. Day-by-day detailed itinerary
-3. General recommendations for transportation, accommodation, budget, and best time to visit`;
+Dostarcz:
+1. Krótkie podsumowanie wycieczki (2-3 zdania)
+2. Szczegółowy plan dzień po dniu
+3. Ogólne rekomendacje dotyczące transportu, zakwaterowania, budżetu i najlepszego czasu na wizytę
+
+PAMIĘTAJ: Wszystkie treści muszą być w języku polskim!`;
   }
 
   /**
@@ -463,59 +466,59 @@ Provide:
           properties: {
             summary: {
               type: "string",
-              description: "Brief 2-3 sentence overview of the trip",
+              description: "Krótkie podsumowanie wycieczki w 2-3 zdaniach (po polsku)",
             },
             days: {
               type: "array",
-              description: "Day-by-day itinerary",
+              description: "Plan podróży dzień po dniu",
               items: {
                 type: "object",
                 properties: {
                   day_number: {
                     type: "number",
-                    description: "Day number (1, 2, 3, ...)",
+                    description: "Numer dnia (1, 2, 3, ...)",
                   },
                   date: {
                     type: "string",
-                    description: "Date in ISO 8601 format (YYYY-MM-DD)",
+                    description: "Data w formacie ISO 8601 (YYYY-MM-DD)",
                   },
                   title: {
                     type: "string",
-                    description: 'Title for the day (e.g., "Exploring Tokyo")',
+                    description: 'Tytuł dnia po polsku (np. "Zwiedzanie Paryża")',
                   },
                   activities: {
                     type: "array",
-                    description: "Activities for this day",
+                    description: "Aktywności na ten dzień",
                     items: {
                       type: "object",
                       properties: {
                         time: {
                           type: "string",
-                          description: "Activity start time (HH:MM format)",
+                          description: "Godzina rozpoczęcia aktywności (format HH:MM)",
                         },
                         title: {
                           type: "string",
-                          description: "Activity title",
+                          description: "Tytuł aktywności po polsku",
                         },
                         description: {
                           type: "string",
-                          description: "Detailed description of the activity",
+                          description: "Szczegółowy opis aktywności po polsku",
                         },
                         location: {
                           type: "string",
-                          description: "Specific location name",
+                          description: "Konkretna nazwa lokalizacji",
                         },
                         duration_minutes: {
                           type: "number",
-                          description: "Estimated duration in minutes",
+                          description: "Szacowany czas trwania w minutach",
                         },
                         cost_estimate: {
                           type: "string",
-                          description: "Cost estimate: $, $$, $$$, or $$$$",
+                          description: "Szacunkowy koszt: $, $$, $$$ lub $$$$",
                         },
                         tips: {
                           type: "string",
-                          description: "Practical tips for this activity",
+                          description: "Praktyczne wskazówki dla tej aktywności po polsku",
                         },
                       },
                       required: [
@@ -537,23 +540,23 @@ Provide:
             },
             recommendations: {
               type: "object",
-              description: "General trip recommendations",
+              description: "Ogólne rekomendacje dotyczące podróży",
               properties: {
                 transportation: {
                   type: "string",
-                  description: "Transportation recommendations",
+                  description: "Rekomendacje dotyczące transportu po polsku",
                 },
                 accommodation: {
                   type: "string",
-                  description: "Accommodation area recommendations",
+                  description: "Rekomendacje dotyczące zakwaterowania po polsku",
                 },
                 budget: {
                   type: "string",
-                  description: "Overall budget estimates",
+                  description: "Ogólne szacunki budżetu po polsku",
                 },
                 best_time: {
                   type: "string",
-                  description: "Best time to visit information",
+                  description: "Informacje o najlepszym czasie na wizytę po polsku",
                 },
               },
               required: ["transportation", "accommodation", "budget", "best_time"],
