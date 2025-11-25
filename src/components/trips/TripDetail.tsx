@@ -13,6 +13,8 @@ import * as React from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import type { TripDetailDTO } from "@/types/dto";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { useTranslation } from "@/i18n/useTranslation";
+import type { TranslationKey } from "@/i18n/types";
 
 // ============================================================================
 // Type Definitions
@@ -26,9 +28,10 @@ export interface TripDetailProps {
 // Helper Functions
 // ============================================================================
 
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString: string, locale: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("pl-PL", {
+  const localeCode = locale === "en" ? "en-US" : "pl-PL";
+  return date.toLocaleDateString(localeCode, {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -44,11 +47,22 @@ const calculateDuration = (startDate: string, endDate: string): number => {
   return diffDays + 1;
 };
 
+const getDayLabel = (days: number, t: (key: TranslationKey, params?: Record<string, string>) => string): string => {
+  if (days === 1) {
+    return t("trips.day_singular");
+  } else if (days >= 2 && days <= 4) {
+    return t("trips.days_few");
+  } else {
+    return t("trips.days_many");
+  }
+};
+
 // ============================================================================
 // Component
 // ============================================================================
 
 export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
+  const { t, locale } = useTranslation();
   const [trip, setTrip] = React.useState<TripDetailDTO | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -70,7 +84,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
         } = await supabaseBrowser.auth.getSession();
 
         if (!session) {
-          throw new Error("Not authenticated. Please log in.");
+          throw new Error(t("trips.error_not_logged_in"));
         }
 
         const response = await fetch(`/api/trips/${tripId}`, {
@@ -81,21 +95,21 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error?.message || "Nie udało się pobrać podróży");
+          throw new Error(errorData.error?.message || t("trips.error_fetch_trip"));
         }
 
         const data: TripDetailDTO = await response.json();
         setTrip(data);
       } catch (err) {
         const error = err as Error;
-        setError(error.message || "Wystąpił błąd podczas pobierania szczegółów podróży");
+        setError(error.message || t("trips.error_fetch_details"));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchTrip();
-  }, [tripId]);
+  }, [tripId, t]);
 
   // Handle delete
   const handleDelete = async () => {
@@ -107,7 +121,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error("Nie jesteś zalogowany. Zaloguj się.");
+        throw new Error(t("trips.error_not_logged_in"));
       }
 
       const response = await fetch(`/api/trips/${tripId}`, {
@@ -119,14 +133,14 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || "Nie udało się usunąć podróży");
+        throw new Error(errorData.error?.message || t("trips.error_delete_trip"));
       }
 
       // Redirect to trips list after successful deletion
       window.location.href = "/trips";
     } catch (err) {
       const error = err as Error;
-      setError(error.message || "Wystąpił błąd podczas usuwania podróży");
+      setError(error.message || t("trips.error_delete_details"));
       setIsDeleting(false);
     }
   };
@@ -167,7 +181,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
         if (!session) {
           console.error("[TripDetail] Session expired during polling");
           clearInterval(pollInterval);
-          setAiError("Sesja wygasła. Odśwież stronę i spróbuj ponownie.");
+          setAiError(t("trips.error_session_expired"));
           return;
         }
 
@@ -195,7 +209,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           setIsGeneratingAI(false);
 
           if (data.status === "failed") {
-            setAiError("Generowanie AI nie powiodło się. Spróbuj ponownie.");
+            setAiError(t("trips.ai_failed"));
           }
         }
       } catch (err) {
@@ -207,7 +221,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       console.log("[TripDetail] Cleaning up polling interval");
       clearInterval(pollInterval);
     };
-  }, [trip?.status, tripId]);
+  }, [trip?.status, tripId, t]);
 
   // Handle AI generation - now just triggers generation without waiting
   const handleGenerateAI = async () => {
@@ -220,7 +234,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       } = await supabaseBrowser.auth.getSession();
 
       if (!session) {
-        throw new Error("Nie jesteś zalogowany. Zaloguj się.");
+        throw new Error(t("trips.error_not_logged_in"));
       }
 
       console.log("[TripDetail] Triggering AI generation for trip:", tripId);
@@ -242,13 +256,13 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
         .then(async (response) => {
           if (!response.ok) {
             const responseData = await response.json();
-            throw new Error(responseData.error?.message || "Nie udało się wygenerować planu AI");
+            throw new Error(responseData.error?.message || t("trips.error_generate_ai"));
           }
           console.log("[TripDetail] AI generation request accepted");
         })
         .catch((err) => {
           console.error("[TripDetail] AI generation request failed:", err);
-          setAiError(err.message || "Wystąpił błąd podczas wysyłania żądania generowania");
+          setAiError(err.message || t("trips.error_generate_request"));
           setIsGeneratingAI(false);
         });
 
@@ -257,7 +271,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
     } catch (err) {
       const error = err as Error;
       console.error("[TripDetail] AI generation error:", err);
-      setAiError(error.message || "Wystąpił błąd podczas generowania planu AI");
+      setAiError(error.message || t("trips.error_generate_details"));
       setIsGeneratingAI(false);
     }
   };
@@ -282,7 +296,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
 
   // No trip found
   if (!trip) {
-    return <ErrorAlert type="error" message="Podróż nie znaleziona" />;
+    return <ErrorAlert type="error" message={t("trips.error_trip_not_found")} />;
   }
 
   const duration = calculateDuration(trip.start_date, trip.end_date);
@@ -304,12 +318,12 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 />
               </svg>
               <span>
-                {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
+                {formatDate(trip.start_date, locale)} - {formatDate(trip.end_date, locale)}
               </span>
             </div>
             <span className="text-gray-400">•</span>
             <span>
-              {duration} {duration === 1 ? "dzień" : duration < 5 ? "dni" : "dni"}
+              {duration} {getDayLabel(duration, t)}
             </span>
           </div>
         </div>
@@ -328,7 +342,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
-            Edytuj
+            {t("trips.edit")}
           </a>
           <button
             onClick={() => setShowDeleteConfirm(true)}
@@ -342,7 +356,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
-            Usuń
+            {t("trips.delete")}
           </button>
         </div>
       </div>
@@ -350,7 +364,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {/* Description */}
       {trip.description && (
         <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900">Opis</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t("trips.description_heading")}</h2>
           <p className="mt-2 text-gray-700 whitespace-pre-wrap">{trip.description}</p>
         </div>
       )}
@@ -367,7 +381,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
               />
             </svg>
-            <h2 className="text-lg font-semibold text-purple-900">Plan podróży wygenerowany przez AI</h2>
+            <h2 className="text-lg font-semibold text-purple-900">{t("trips.ai_plan_heading")}</h2>
           </div>
 
           {/* Summary */}
@@ -380,9 +394,9 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
             {trip.ai_generated_content.days.map((day) => (
               <div key={day.day_number} className="rounded-lg bg-white p-4 shadow-sm">
                 <h3 className="text-md font-semibold text-gray-900">
-                  Dzień {day.day_number}: {day.title}
+                  {t("trips.day_title")} {day.day_number}: {day.title}
                 </h3>
-                <p className="text-sm text-gray-500">{formatDate(day.date)}</p>
+                <p className="text-sm text-gray-500">{formatDate(day.date, locale)}</p>
                 {day.summary && <p className="mt-2 text-sm text-gray-700">{day.summary}</p>}
 
                 {/* Activities */}
@@ -414,22 +428,22 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
           {/* Recommendations */}
           {trip.ai_generated_content.recommendations && (
             <div className="mt-6 rounded-lg bg-white p-4">
-              <h3 className="text-md font-semibold text-gray-900 mb-3">Rekomendacje</h3>
+              <h3 className="text-md font-semibold text-gray-900 mb-3">{t("trips.recommendations_heading")}</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Transport:</span>
+                  <span className="text-sm font-medium text-gray-700">{t("trips.transport")}</span>
                   <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.transportation}</p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Zakwaterowanie:</span>
+                  <span className="text-sm font-medium text-gray-700">{t("trips.accommodation")}</span>
                   <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.accommodation}</p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Budżet:</span>
+                  <span className="text-sm font-medium text-gray-700">{t("trips.budget")}</span>
                   <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.budget}</p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">Najlepszy czas:</span>
+                  <span className="text-sm font-medium text-gray-700">{t("trips.best_time")}</span>
                   <p className="text-sm text-gray-600">{trip.ai_generated_content.recommendations.best_time}</p>
                 </div>
               </div>
@@ -442,7 +456,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {!trip.ai_generated_content && trip.status === "draft" && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
           {aiError && <ErrorAlert type="error" message={aiError} />}
-          <p className="text-gray-600">Ta podróż nie ma jeszcze wygenerowanego planu AI.</p>
+          <p className="text-gray-600">{t("trips.no_ai_plan")}</p>
           <button
             onClick={handleGenerateAI}
             disabled={isGeneratingAI}
@@ -458,10 +472,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Generowanie...
+                {t("trips.generating")}
               </>
             ) : (
-              "Generuj plan podróży AI"
+              t("trips.generate_ai_plan")
             )}
           </button>
         </div>
@@ -485,13 +499,12 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
               />
             </svg>
             <div>
-              <p className="font-medium text-purple-900">Generowanie planu podróży AI...</p>
+              <p className="font-medium text-purple-900">{t("trips.generating_ai")}</p>
               <p className="text-sm text-purple-700">
-                Czas generowania: {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, "0")}
+                {t("trips.generation_time")} {Math.floor(elapsedSeconds / 60)}:
+                {(elapsedSeconds % 60).toString().padStart(2, "0")}
               </p>
-              <p className="text-xs text-purple-600 mt-1">
-                AI tworzy spersonalizowany plan - może to potrwać kilka minut
-              </p>
+              <p className="text-xs text-purple-600 mt-1">{t("trips.ai_explanation")}</p>
             </div>
           </div>
         </div>
@@ -500,7 +513,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {/* Failed status */}
       {trip.status === "failed" && !trip.ai_generated_content && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-          <ErrorAlert type="error" message="Generowanie AI nie powiodło się. Spróbuj ponownie." />
+          <ErrorAlert type="error" message={t("trips.ai_failed")} />
           <button
             onClick={handleGenerateAI}
             disabled={isGeneratingAI}
@@ -516,10 +529,10 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Ponowna próba...
+                {t("trips.retrying")}
               </>
             ) : (
-              "Spróbuj ponownie"
+              t("trips.retry")
             )}
           </button>
         </div>
@@ -529,9 +542,9 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="mx-4 max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">Usunąć podróż?</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t("trips.delete_confirm_title")}</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Czy na pewno chcesz usunąć &quot;{trip.destination}&quot;? Tej operacji nie można cofnąć.
+              {t("trips.delete_confirm_message", { destination: trip.destination })}
             </p>
             <div className="mt-6 flex gap-3">
               <button
@@ -539,14 +552,14 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
                 disabled={isDeleting}
                 className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Anuluj
+                {t("trips.cancel")}
               </button>
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className="flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
               >
-                {isDeleting ? "Usuwanie..." : "Usuń"}
+                {isDeleting ? t("trips.deleting") : t("trips.delete")}
               </button>
             </div>
           </div>

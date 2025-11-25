@@ -20,10 +20,14 @@ if (!id) {
   return Astro.redirect("/trips");
 }
 
-const breadcrumbItems = [{ label: "Start", href: "/" }, { label: "Plany", href: "/trips" }, { label: "Szczegóły" }];
+const breadcrumbItems = [
+  { label: "breadcrumb_start", href: "/" },
+  { label: "breadcrumb_plans", href: "/trips" },
+  { label: "breadcrumb_details" },
+];
 ---
 
-<Layout title="Szczegóły podróży - Magic Travel App">
+<Layout title="page_title" data-i18n-title="trips.page_title">
   <main class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
     {/* Breadcrumb */}
     <div class="mb-6">
@@ -33,4 +37,27 @@ const breadcrumbItems = [{ label: "Start", href: "/" }, { label: "Plany", href: 
     {/* Trip Detail Component */}
     <TripDetail tripId={id} client:load />
   </main>
+
+  <script>
+    /* eslint-disable */
+    import { t, getLocaleFromStorage } from "@/i18n";
+    import type { TranslationKey } from "@/i18n";
+
+    const locale = getLocaleFromStorage();
+
+    // Translate breadcrumb labels
+    document.querySelectorAll("[data-breadcrumb-i18n]").forEach((element) => {
+      const key = element.getAttribute("data-breadcrumb-i18n");
+      if (key) {
+        element.textContent = t(key as TranslationKey, locale);
+      }
+    });
+
+    // Translate page title
+    const titleElement = document.querySelector("title");
+    if (titleElement) {
+      titleElement.textContent = `${t("trips.page_title" as TranslationKey, locale)} - Magic Travel App`;
+    }
+    /* eslint-enable */
+  </script>
 </Layout>

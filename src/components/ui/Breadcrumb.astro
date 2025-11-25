@@ -41,11 +41,16 @@ const { items } = Astro.props;
               href={item.href}
               class="text-[var(--colorBrandForegroundLink)] hover:text-[var(--colorBrandBackgroundHover)] hover:underline focus-visible:outline-none focus-visible:outline-[2px] focus-visible:outline-offset-[1px] focus-visible:outline-[var(--colorNeutralStroke3)] rounded-[var(--borderRadiusSmall)] px-[var(--spacingHorizontalXXS)] transition-colors duration-100"
               aria-current={index === items.length - 1 ? "page" : undefined}
+              data-breadcrumb-i18n={`trips.${item.label}`}
             >
               {item.label}
             </a>
           ) : (
-            <span class="font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]" aria-current="page">
+            <span
+              class="font-[var(--fontWeightSemibold)] text-[var(--colorNeutralForeground1)]"
+              aria-current="page"
+              data-breadcrumb-i18n={`trips.${item.label}`}
+            >
               {item.label}
             </span>
           )}
