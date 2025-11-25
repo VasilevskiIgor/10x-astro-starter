@@ -119,7 +119,10 @@ export const TripsList: React.FC = () => {
               </p>
             </div>
             <div>
-              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label={t("trips.pagination_label")}>
+              <nav
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                aria-label={t("trips.pagination_label")}
+              >
                 <button
                   onClick={prevPage}
                   disabled={pagination.offset === 0}
