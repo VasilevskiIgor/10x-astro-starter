@@ -4,7 +4,7 @@
  * Custom hook for using translations in React components
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { Locale, TranslationKey } from "./types";
 import { t, getLocaleFromStorage } from "./utils";
 
@@ -38,9 +38,13 @@ export function useTranslation() {
   }, []);
 
   // Return translation function with current locale already applied
-  const translate = (key: TranslationKey, params?: Record<string, string>) => {
-    return t(key, locale, params);
-  };
+  // Use useCallback to memoize the function and prevent unnecessary re-renders
+  const translate = useCallback(
+    (key: TranslationKey, params?: Record<string, string>) => {
+      return t(key, locale, params);
+    },
+    [locale]
+  );
 
   return { t: translate, locale };
 }

@@ -109,8 +109,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
     };
 
     fetchTrip();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tripId]);
+  }, [tripId, t]);
 
   // Handle delete
   const handleDelete = async () => {
@@ -222,8 +221,7 @@ export const TripDetail: React.FC<TripDetailProps> = ({ tripId }) => {
       console.log("[TripDetail] Cleaning up polling interval");
       clearInterval(pollInterval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trip?.status, tripId]);
+  }, [trip?.status, tripId, t]);
 
   // Handle AI generation - now just triggers generation without waiting
   const handleGenerateAI = async () => {
