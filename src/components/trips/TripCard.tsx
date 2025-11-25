@@ -25,9 +25,9 @@ export interface TripCardProps {
 // Helper Functions
 // ============================================================================
 
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString: string, locale: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("pl-PL", {
+  return date.toLocaleDateString(locale === "en" ? "en-US" : "pl-PL", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -82,7 +82,7 @@ const getStatusBadge = (status: string, translateFn: (key: string) => string) =>
 // ============================================================================
 
 export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const duration = calculateDuration(trip.start_date, trip.end_date);
 
   const getDayLabel = (days: number) => {
@@ -128,7 +128,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
           />
         </svg>
         <span>
-          {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
+          {formatDate(trip.start_date, locale)} - {formatDate(trip.end_date, locale)}
         </span>
         <span className="text-[var(--colorNeutralForeground3)]">•</span>
         <span>
@@ -160,7 +160,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
           )}
         </div>
         <div className="text-[var(--fontSizeBase200)] text-[var(--colorNeutralForeground3)]">
-          {t("trips.created")} {formatDate(trip.created_at)}
+          {t("trips.created")} {formatDate(trip.created_at, locale)}
         </div>
       </div>
     </a>
