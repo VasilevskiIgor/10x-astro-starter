@@ -14,12 +14,14 @@ import * as React from "react";
 import { useTrips } from "@/hooks/useTrips";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { TripCard } from "./TripCard";
+import { useTranslation } from "@/i18n/useTranslation";
 
 // ============================================================================
 // Component
 // ============================================================================
 
 export const TripsList: React.FC = () => {
+  const { t } = useTranslation();
   const { trips, isLoading, error, pagination, nextPage, prevPage } = useTrips();
 
   // Loading state
@@ -60,8 +62,8 @@ export const TripsList: React.FC = () => {
             d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-semibold text-gray-900">Brak podróży</h3>
-        <p className="mt-1 text-sm text-gray-500">Zacznij od stworzenia swojej pierwszej podróży.</p>
+        <h3 className="mt-2 text-sm font-semibold text-gray-900">{t("trips.no_trips_title")}</h3>
+        <p className="mt-1 text-sm text-gray-500">{t("trips.no_trips_description")}</p>
         <div className="mt-6">
           <a
             href="/trips/new"
@@ -70,7 +72,7 @@ export const TripsList: React.FC = () => {
             <svg className="mr-1.5 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Utwórz nową podróż
+            {t("trips.create_new_trip")}
           </a>
         </div>
       </div>
@@ -96,32 +98,34 @@ export const TripsList: React.FC = () => {
               disabled={pagination.offset === 0}
               className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Poprzednia
+              {t("trips.pagination_previous")}
             </button>
             <button
               onClick={nextPage}
               disabled={!pagination.has_more}
               className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Następna
+              {t("trips.pagination_next")}
             </button>
           </div>
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Pokazuję <span className="font-medium">{pagination.offset + 1}</span> do{" "}
+                {t("trips.pagination_showing")} <span className="font-medium">{pagination.offset + 1}</span>{" "}
+                {t("trips.pagination_to")}{" "}
                 <span className="font-medium">{Math.min(pagination.offset + pagination.limit, pagination.total)}</span>{" "}
-                z <span className="font-medium">{pagination.total}</span> podróży
+                {t("trips.pagination_of")} <span className="font-medium">{pagination.total}</span>{" "}
+                {t("trips.pagination_trips")}
               </p>
             </div>
             <div>
-              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Paginacja">
+              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label={t("trips.pagination_label")}>
                 <button
                   onClick={prevPage}
                   disabled={pagination.offset === 0}
                   className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <span className="sr-only">Poprzednia</span>
+                  <span className="sr-only">{t("trips.pagination_previous")}</span>
                   <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                       fillRule="evenodd"
@@ -135,7 +139,7 @@ export const TripsList: React.FC = () => {
                   disabled={!pagination.has_more}
                   className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <span className="sr-only">Następna</span>
+                  <span className="sr-only">{t("trips.pagination_next")}</span>
                   <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                       fillRule="evenodd"

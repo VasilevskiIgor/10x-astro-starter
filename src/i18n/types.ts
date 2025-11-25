@@ -91,6 +91,22 @@ export interface Translations {
     status_draft: string;
     status_generating: string;
     status_completed: string;
+    status_failed: string;
+    day_singular: string;
+    days_few: string;
+    days_many: string;
+    ai_generated: string;
+    created: string;
+    no_trips_title: string;
+    no_trips_description: string;
+    create_new_trip: string;
+    pagination_previous: string;
+    pagination_next: string;
+    pagination_showing: string;
+    pagination_to: string;
+    pagination_of: string;
+    pagination_trips: string;
+    pagination_label: string;
   };
   navigation: {
     home: string;

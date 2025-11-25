@@ -11,6 +11,7 @@
 
 import * as React from "react";
 import type { TripListItemDTO } from "@/types/dto";
+import { useTranslation } from "@/i18n/useTranslation";
 
 // ============================================================================
 // Type Definitions
@@ -41,27 +42,27 @@ const calculateDuration = (startDate: string, endDate: string): number => {
   return diffDays + 1; // Include both start and end days
 };
 
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: string, translateFn: (key: string) => string) => {
   const badges = {
     draft: {
       color:
         "bg-[var(--colorNeutralBackground4)] text-[var(--colorNeutralForeground2)] border border-[var(--colorNeutralStroke2)]",
-      label: "Szkic",
+      labelKey: "trips.status_draft",
     },
     generating: {
       color:
         "bg-[var(--colorStatusInfoBackground2)] text-[var(--colorStatusInfoForeground1)] border border-[var(--colorStatusInfoBorder1)]",
-      label: "Generowanie...",
+      labelKey: "trips.status_generating",
     },
     completed: {
       color:
         "bg-[var(--colorStatusSuccessBackground2)] text-[var(--colorStatusSuccessForeground1)] border border-[var(--colorStatusSuccessBorder1)]",
-      label: "Ukończona",
+      labelKey: "trips.status_completed",
     },
     failed: {
       color:
         "bg-[var(--colorStatusDangerBackground2)] text-[var(--colorStatusDangerForeground1)] border border-[var(--colorStatusDangerBorder1)]",
-      label: "Nie powiodło się",
+      labelKey: "trips.status_failed",
     },
   };
 
@@ -71,7 +72,7 @@ const getStatusBadge = (status: string) => {
     <span
       className={`inline-flex items-center rounded-[var(--borderRadiusXLarge)] px-[var(--spacingHorizontalS)] py-[var(--spacingVerticalXXS)] text-[var(--fontSizeBase200)] font-[var(--fontWeightSemibold)] ${badge.color}`}
     >
-      {badge.label}
+      {translateFn(badge.labelKey)}
     </span>
   );
 };
@@ -81,7 +82,14 @@ const getStatusBadge = (status: string) => {
 // ============================================================================
 
 export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
+  const { t } = useTranslation();
   const duration = calculateDuration(trip.start_date, trip.end_date);
+
+  const getDayLabel = (days: number) => {
+    if (days === 1) return t("trips.day_singular");
+    if (days < 5) return t("trips.days_few");
+    return t("trips.days_many");
+  };
 
   return (
     <a
@@ -100,7 +108,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
             </p>
           )}
         </div>
-        <div>{getStatusBadge(trip.status)}</div>
+        <div>{getStatusBadge(trip.status, t)}</div>
       </div>
 
       {/* Dates */}
@@ -124,7 +132,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
         </span>
         <span className="text-[var(--colorNeutralForeground3)]">•</span>
         <span>
-          {duration} {duration === 1 ? "dzień" : duration < 5 ? "dni" : "dni"}
+          {duration} {getDayLabel(duration)}
         </span>
       </div>
 
@@ -147,12 +155,12 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                 />
               </svg>
-              <span>Wygenerowane przez AI</span>
+              <span>{t("trips.ai_generated")}</span>
             </div>
           )}
         </div>
         <div className="text-[var(--fontSizeBase200)] text-[var(--colorNeutralForeground3)]">
-          Utworzone {formatDate(trip.created_at)}
+          {t("trips.created")} {formatDate(trip.created_at)}
         </div>
       </div>
     </a>

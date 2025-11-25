@@ -44,8 +44,7 @@ export default function LanguageSwitcher() {
         aria-label="Change language"
         aria-expanded={isOpen}
       >
-        <span className="text-lg">{currentConfig.flag}</span>
-        <span className="hidden sm:inline">{currentConfig.code.toUpperCase()}</span>
+        <span className="text-2xl">{currentConfig.flag}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
